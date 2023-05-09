@@ -1,0 +1,44 @@
+title: "&bOre Processor | Storage"
+layout:
+  - "---------"
+  - "--X--IO--"
+  - "---------"
+  - "----|----"
+components:
+  "-":
+    name: "&e"
+    material: gray_stained_glass_pane
+  "X":
+    type: ore
+    lore:
+      - "&7▪ In queue: {queue}"
+      - "&7▪ In storage: {storage-current}/{storage-capacity}"
+      - "&7▪ Throughput: {throughput}/m"
+      - ""
+      - "&e» Click to upgrade."
+  "I":
+    type: input
+    material: hopper
+    name: "&aPut ore"
+    lore:
+      - "&7▪ Amount: {current}/{capacity}"
+      - ""
+      - "&e» Put {ore} into this slot to"
+      - "&eimport into the storage."
+  "O":
+    type: output
+    material: chest
+    name: "&aTake ore"
+    lore:
+      - "&7▪ Amount: {current}/{capacity}"
+      - ""
+      - "&e[Left] Take x1"
+      - "&e[Right] Take x64"
+      - "&e[Left + Shift] Take x16"
+      - "&e[Right + Shift] Take x32"
+  "|":
+    type: back
+    material: barrier
+    name: "&cBack"
+    lore:
+      - "&e» Go back to main menu"

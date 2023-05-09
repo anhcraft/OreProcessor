@@ -1,0 +1,83 @@
+ores:
+  coal:
+    blocks:
+      - coal_ore
+    raw-materials:
+      - coal
+  iron_ingot:
+    blocks:
+      - iron_ore
+      - deepslate_iron_ore
+    raw-materials:
+      - iron_ore
+      - raw_iron
+  gold_ingot:
+    blocks:
+      - gold_ore
+      - deepslate_gold_ore
+    raw-materials:
+      - gold_ore
+      - raw_gold
+  copper_ingot:
+    blocks:
+      - copper_ore
+    raw-materials:
+      - raw_copper
+  lapis_lazuli:
+    blocks:
+      - lapis_ore
+      - deepslate_lapis_ore
+    raw-materials:
+      - lapis_lazuli
+  redstone:
+    blocks:
+      - redstone_ore
+      - deepslate_redstone_ore
+    raw-materials:
+      - redstone
+  diamond:
+    blocks:
+      - diamond_ore
+      - deepslate_diamond_ore
+    raw-materials:
+      - diamond
+  emerald:
+    blocks:
+      - emerald_ore
+      - deepslate_emerald_ore
+    raw-materials:
+      - emerald
+  quartz:
+    blocks:
+      - nether_quartz_ore
+    raw-materials:
+      - quartz
+  netherite_scrap:
+    blocks:
+      - ancient_debris
+    raw-materials:
+      - ancient_debris
+throughput-upgrade:
+  default:
+    amount: 1
+  level-1:
+    amount: 2
+    cost: 50000
+  level-3:
+    amount: 3
+    cost: 100000
+  level-4:
+    amount: 4
+    cost: 300000
+capacity-upgrade:
+  default:
+    amount: 128
+  level-1:
+    amount: 192
+    cost: 30000
+  level-3:
+    amount: 256
+    cost: 50000
+  level-4:
+    amount: 320
+    cost: 100000
