@@ -24,7 +24,7 @@ components:
       - "&e» Go back to main menu"
 
 throughput-upgradable-lore:
-  - "&fIncrease processing rate to obtain products faster."
+  - "&fIncrease processing rate to obtain {ore} faster."
   - ""
   - "&7▪ Current: {current-throughput}/m"
   - "&7▪ Next level: {next-throughput}/m"
@@ -33,7 +33,7 @@ throughput-upgradable-lore:
   - "&e» Click to confirm upgrade."
 
 throughput-unaffordable-lore:
-  - "&fIncrease processing rate to obtain products faster."
+  - "&fIncrease processing rate to obtain {ore} faster."
   - ""
   - "&7▪ Current: {current-throughput}/m"
   - "&7▪ Next level: {next-throughput}/m"
@@ -42,14 +42,14 @@ throughput-unaffordable-lore:
   - "&c[Not enough balance]"
 
 throughput-maximized-lore:
-  - "&fIncrease processing rate to obtain products faster."
+  - "&fIncrease processing rate to obtain {ore} faster."
   - ""
   - "&7▪ Current: {current-throughput}/m"
   - ""
   - "&c[Maximum level reached]"
 
 capacity-upgradable-lore:
-  - "&fIncrease storage capacity."
+  - "&fIncrease {ore} storage capacity."
   - ""
   - "&7▪ Current: {current-capacity}"
   - "&7▪ Next level: {next-capacity}"
@@ -58,7 +58,7 @@ capacity-upgradable-lore:
   - "&e» Click to confirm upgrade."
 
 capacity-unaffordable-lore:
-  - "&fIncrease storage capacity."
+  - "&fIncrease {ore} storage capacity."
   - ""
   - "&7▪ Current: {current-capacity}"
   - "&7▪ Next level: {next-capacity}"
@@ -67,7 +67,7 @@ capacity-unaffordable-lore:
   - "&c[Not enough balance]"
 
 capacity-maximized-lore:
-  - "&fIncrease storage capacity."
+  - "&fIncrease {ore} storage capacity."
   - ""
   - "&7▪ Current: {current-capacity}"
   - ""

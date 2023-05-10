@@ -15,23 +15,23 @@ public class PlayerData {
     public final AtomicBoolean dirty = new AtomicBoolean(false);
 
     @Validation(notNull = true, silent = true)
-    private Map<Material, Integer> queuedOre;
+    private Map<Material, Integer> queuedOre; // product; amount
 
     @Validation(notNull = true, silent = true)
-    private Map<Material, Integer> storage;
+    private Map<Material, Integer> storage; // product, amount
 
     @Validation(notNull = true, silent = true)
-    private Map<Material, Integer> throughput;
+    private Map<Material, Integer> throughput; // product, amount
 
     @Validation(notNull = true, silent = true)
-    private Map<Material, Integer> capacity;
+    private Map<Material, Integer> capacity; // product, amount
 
     public void markDirty() {
         dirty.set(true);
     }
 
-    public int countQueuedOre(Material ore) {
-        return queuedOre.getOrDefault(ore, 0);
+    public int countQueuedOre(Material product) {
+        return queuedOre.getOrDefault(product, 0);
     }
 
     public int countStorage(Material product) {
@@ -46,9 +46,9 @@ public class PlayerData {
         return capacity.getOrDefault(product, OreProcessor.getInstance().mainConfig.capacityUpgrade.get("default").amount);
     }
 
-    public void queueMineral(Material ore, int amount) {
+    public void queueOre(Material product, int amount) {
         synchronized (dirty) {
-            queuedOre.put(ore, queuedOre.getOrDefault(ore, 0) + amount);
+            queuedOre.put(product, queuedOre.getOrDefault(product, 0) + amount);
         }
     }
 
@@ -66,19 +66,19 @@ public class PlayerData {
 
     public int storeOre(Material ore, int amount) {
         synchronized (dirty) {
-            int stored = storedOre.getOrDefault(ore, 0);
+            int stored = storage.getOrDefault(ore, 0);
             int cap = capacity.getOrDefault(ore, 0);
             int toStore = Math.min(amount, cap - stored);
-            storedOre.put(ore, stored + toStore);
+            storage.put(ore, stored + toStore);
             return toStore;
         }
     }
 
     public int takeOre(Material ore, int amount) {
         synchronized (dirty) {
-            int stored = storedOre.getOrDefault(ore, 0);
+            int stored = storage.getOrDefault(ore, 0);
             int toTake = Math.max(0, stored - amount);
-            storedOre.put(ore, stored - toTake);
+            storage.put(ore, stored - toTake);
             return toTake;
         }
     }

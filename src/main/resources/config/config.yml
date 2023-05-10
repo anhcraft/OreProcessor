@@ -1,10 +1,12 @@
 ores:
   coal:
+    name: "Coal"
     blocks:
       - coal_ore
     raw-materials:
       - coal
   iron_ingot:
+    name: "Iron"
     blocks:
       - iron_ore
       - deepslate_iron_ore
@@ -12,6 +14,7 @@ ores:
       - iron_ore
       - raw_iron
   gold_ingot:
+    name: "Gold"
     blocks:
       - gold_ore
       - deepslate_gold_ore
@@ -19,40 +22,47 @@ ores:
       - gold_ore
       - raw_gold
   copper_ingot:
+    name: "Copper"
     blocks:
       - copper_ore
     raw-materials:
       - raw_copper
   lapis_lazuli:
+    name: "Lapis Lazuli"
     blocks:
       - lapis_ore
       - deepslate_lapis_ore
     raw-materials:
       - lapis_lazuli
   redstone:
+    name: "Redstone"
     blocks:
       - redstone_ore
       - deepslate_redstone_ore
     raw-materials:
       - redstone
   diamond:
+    name: "Diamond"
     blocks:
       - diamond_ore
       - deepslate_diamond_ore
     raw-materials:
       - diamond
   emerald:
+    name: "Emerald"
     blocks:
       - emerald_ore
       - deepslate_emerald_ore
     raw-materials:
       - emerald
   quartz:
+    name: "Quartz"
     blocks:
       - nether_quartz_ore
     raw-materials:
       - quartz
   netherite_scrap:
+    name: "Netherite"
     blocks:
       - ancient_debris
     raw-materials:

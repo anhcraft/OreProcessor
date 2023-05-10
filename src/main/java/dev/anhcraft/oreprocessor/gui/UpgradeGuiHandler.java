@@ -18,10 +18,10 @@ import java.util.function.UnaryOperator;
 import static dev.anhcraft.oreprocessor.gui.GuiRegistry.UPGRADE;
 
 public class UpgradeGuiHandler extends GuiHandler {
-    private final Material ore;
+    private final Material product;
 
-    public UpgradeGuiHandler(Material ore) {
-        this.ore = ore;
+    public UpgradeGuiHandler(Material product) {
+        this.product = product;
     }
 
     @Override
@@ -46,12 +46,14 @@ public class UpgradeGuiHandler extends GuiHandler {
                 GuiRegistry.openMenuGui(player);
             }
         });
+
+        refresh(player);
     }
 
     public void refresh(Player player) {
         PlayerData playerData = OreProcessor.getInstance().playerDataManager.getData(player);
 
-        int currentThroughput = playerData.getThroughput(ore);
+        int currentThroughput = playerData.getThroughput(product);
         UpgradeLevel nextThroughput = OreProcessor.getInstance().processingPlant.findNextThroughputUpgrade(currentThroughput);
 
         if (nextThroughput == null) {
@@ -65,7 +67,8 @@ public class UpgradeGuiHandler extends GuiHandler {
                         itemBuilder.replaceDisplay(new UnaryOperator<String>() {
                             @Override
                             public String apply(String s) {
-                                return s.replace("{current-throughput}", Integer.toString(currentThroughput));
+                                return s.replace("{ore}", OreProcessor.getInstance().mainConfig.ores.get(product).name)
+                                        .replace("{current-throughput}", Integer.toString(currentThroughput));
                             }
                         });
                         return itemBuilder;
@@ -88,7 +91,8 @@ public class UpgradeGuiHandler extends GuiHandler {
                         itemBuilder.replaceDisplay(new UnaryOperator<String>() {
                             @Override
                             public String apply(String s) {
-                                return s.replace("{current-throughput}", Integer.toString(currentThroughput))
+                                return s.replace("{ore}", OreProcessor.getInstance().mainConfig.ores.get(product).name)
+                                        .replace("{current-throughput}", Integer.toString(currentThroughput))
                                         .replace("{next-throughput}", Integer.toString(nextThroughput.amount))
                                         .replace("{cost}", String.format("%.2f", nextThroughput.cost));
                             }
@@ -99,7 +103,7 @@ public class UpgradeGuiHandler extends GuiHandler {
             }
         }
 
-        int currentCapacity = playerData.getCapacity(ore);
+        int currentCapacity = playerData.getCapacity(product);
         UpgradeLevel nextCapacity = OreProcessor.getInstance().processingPlant.findNextCapacityUpgrade(currentCapacity);
 
         if (nextCapacity == null) {
@@ -113,7 +117,8 @@ public class UpgradeGuiHandler extends GuiHandler {
                         itemBuilder.replaceDisplay(new UnaryOperator<String>() {
                             @Override
                             public String apply(String s) {
-                                return s.replace("{current-capacity}", Integer.toString(currentCapacity));
+                                return s.replace("{ore}", OreProcessor.getInstance().mainConfig.ores.get(product).name)
+                                        .replace("{current-capacity}", Integer.toString(currentCapacity));
                             }
                         });
                         return itemBuilder;
@@ -136,7 +141,8 @@ public class UpgradeGuiHandler extends GuiHandler {
                         itemBuilder.replaceDisplay(new UnaryOperator<String>() {
                             @Override
                             public String apply(String s) {
-                                return s.replace("{current-capacity}", Integer.toString(currentCapacity))
+                                return s.replace("{ore}", OreProcessor.getInstance().mainConfig.ores.get(product).name)
+                                        .replace("{current-capacity}", Integer.toString(currentCapacity))
                                         .replace("{next-capacity}", Integer.toString(nextCapacity.amount))
                                         .replace("{cost}", String.format("%.2f", nextCapacity.cost));
                             }
@@ -151,20 +157,22 @@ public class UpgradeGuiHandler extends GuiHandler {
     private void upgradeThroughput(Player player, UpgradeLevel nextThroughput) {
         if (OreProcessor.getInstance().economy.withdrawPlayer(player, nextThroughput.cost).transactionSuccess()) {
             PlayerData playerData = OreProcessor.getInstance().playerDataManager.getData(player);
-            playerData.setThroughput(ore, nextThroughput.amount);
+            playerData.setThroughput(product, nextThroughput.amount);
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
         } else {
             player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f);
         }
+        refresh(player);
     }
 
     private void upgradeCapacity(Player player, UpgradeLevel nextCapacity) {
         if (OreProcessor.getInstance().economy.withdrawPlayer(player, nextCapacity.cost).transactionSuccess()) {
             PlayerData playerData = OreProcessor.getInstance().playerDataManager.getData(player);
-            playerData.setCapacity(ore, nextCapacity.amount);
+            playerData.setCapacity(product, nextCapacity.amount);
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
         } else {
             player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f);
         }
+        refresh(player);
     }
 }

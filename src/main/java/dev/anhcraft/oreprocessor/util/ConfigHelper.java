@@ -7,7 +7,6 @@ import dev.anhcraft.config.bukkit.BukkitConfigProvider;
 import dev.anhcraft.config.bukkit.BukkitConfigSerializer;
 import dev.anhcraft.config.bukkit.struct.YamlConfigSection;
 import dev.anhcraft.config.schema.SchemaScanner;
-import dev.anhcraft.oreprocessor.config.OreTransformAdapter;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.Objects;
@@ -18,9 +17,7 @@ public class ConfigHelper {
 
     static {
         SERIALIZER = new BukkitConfigSerializer(BukkitConfigProvider.YAML);
-        SERIALIZER.registerTypeAdapter(OreTransformAdapter.class, OreTransformAdapter.INSTANCE);
         DESERIALIZER = new BukkitConfigDeserializer(BukkitConfigProvider.YAML);
-        DESERIALIZER.registerTypeAdapter(OreTransformAdapter.class, OreTransformAdapter.INSTANCE);
     }
 
     public static <T> T load(Class<T> clazz, ConfigurationSection section) {

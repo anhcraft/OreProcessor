@@ -10,6 +10,7 @@ components:
     material: gray_stained_glass_pane
   "X":
     type: ore
+    material: black_stained_glass_pane
     lore:
       - "&7▪ In queue: {queue}"
       - "&7▪ In storage: {storage-current}/{storage-capacity}"
@@ -19,7 +20,7 @@ components:
   "I":
     type: input
     material: hopper
-    name: "&aPut ore"
+    name: "&aPut {ore}"
     lore:
       - "&7▪ Amount: {current}/{capacity}"
       - ""
@@ -28,14 +29,14 @@ components:
   "O":
     type: output
     material: chest
-    name: "&aTake ore"
+    name: "&aTake {ore}"
     lore:
       - "&7▪ Amount: {current}/{capacity}"
       - ""
-      - "&e[Left] Take x1"
-      - "&e[Right] Take x64"
-      - "&e[Left + Shift] Take x16"
-      - "&e[Right + Shift] Take x32"
+      - "&e[Left] Take x1 {ore}"
+      - "&e[Right] Take x64 {ore}"
+      - "&e[Left + Shift] Take x16 {ore}"
+      - "&e[Right + Shift] Take x32 {ore}"
   "|":
     type: back
     material: barrier

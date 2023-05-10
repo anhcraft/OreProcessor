@@ -25,8 +25,8 @@ public class MenuGuiHandler extends GuiHandler implements AutoRefresh {
     public void refresh(Player player) {
         PlayerData playerData = OreProcessor.getInstance().playerDataManager.getData(player);
         List<Integer> slots = new ArrayList<>(locateComponent("ore"));
+        Material[] ores = OreProcessor.getInstance().mainConfig.ores.keySet().toArray(new Material[0]);
 
-        Material[] ores = OreProcessor.getInstance().processingPlant.rawToProductMap.keySet().toArray(new Material[0]);
         for (int i = 0; i < Math.min(slots.size(), ores.length); i++) {
             int slot = slots.get(i);
             Material ore = ores[i];
@@ -38,7 +38,7 @@ public class MenuGuiHandler extends GuiHandler implements AutoRefresh {
                 @Override
                 public String apply(String s) {
                     return s.replace("{queue}", Integer.toString(playerData.countQueuedOre(ore)))
-                            .replace("{storage-current}", Integer.toString(playerData.countStoredOre(ore)))
+                            .replace("{storage-current}", Integer.toString(playerData.countStorage(ore)))
                             .replace("{storage-capacity}", Integer.toString(playerData.getCapacity(ore)))
                             .replace("{throughput}", Integer.toString(playerData.getThroughput(ore)));
                 }

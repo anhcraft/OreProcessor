@@ -1,26 +1,26 @@
 package dev.anhcraft.oreprocessor.handler;
 
 import dev.anhcraft.oreprocessor.OreProcessor;
+import dev.anhcraft.oreprocessor.config.OreConfig;
 import dev.anhcraft.oreprocessor.config.UpgradeLevel;
-import dev.anhcraft.oreprocessor.util.OreTransform;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 public class ProcessingPlant implements Listener {
     private final OreProcessor plugin;
-    public List rawToProductMap;
+    public Map<Material, Material> rawToProductMap;
+    public Set<Material> allowedBlocks;
     private TreeMap<Integer, UpgradeLevel> throughputUpgrades;
     private TreeMap<Integer, UpgradeLevel> capacityUpgrade;
 
@@ -30,9 +30,14 @@ public class ProcessingPlant implements Listener {
     }
 
     public void refresh() {
-        rawToProductMap = new LinkedHashMap<>();
-        for (OreTransform oreTransform : plugin.mainConfig.oreTransform) {
-            rawToProductMap.put(oreTransform.getRaw(), oreTransform.getProduct());
+        rawToProductMap = new EnumMap<>(Material.class);
+        allowedBlocks = EnumSet.noneOf(Material.class);
+
+        for (Map.Entry<Material, OreConfig> entry : plugin.mainConfig.ores.entrySet()) {
+            for (Material rawMaterial : entry.getValue().rawMaterials) {
+                rawToProductMap.put(rawMaterial, entry.getKey());
+            }
+            allowedBlocks.addAll(entry.getValue().blocks);
         }
 
         throughputUpgrades = new TreeMap<>();
@@ -67,16 +72,18 @@ public class ProcessingPlant implements Listener {
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
-    private void onBreak(BlockBreakEvent event) {
+    private void onDrop(BlockDropItemEvent event) {
         Player player = event.getPlayer();
-        Block block = event.getBlock();
+        BlockState brokenBlock = event.getBlockState();
+        if (!allowedBlocks.contains(brokenBlock.getType())) return;
         ItemStack item = player.getInventory().getItemInMainHand();
-        Material product = rawToProductMap.get(block.getType());
-        if (product == null || item.containsEnchantment(Enchantment.SILK_TOUCH)) return;
+        if (item.containsEnchantment(Enchantment.SILK_TOUCH)) return;
 
-        for (ItemStack drop : block.getDrops(item)) {
-            if ((drop.getType() == block.getType() || drop.getType() == product) && !drop.hasItemMeta()) {
+        for (Iterator<Item> iterator = event.getItems().iterator(); iterator.hasNext(); ) {
+            Item eventItem = iterator.next();
+            if (rawToProductMap.containsKey(eventItem.getItemStack().getType())) {
 
+                iterator.remove();
             }
         }
     }

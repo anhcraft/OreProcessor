@@ -13,11 +13,11 @@ public class GuiRegistry {
         MENU.open(player, new MenuGuiHandler());
     }
 
-    public static void openUpgradeGui(Player player, Material ore) {
-        UPGRADE.open(player, new UpgradeGuiHandler(ore));
+    public static void openUpgradeGui(Player player, Material product) {
+        UPGRADE.open(player, new UpgradeGuiHandler(product));
     }
 
-    public static void openStorageGui(Player player, Material ore) {
-        STORAGE.open(player, new StorageGuiHandler(ore));
+    public static void openStorageGui(Player player, Material product) {
+        STORAGE.open(player, new StorageGuiHandler(product));
     }
 }
