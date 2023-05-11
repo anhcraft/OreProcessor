@@ -1,0 +1,4 @@
+prefix: "&e[Ore] &f"
+upgrade-success: "&aSuccessfully upgraded!"
+upgrade-failed: "&cFailed to upgrade!"
+storage-full: "&cStorage is full. Please take your resources: /ore"

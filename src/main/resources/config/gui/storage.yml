@@ -1,16 +1,20 @@
-title: "&bOre Processor | Storage"
+title: "&0Ore Processor | Storage"
 layout:
   - "---------"
   - "--X--IO--"
   - "---------"
-  - "----|----"
+  - "++++|++++"
 components:
   "-":
     name: "&e"
     material: gray_stained_glass_pane
+  "+":
+    name: "&e"
+    material: black_stained_glass_pane
   "X":
     type: ore
-    material: black_stained_glass_pane
+    material: gray_stained_glass_pane
+    name: "&b{ore} &f({storage-ratio}%)"
     lore:
       - "&7▪ In queue: {queue}"
       - "&7▪ In storage: {storage-current}/{storage-capacity}"
@@ -20,7 +24,7 @@ components:
   "I":
     type: input
     material: hopper
-    name: "&aPut {ore}"
+    name: "&aStore {ore}"
     lore:
       - "&7▪ Amount: {current}/{capacity}"
       - ""
@@ -33,10 +37,10 @@ components:
     lore:
       - "&7▪ Amount: {current}/{capacity}"
       - ""
-      - "&e[Left] Take x1 {ore}"
-      - "&e[Right] Take x64 {ore}"
-      - "&e[Left + Shift] Take x16 {ore}"
-      - "&e[Right + Shift] Take x32 {ore}"
+      - "&fLeft:       &eTake x1 {ore}"
+      - "&fRight:      &eTake x64 {ore}"
+      - "&fLeft+Shift:  &eTake x16 {ore}"
+      - "&fRight+Shift: &eTake x32 {ore}"
   "|":
     type: back
     material: barrier

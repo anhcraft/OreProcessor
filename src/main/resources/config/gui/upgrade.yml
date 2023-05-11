@@ -1,13 +1,16 @@
-title: "&bOre Processor | Upgrade"
+title: "&0Ore Processor | Upgrade"
 layout:
   - "---------"
   - "--T---C--"
   - "---------"
-  - "----|----"
+  - "++++|++++"
 components:
   "-":
     name: "&e"
     material: gray_stained_glass_pane
+  "+":
+    name: "&e"
+    material: black_stained_glass_pane
   "T":
     type: throughput
     material: hopper
@@ -28,7 +31,7 @@ throughput-upgradable-lore:
   - ""
   - "&7▪ Current: {current-throughput}/m"
   - "&7▪ Next level: {next-throughput}/m"
-  - "&7▪ Upgrade cost:&c ${cost}"
+  - "&7▪ Upgrade cost: ${cost}"
   - ""
   - "&e» Click to confirm upgrade."
 
@@ -37,7 +40,7 @@ throughput-unaffordable-lore:
   - ""
   - "&7▪ Current: {current-throughput}/m"
   - "&7▪ Next level: {next-throughput}/m"
-  - "&7▪ Upgrade cost:&c ${cost}"
+  - "&7▪ Upgrade cost: ${cost}"
   - ""
   - "&c[Not enough balance]"
 
@@ -53,7 +56,7 @@ capacity-upgradable-lore:
   - ""
   - "&7▪ Current: {current-capacity}"
   - "&7▪ Next level: {next-capacity}"
-  - "&7▪ Upgrade cost:&c ${cost}"
+  - "&7▪ Upgrade cost: ${cost}"
   - ""
   - "&e» Click to confirm upgrade."
 
@@ -62,7 +65,7 @@ capacity-unaffordable-lore:
   - ""
   - "&7▪ Current: {current-capacity}"
   - "&7▪ Next level: {next-capacity}"
-  - "&7▪ Upgrade cost:&c ${cost}"
+  - "&7▪ Upgrade cost: ${cost}"
   - ""
   - "&c[Not enough balance]"
 

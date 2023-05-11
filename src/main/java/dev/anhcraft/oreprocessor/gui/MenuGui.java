@@ -7,5 +7,6 @@ import java.util.List;
 
 @Configurable(keyNamingStyle = Configurable.NamingStyle.TRAIN_CASE)
 public class MenuGui extends Gui {
+    public String oreName;
     public List<String> oreLore;
 }

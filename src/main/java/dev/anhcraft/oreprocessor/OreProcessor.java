@@ -6,6 +6,7 @@ import dev.anhcraft.jvmkit.utils.FileUtil;
 import dev.anhcraft.jvmkit.utils.IOUtil;
 import dev.anhcraft.oreprocessor.cmd.OreCommand;
 import dev.anhcraft.oreprocessor.config.MainConfig;
+import dev.anhcraft.oreprocessor.config.MessageConfig;
 import dev.anhcraft.oreprocessor.gui.GuiRefreshTask;
 import dev.anhcraft.oreprocessor.gui.GuiRegistry;
 import dev.anhcraft.oreprocessor.gui.MenuGui;
@@ -17,6 +18,7 @@ import dev.anhcraft.palette.listener.GuiEventListener;
 import dev.anhcraft.palette.ui.Gui;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.ChatColor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -28,6 +30,7 @@ import java.io.IOException;
 public final class OreProcessor extends JavaPlugin {
     private static OreProcessor INSTANCE;
     public MainConfig mainConfig;
+    public MessageConfig messageConfig;
     public ProcessingPlant processingPlant;
     public PlayerDataManager playerDataManager;
     public Economy economy;
@@ -43,6 +46,10 @@ public final class OreProcessor extends JavaPlugin {
         }
     }
 
+    public void msg(CommandSender sender, String str) {
+        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messageConfig.prefix + str));
+    }
+
     @Override
     public void onEnable() {
         if (!setupEconomy()) {
@@ -56,7 +63,6 @@ public final class OreProcessor extends JavaPlugin {
         playerDataManager = new PlayerDataManager(this);
         reload();
 
-        new GuiRefreshTask().runTaskTimerAsynchronously(this, 0L, 20L);
         getServer().getPluginManager().registerEvents(new GuiEventListener(), this);
 
         PaperCommandManager pcm = new PaperCommandManager(this);
@@ -82,15 +88,20 @@ public final class OreProcessor extends JavaPlugin {
     }
 
     public void reload() {
+        getServer().getScheduler().cancelTasks(this);
+        new GuiRefreshTask().runTaskTimerAsynchronously(this, 0L, 20L);
+
         getDataFolder().mkdir();
         mainConfig = ConfigHelper.load(MainConfig.class, requestConfig("config.yml"));
+        messageConfig = ConfigHelper.load(MessageConfig.class, requestConfig("messages.yml"));
 
         new File(getDataFolder(), "gui").mkdir();
         GuiRegistry.MENU = ConfigHelper.load(MenuGui.class, requestConfig("gui/menu.yml"));
         GuiRegistry.UPGRADE = ConfigHelper.load(UpgradeGui.class, requestConfig("gui/upgrade.yml"));
         GuiRegistry.STORAGE = ConfigHelper.load(Gui.class, requestConfig("gui/storage.yml"));
 
-        processingPlant.refresh();
+        processingPlant.reload();
+        playerDataManager.reload();
     }
 
     public YamlConfiguration requestConfig(String path) {
@@ -106,5 +117,9 @@ public final class OreProcessor extends JavaPlugin {
         }
 
         return YamlConfiguration.loadConfiguration(f);
+    }
+
+    public int getDefaultCapacity() {
+        return mainConfig.capacityUpgrade.get("default").amount;
     }
 }

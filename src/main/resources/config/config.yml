@@ -67,6 +67,7 @@ ores:
       - ancient_debris
     raw-materials:
       - ancient_debris
+processing-speed: 5
 throughput-upgrade:
   default:
     amount: 1
@@ -91,3 +92,4 @@ capacity-upgrade:
   level-4:
     amount: 320
     cost: 100000
+dev-mode: false

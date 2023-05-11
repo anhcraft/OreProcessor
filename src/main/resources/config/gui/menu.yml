@@ -1,6 +1,7 @@
-title: "&bOre Processor | Menu"
+title: "&0Ore Processor | Menu"
 layout:
   - "---------"
+  - "--XXXXX--"
   - "--XXXXX--"
   - "--XXXXX--"
   - "---------"
@@ -12,6 +13,7 @@ components:
     type: ore
     name: "&e"
     material: black_stained_glass_pane
+ore-name: "&b{ore} &f({storage-ratio}%)"
 ore-lore:
   - "&7▪ In queue: {queue}"
   - "&7▪ In storage: {storage-current}/{storage-capacity}"

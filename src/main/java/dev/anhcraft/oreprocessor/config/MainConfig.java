@@ -10,6 +10,8 @@ import java.util.LinkedHashMap;
 public class MainConfig {
     public boolean devMode;
 
+    public int processingSpeed = 5;
+
     @Validation(notNull = true, notEmpty = true)
     public LinkedHashMap<Material, OreConfig> ores;
 

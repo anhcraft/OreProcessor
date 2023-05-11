@@ -32,11 +32,14 @@ public class PlayerDataManager implements Listener {
         folder.mkdir();
 
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
-        plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, this::checkTask, 20, 200);
 
         for (Player player : plugin.getServer().getOnlinePlayers()) {
             requireData(player.getUniqueId());
         }
+    }
+
+    public void reload() {
+        plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, this::checkTask, 20, 200);
     }
 
     @NotNull
