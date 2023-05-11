@@ -19,6 +19,10 @@ public class MenuGuiHandler extends GuiHandler implements AutoRefresh {
 
     @Override
     public void onPreOpen(@NotNull Player player) {
+        PlayerData playerData = OreProcessor.getInstance().playerDataManager.getData(player);
+        playerData.hideTutorial = true;
+        playerData.markDirty();
+
         refresh(player);
     }
 

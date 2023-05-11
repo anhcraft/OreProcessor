@@ -89,7 +89,7 @@ public final class OreProcessor extends JavaPlugin {
 
     public void reload() {
         getServer().getScheduler().cancelTasks(this);
-        new GuiRefreshTask().runTaskTimerAsynchronously(this, 0L, 20L);
+        new GuiRefreshTask().runTaskTimer(this, 0L, 20L);
 
         getDataFolder().mkdir();
         mainConfig = ConfigHelper.load(MainConfig.class, requestConfig("config.yml"));

@@ -16,6 +16,8 @@ public class PlayerData {
     @Exclude
     public final AtomicBoolean dirty = new AtomicBoolean(false);
 
+    public boolean hideTutorial;
+
     @Validation(notNull = true, silent = true)
     private LinkedHashMap<Material, Integer> throughput = new LinkedHashMap<>(); // product, amount
 

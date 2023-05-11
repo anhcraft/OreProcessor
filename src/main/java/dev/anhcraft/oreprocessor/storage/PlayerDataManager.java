@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class PlayerDataManager implements Listener {
     private final static long EXPIRATION_TIME = Duration.ofMinutes(5).toMillis();
@@ -33,8 +34,12 @@ public class PlayerDataManager implements Listener {
 
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
 
-        for (Player player : plugin.getServer().getOnlinePlayers()) {
-            requireData(player.getUniqueId());
+        try {
+            for (Player player : plugin.getServer().getOnlinePlayers()) {
+                requireData(player.getUniqueId()).get();
+            }
+        } catch (ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 

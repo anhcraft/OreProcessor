@@ -105,13 +105,22 @@ public class ProcessingPlant implements Listener {
         if (item.containsEnchantment(Enchantment.SILK_TOUCH)) return;
         PlayerData playerData = plugin.playerDataManager.getData(player);
 
+        boolean has = false;
+
         for (Iterator<Item> iterator = event.getItems().iterator(); iterator.hasNext(); ) {
             Item eventItem = iterator.next();
             Material product = rawToProductMap.get(eventItem.getItemStack().getType());
 
             if (product != null) {
                 playerData.queueOre(product, eventItem.getItemStack().getAmount());
+                has = true;
                 iterator.remove();
+            }
+        }
+
+        if (has && !playerData.hideTutorial) {
+            for (String msg : OreProcessor.getInstance().messageConfig.firstTimeTutorial) {
+                OreProcessor.getInstance().msg(player, msg);
             }
         }
     }
