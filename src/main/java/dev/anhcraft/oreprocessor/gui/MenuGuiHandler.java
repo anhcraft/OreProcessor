@@ -45,7 +45,7 @@ public class MenuGuiHandler extends GuiHandler implements AutoRefresh {
                     int cap = playerData.getCapacity(ore);
                     String throughput = playerData.getThroughputPerMinute(ore);
                     itemBuilder.replaceDisplay(s -> s.replace("{ore}", oreName)
-                            .replace("{queue}", Integer.toString(queued))
+                            .replace("{processing}", Integer.toString(queued))
                             .replace("{storage-current}", Integer.toString(stored))
                             .replace("{storage-capacity}", Integer.toString(cap))
                             .replace("{storage-ratio}", Integer.toString((int) (((double) stored) / cap * 100d)))

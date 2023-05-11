@@ -1,4 +1,4 @@
-prefix: "&e[Ore] &f"
+prefix: "&e[OreProcessor] &f"
 upgrade-success: "&aSuccessfully upgraded!"
 upgrade-failed: "&cFailed to upgrade!"
 storage-full: "&cStorage is full. Please take your resources: /ore"

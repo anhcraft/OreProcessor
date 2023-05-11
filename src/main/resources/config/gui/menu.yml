@@ -15,7 +15,7 @@ components:
     material: black_stained_glass_pane
 ore-name: "&b{ore} &f({storage-ratio}%)"
 ore-lore:
-  - "&7▪ In queue: {queue}"
+  - "&7▪ Processing: {processing}"
   - "&7▪ In storage: {storage-current}/{storage-capacity}"
   - "&7▪ Throughput: {throughput}/m"
   - ""
