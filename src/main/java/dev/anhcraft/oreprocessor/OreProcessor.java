@@ -1,7 +1,5 @@
 package dev.anhcraft.oreprocessor;
 
-import co.aikar.commands.BukkitCommandCompletionContext;
-import co.aikar.commands.CommandCompletions;
 import co.aikar.commands.PaperCommandManager;
 import com.google.common.base.Preconditions;
 import dev.anhcraft.jvmkit.utils.FileUtil;
@@ -15,6 +13,7 @@ import dev.anhcraft.oreprocessor.gui.UpgradeGui;
 import dev.anhcraft.oreprocessor.handler.ProcessingPlant;
 import dev.anhcraft.oreprocessor.storage.PlayerDataManager;
 import dev.anhcraft.oreprocessor.util.ConfigHelper;
+import dev.anhcraft.palette.listener.GuiEventListener;
 import dev.anhcraft.palette.ui.Gui;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.ChatColor;
@@ -25,7 +24,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 public final class OreProcessor extends JavaPlugin {
     private static OreProcessor INSTANCE;
@@ -34,20 +32,20 @@ public final class OreProcessor extends JavaPlugin {
     public PlayerDataManager playerDataManager;
     public Economy economy;
 
+    @NotNull
+    public static OreProcessor getInstance() {
+        return INSTANCE;
+    }
+
     public void debug(@NotNull String format, @NotNull Object... args) {
         if (mainConfig != null && mainConfig.devMode) {
             getServer().getConsoleSender().sendMessage(ChatColor.GOLD + "[OreProcessor#Dev] " + String.format(format, args));
         }
     }
 
-    @NotNull
-    public static OreProcessor getInstance() {
-        return INSTANCE;
-    }
-
     @Override
     public void onEnable() {
-        if (!setupEconomy() ) {
+        if (!setupEconomy()) {
             getLogger().severe(String.format("[%s] - Disabled due to no Vault dependency found!", getDescription().getName()));
             getServer().getPluginManager().disablePlugin(this);
             return;
@@ -59,12 +57,11 @@ public final class OreProcessor extends JavaPlugin {
         reload();
 
         new GuiRefreshTask().runTaskTimerAsynchronously(this, 0L, 20L);
+        getServer().getPluginManager().registerEvents(new GuiEventListener(), this);
 
         PaperCommandManager pcm = new PaperCommandManager(this);
         pcm.enableUnstableAPI("help");
         pcm.registerCommand(new OreCommand(this));
-        CommandCompletions<BukkitCommandCompletionContext> cc = pcm.getCommandCompletions();
-        cc.registerAsyncCompletion("skills", context -> List.of(skillManager.getSkillList()));
     }
 
     @Override

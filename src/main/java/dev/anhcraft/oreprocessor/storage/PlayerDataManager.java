@@ -139,7 +139,7 @@ public class PlayerDataManager implements Listener {
                 Map.Entry<UUID, TrackedPlayerData> entry = it.next();
                 saveDataIfDirty(entry.getKey(), entry.getValue().getPlayerData());
 
-                if (entry.getValue().isShortTerm() && System.currentTimeMillis() - entry.getValue().getLoadTime() >  EXPIRATION_TIME) {
+                if (entry.getValue().isShortTerm() && System.currentTimeMillis() - entry.getValue().getLoadTime() > EXPIRATION_TIME) {
                     it.remove();
                     plugin.debug("%s's data now expires", entry.getKey());
                 }

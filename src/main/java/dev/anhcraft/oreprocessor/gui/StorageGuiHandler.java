@@ -8,7 +8,9 @@ import dev.anhcraft.palette.event.ClickEvent;
 import dev.anhcraft.palette.event.PostPlaceEvent;
 import dev.anhcraft.palette.ui.GuiHandler;
 import dev.anhcraft.palette.util.ItemReplacer;
+import dev.anhcraft.palette.util.ItemUtil;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -24,22 +26,62 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
     @Override
     public void onPreOpen(@NotNull Player player) {
         visitComponent("input", slot -> {
-            slot.makeModifiable()
-                    .filter(i -> OreProcessor.getInstance().processingPlant.rawToProductMap.get(i.getType()) == product)
-                    .disallowTaking();
+            slot.makeModifiable().filter(i -> i.getType() == product);
             slot.listen(new PostPlaceEvent() {
                 @Override
                 public void onPostPlace(@NotNull Action action, @NotNull Player player, int slot, @NotNull ItemStack item) {
                     PlayerData playerData = OreProcessor.getInstance().playerDataManager.getData(player);
-                    playerData.queueOre();
+                    int stored = playerData.storeOre(product, item.getAmount());
+                    int remain = item.getAmount() - stored;
+                    if (remain == 0) resetBulk("input");
+                    else {
+                        ItemStack clone = item.clone();
+                        clone.setAmount(remain);
+                        setBulk("input", clone);
+                    }
                 }
             });
+        });
+
+        listen("output", new ClickEvent() {
+            @Override
+            public void onClick(@NotNull InventoryClickEvent clickEvent, @NotNull Player player, int slot) {
+                if (ItemUtil.isPresent(player.getItemOnCursor())) return;
+                PlayerData playerData = OreProcessor.getInstance().playerDataManager.getData(player);
+                int many;
+                switch (clickEvent.getClick()) {
+                    case LEFT:
+                        many = 1;
+                        break;
+                    case RIGHT:
+                        many = 64;
+                        break;
+                    case SHIFT_LEFT:
+                        many = 16;
+                        break;
+                    case SHIFT_RIGHT:
+                        many = 32;
+                        break;
+                    default:
+                        return;
+                }
+                int amount = playerData.takeOre(product, many);
+                player.setItemOnCursor(new ItemStack(product, amount));
+                player.playSound(player.getLocation(), Sound.ENTITY_ITEM_FRAME_REMOVE_ITEM, 1f, 1f);
+            }
         });
 
         listen("ore", new ClickEvent() {
             @Override
             public void onClick(@NotNull InventoryClickEvent clickEvent, @NotNull Player player, int slot) {
                 GuiRegistry.openUpgradeGui(player, product);
+            }
+        });
+
+        listen("back", new ClickEvent() {
+            @Override
+            public void onClick(@NotNull InventoryClickEvent clickEvent, @NotNull Player player, int slot) {
+                GuiRegistry.openMenuGui(player);
             }
         });
 

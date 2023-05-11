@@ -6,6 +6,7 @@ import dev.anhcraft.config.annotations.Validation;
 import dev.anhcraft.oreprocessor.OreProcessor;
 import org.bukkit.Material;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -15,16 +16,16 @@ public class PlayerData {
     public final AtomicBoolean dirty = new AtomicBoolean(false);
 
     @Validation(notNull = true, silent = true)
-    private Map<Material, Integer> queuedOre; // product; amount
+    private LinkedHashMap<Material, Integer> queuedOre = new LinkedHashMap<>(); // product; amount
 
     @Validation(notNull = true, silent = true)
-    private Map<Material, Integer> storage; // product, amount
+    private LinkedHashMap<Material, Integer> storage = new LinkedHashMap<>(); // product, amount
 
     @Validation(notNull = true, silent = true)
-    private Map<Material, Integer> throughput; // product, amount
+    private LinkedHashMap<Material, Integer> throughput = new LinkedHashMap<>(); // product, amount
 
     @Validation(notNull = true, silent = true)
-    private Map<Material, Integer> capacity; // product, amount
+    private LinkedHashMap<Material, Integer> capacity = new LinkedHashMap<>(); // product, amount
 
     public void markDirty() {
         dirty.set(true);
@@ -52,32 +53,35 @@ public class PlayerData {
         }
     }
 
-    public void processOre(Material ore) {
+    public void processOre() {
         synchronized (dirty) {
-            int queued = queuedOre.getOrDefault(ore, 0);
-            int stored = storage.getOrDefault(ore, 0);
-            int cap = capacity.getOrDefault(ore, 0);
-            int toStore = Math.min(queued, throughput.get(ore));
-            toStore = Math.min(toStore, cap - stored);
-            storage.put(ore, stored + toStore);
-            queuedOre.put(ore, queued - toStore);
+            for (Map.Entry<Material, Integer> en : queuedOre.entrySet()) {
+                Material product = en.getKey();
+                int queued = en.getValue();
+                int stored = storage.getOrDefault(product, 0);
+                int cap = getCapacity(product);
+                int toStore = Math.min(queued, getThroughput(product));
+                toStore = Math.min(toStore, cap - stored);
+                storage.put(product, stored + toStore);
+                queuedOre.put(product, queued - toStore);
+            }
         }
     }
 
-    public int storeOre(Material ore, int amount) {
+    public int storeOre(Material ore, int expectAmount) {
         synchronized (dirty) {
             int stored = storage.getOrDefault(ore, 0);
-            int cap = capacity.getOrDefault(ore, 0);
-            int toStore = Math.min(amount, cap - stored);
+            int cap = getCapacity(ore);
+            int toStore = Math.min(expectAmount, cap - stored);
             storage.put(ore, stored + toStore);
             return toStore;
         }
     }
 
-    public int takeOre(Material ore, int amount) {
+    public int takeOre(Material ore, int expectAmount) {
         synchronized (dirty) {
             int stored = storage.getOrDefault(ore, 0);
-            int toTake = Math.max(0, stored - amount);
+            int toTake = Math.max(0, stored - expectAmount);
             storage.put(ore, stored - toTake);
             return toTake;
         }

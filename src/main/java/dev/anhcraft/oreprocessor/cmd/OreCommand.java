@@ -28,9 +28,8 @@ public class OreCommand extends BaseCommand {
         GuiRegistry.openMenuGui(player);
     }
 
-    @Subcommand("acquire")
-    @CommandPermission("martialart.acquire")
-    @CommandCompletion("@skills @players")
+    @Subcommand("reload")
+    @CommandPermission("oreprocessor.reload")
     public void reload(CommandSender sender) {
         plugin.reload();
         sender.sendMessage(ChatColor.GREEN + "OreProcessor reloaded!");

@@ -103,13 +103,13 @@
         <dependency>
             <groupId>com.github.anhcraft</groupId>
             <artifactId>palette</artifactId>
-            <version>v1.0.2</version>
+            <version>main-96c6766b9d-1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.github.anhcraft.config</groupId>
             <artifactId>config.bukkit</artifactId>
-            <version>v1.1.5</version>
+            <version>-3187565e88-1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

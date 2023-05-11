@@ -26,20 +26,6 @@ public class UpgradeGuiHandler extends GuiHandler {
 
     @Override
     public void onPreOpen(@NotNull Player player) {
-        listen("throughput", new ClickEvent() {
-            @Override
-            public void onClick(@NotNull InventoryClickEvent clickEvent, @NotNull Player player, int slot) {
-
-            }
-        });
-
-        listen("capacity", new ClickEvent() {
-            @Override
-            public void onClick(@NotNull InventoryClickEvent clickEvent, @NotNull Player player, int slot) {
-
-            }
-        });
-
         listen("back", new ClickEvent() {
             @Override
             public void onClick(@NotNull InventoryClickEvent clickEvent, @NotNull Player player, int slot) {
@@ -160,7 +146,7 @@ public class UpgradeGuiHandler extends GuiHandler {
             playerData.setThroughput(product, nextThroughput.amount);
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
         } else {
-            player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f);
+            player.playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1.0f, 1.0f);
         }
         refresh(player);
     }
@@ -171,7 +157,7 @@ public class UpgradeGuiHandler extends GuiHandler {
             playerData.setCapacity(product, nextCapacity.amount);
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
         } else {
-            player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f);
+            player.playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1.0f, 1.0f);
         }
         refresh(player);
     }

@@ -13,9 +13,9 @@ components:
     name: "&e"
     material: black_stained_glass_pane
 ore-lore:
- - "&7▪ In queue: {queue}"
- - "&7▪ In storage: {storage-current}/{storage-capacity}"
- - "&7▪ Throughput: {throughput}/m"
- - ""
- - "&e» Left-click to open storage."
- - "&e» Right-click to upgrade."
+  - "&7▪ In queue: {queue}"
+  - "&7▪ In storage: {storage-current}/{storage-capacity}"
+  - "&7▪ Throughput: {throughput}/m"
+  - ""
+  - "&e» Left-click to open storage."
+  - "&e» Right-click to upgrade."

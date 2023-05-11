@@ -23,8 +23,7 @@ public class ConfigHelper {
     public static <T> T load(Class<T> clazz, ConfigurationSection section) {
         try {
             return DESERIALIZER.transformConfig(Objects.requireNonNull(SchemaScanner.scanConfig(clazz)), new YamlConfigSection(section));
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
@@ -33,8 +32,7 @@ public class ConfigHelper {
     public static <T> T load(Class<T> clazz, ConfigurationSection section, T dest) {
         try {
             return DESERIALIZER.transformConfig(Objects.requireNonNull(SchemaScanner.scanConfig(clazz)), new YamlConfigSection(section), dest);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
@@ -43,8 +41,7 @@ public class ConfigHelper {
     public static <T> void save(Class<T> clazz, ConfigurationSection section, T dest) {
         try {
             SERIALIZER.transformConfig(Objects.requireNonNull(SchemaScanner.scanConfig(clazz)), new YamlConfigSection(section), dest);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

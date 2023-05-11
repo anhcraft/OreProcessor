@@ -3,6 +3,7 @@ package dev.anhcraft.oreprocessor.handler;
 import dev.anhcraft.oreprocessor.OreProcessor;
 import dev.anhcraft.oreprocessor.config.OreConfig;
 import dev.anhcraft.oreprocessor.config.UpgradeLevel;
+import dev.anhcraft.oreprocessor.storage.PlayerData;
 import org.bukkit.Material;
 import org.bukkit.block.BlockState;
 import org.bukkit.enchantments.Enchantment;
@@ -27,6 +28,7 @@ public class ProcessingPlant implements Listener {
     public ProcessingPlant(OreProcessor plugin) {
         this.plugin = plugin;
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
+        new MineralProcessingTask().runTaskTimerAsynchronously(plugin, 0L, 20L);
     }
 
     public void refresh() {
@@ -78,11 +80,14 @@ public class ProcessingPlant implements Listener {
         if (!allowedBlocks.contains(brokenBlock.getType())) return;
         ItemStack item = player.getInventory().getItemInMainHand();
         if (item.containsEnchantment(Enchantment.SILK_TOUCH)) return;
+        PlayerData playerData = plugin.playerDataManager.getData(player);
 
         for (Iterator<Item> iterator = event.getItems().iterator(); iterator.hasNext(); ) {
             Item eventItem = iterator.next();
-            if (rawToProductMap.containsKey(eventItem.getItemStack().getType())) {
+            Material product = rawToProductMap.get(eventItem.getItemStack().getType());
 
+            if (product != null) {
+                playerData.queueOre(product, eventItem.getItemStack().getAmount());
                 iterator.remove();
             }
         }
