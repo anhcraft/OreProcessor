@@ -45,8 +45,6 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
         listen("output", new ClickEvent() {
             @Override
             public void onClick(@NotNull InventoryClickEvent clickEvent, @NotNull Player player, int slot) {
-                ItemStack cursor = player.getItemOnCursor();
-                if (ItemUtil.isPresent(cursor) && cursor.getType() != product) return;
                 int many;
                 switch (clickEvent.getClick()) {
                     case LEFT:
@@ -65,12 +63,7 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
                         return;
                 }
                 PlayerData playerData = OreProcessor.getInstance().playerDataManager.getData(player);
-                if (ItemUtil.isPresent(cursor)) {
-                    many = Math.min(many, product.getMaxStackSize() - cursor.getAmount());
-                    player.setItemOnCursor(new ItemStack(product, cursor.getAmount() + playerData.takeOre(product, many)));
-                } else {
-                    player.setItemOnCursor(new ItemStack(product, playerData.takeOre(product, many)));
-                }
+                ItemUtil.addToInventory(player, new ItemStack(product, playerData.takeOre(product, many)));
                 player.playSound(player.getLocation(), Sound.ENTITY_ITEM_FRAME_REMOVE_ITEM, 1f, 1f);
             }
         });
