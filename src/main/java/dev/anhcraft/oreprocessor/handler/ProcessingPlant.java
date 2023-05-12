@@ -4,6 +4,7 @@ import dev.anhcraft.oreprocessor.OreProcessor;
 import dev.anhcraft.oreprocessor.config.OreConfig;
 import dev.anhcraft.oreprocessor.config.UpgradeLevel;
 import dev.anhcraft.oreprocessor.storage.PlayerData;
+import dev.anhcraft.palette.util.ItemUtil;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -81,10 +82,11 @@ public class ProcessingPlant implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
     private void onBreak(BlockBreakEvent event) {
         Player player = event.getPlayer();
+        if (player.getGameMode() != GameMode.SURVIVAL && player.getGameMode() != GameMode.ADVENTURE) return;
         Block block = event.getBlock();
         if (!blockToProductMap.containsKey(block.getType())) return;
         ItemStack item = player.getInventory().getItemInMainHand();
-        if (item.containsEnchantment(Enchantment.SILK_TOUCH)) return;
+        if (ItemUtil.isEmpty(item) || item.containsEnchantment(Enchantment.SILK_TOUCH)) return;
         PlayerData playerData = plugin.playerDataManager.getData(player);
         Material product = blockToProductMap.get(block.getType());
         if (playerData.isStorageFull(product)) {
@@ -100,7 +102,7 @@ public class ProcessingPlant implements Listener {
         Block block = event.getBlock();
         if (!blockToProductMap.containsKey(block.getType())) return;
         ItemStack item = player.getInventory().getItemInMainHand();
-        if (item.containsEnchantment(Enchantment.SILK_TOUCH)) return;
+        if (ItemUtil.isEmpty(item) || item.containsEnchantment(Enchantment.SILK_TOUCH)) return;
         PlayerData playerData = plugin.playerDataManager.getData(player);
 
         boolean has = false;
