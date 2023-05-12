@@ -28,7 +28,7 @@ components:
     lore:
       - "&7▪ Amount: {current}/{capacity}"
       - ""
-      - "&e» Put {ore} to import into the storage."
+      - "&e» Drop {ore} into the hopper to store."
   "O":
     type: output
     material: chest

@@ -7,4 +7,4 @@ first-time-tutorial:
   - "&eLet's access it using &b/ore&f and disable this message."
 upgrade-success: "&aSuccessfully upgraded!"
 upgrade-failed: "&cFailed to upgrade!"
-storage-full: "&cStorage is full. Please take your resources: /ore"
+storage-full: "&cReaching storage limit. Please take your resources: /ore"
