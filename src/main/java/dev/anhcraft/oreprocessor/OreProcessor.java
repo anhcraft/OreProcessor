@@ -12,6 +12,7 @@ import dev.anhcraft.oreprocessor.gui.GuiRegistry;
 import dev.anhcraft.oreprocessor.gui.MenuGui;
 import dev.anhcraft.oreprocessor.gui.UpgradeGui;
 import dev.anhcraft.oreprocessor.handler.ProcessingPlant;
+import dev.anhcraft.oreprocessor.integration.AureliumSkillsBridge;
 import dev.anhcraft.oreprocessor.storage.PlayerDataManager;
 import dev.anhcraft.oreprocessor.util.ConfigHelper;
 import dev.anhcraft.palette.listener.GuiEventListener;
@@ -61,6 +62,10 @@ public final class OreProcessor extends JavaPlugin {
         INSTANCE = this;
         processingPlant = new ProcessingPlant(this);
         playerDataManager = new PlayerDataManager(this);
+        if (getServer().getPluginManager().isPluginEnabled("AureliumSkills")) {
+            getServer().getPluginManager().registerEvents(new AureliumSkillsBridge(this), this);
+            getLogger().info("Hooked to AureliumSkills");
+        }
         reload();
 
         getServer().getPluginManager().registerEvents(new GuiEventListener(), this);
