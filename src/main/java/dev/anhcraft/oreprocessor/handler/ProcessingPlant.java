@@ -8,16 +8,20 @@ import dev.anhcraft.palette.util.ItemUtil;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -95,38 +99,33 @@ public class ProcessingPlant implements Listener {
         }
     }
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGH)
-    private void onPostBreak(BlockBreakEvent event) {
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    private void onDrop(BlockDropItemEvent event) {
         Player player = event.getPlayer();
         if (player.getGameMode() != GameMode.SURVIVAL && player.getGameMode() != GameMode.ADVENTURE) return;
-        Block block = event.getBlock();
-        if (!blockToProductMap.containsKey(block.getType())) return;
+        BlockState brokenBlock = event.getBlockState();
+        if (!blockToProductMap.containsKey(brokenBlock.getType())) return;
         ItemStack item = player.getInventory().getItemInMainHand();
         if (ItemUtil.isEmpty(item) || item.containsEnchantment(Enchantment.SILK_TOUCH)) return;
         PlayerData playerData = plugin.playerDataManager.getData(player);
 
         boolean has = false;
 
-        for (ItemStack drop : block.getDrops(item)) {
-            Material product = rawToProductMap.get(drop.getType());
+        for (Iterator<Item> iterator = event.getItems().iterator(); iterator.hasNext(); ) {
+            Item eventItem = iterator.next();
+            Material product = rawToProductMap.get(eventItem.getItemStack().getType());
+
             if (product != null) {
-                playerData.queueOre(product, drop.getAmount());
+                playerData.queueOre(product, eventItem.getItemStack().getAmount());
                 has = true;
-            } else {
-                block.getWorld().dropItemNaturally(block.getLocation(), drop);
+                iterator.remove();
             }
         }
 
-        if (has) {
-            if (!playerData.hideTutorial) {
-                for (String msg : OreProcessor.getInstance().messageConfig.firstTimeTutorial) {
-                    OreProcessor.getInstance().msg(player, msg);
-                }
+        if (has && !playerData.hideTutorial) {
+            for (String msg : OreProcessor.getInstance().messageConfig.firstTimeTutorial) {
+                OreProcessor.getInstance().msg(player, msg);
             }
-
-            event.setDropItems(false);
-            event.setCancelled(true);
-            block.setType(Material.AIR);
         }
     }
 }
