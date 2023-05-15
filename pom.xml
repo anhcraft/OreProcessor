@@ -103,7 +103,7 @@
         <dependency>
             <groupId>com.github.anhcraft</groupId>
             <artifactId>palette</artifactId>
-            <version>main-96c6766b9d-1</version>
+            <version>v1.0.3</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
