@@ -18,6 +18,8 @@ public class PlayerData {
 
     public boolean hideTutorial;
 
+    public long hibernationStart;
+
     @Validation(notNull = true, silent = true)
     private LinkedHashMap<Material, Integer> throughput = new LinkedHashMap<>(); // product, amount
 
@@ -71,7 +73,7 @@ public class PlayerData {
         }
     }
 
-    public void processOre() {
+    public void processOre(int throughputMultiplier) {
         synchronized (dirty) {
             for (Map.Entry<Material, Integer> en : queuedOre.entrySet()) {
                 Material product = en.getKey();
@@ -79,7 +81,7 @@ public class PlayerData {
                 int stored = storage.getOrDefault(product, 0);
                 int cap = getCapacity(product);
                 if (stored >= cap) continue;
-                int toStore = Math.min(queued, getThroughput(product));
+                int toStore = Math.min(queued, getThroughput(product) * throughputMultiplier);
                 toStore = Math.min(toStore, cap - stored);
                 if (toStore == 0) continue;
                 storage.put(product, stored + toStore);
@@ -87,6 +89,10 @@ public class PlayerData {
                 markDirty();
             }
         }
+    }
+
+    public void processOre() {
+        processOre(1);
     }
 
     public int storeOre(Material ore, int expectAmount) {

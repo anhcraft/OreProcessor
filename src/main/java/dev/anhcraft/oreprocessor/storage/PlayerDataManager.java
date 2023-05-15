@@ -1,6 +1,7 @@
 package dev.anhcraft.oreprocessor.storage;
 
 import com.google.common.base.Preconditions;
+import dev.anhcraft.jvmkit.utils.PresentPair;
 import dev.anhcraft.oreprocessor.OreProcessor;
 import dev.anhcraft.oreprocessor.util.ConfigHelper;
 import org.bukkit.Bukkit;
@@ -19,6 +20,7 @@ import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Consumer;
 
 public class PlayerDataManager implements Listener {
     private final static long EXPIRATION_TIME = Duration.ofMinutes(5).toMillis();
@@ -26,6 +28,7 @@ public class PlayerDataManager implements Listener {
     private final Map<UUID, TrackedPlayerData> playerDataMap = new HashMap<>();
     private final Object LOCK = new Object();
     private final File folder;
+    private Consumer<PresentPair<UUID, PlayerData>> onPlayerDataLoad;
 
     public PlayerDataManager(OreProcessor plugin) {
         this.plugin = plugin;
@@ -45,6 +48,13 @@ public class PlayerDataManager implements Listener {
 
     public void reload() {
         plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, this::checkTask, 20, 200);
+    }
+
+    public void setOnPlayerDataLoad(Consumer<PresentPair<UUID, PlayerData>> onPlayerDataLoad) {
+        if (this.onPlayerDataLoad != null) {
+            throw new IllegalStateException("onPlayerDataLoad already set");
+        }
+        this.onPlayerDataLoad = onPlayerDataLoad;
     }
 
     @NotNull
@@ -68,6 +78,14 @@ public class PlayerDataManager implements Listener {
                 conf.save(file);
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+        }
+    }
+
+    public void streamData(Consumer<PlayerData> consumer) {
+        synchronized (LOCK) {
+            for (TrackedPlayerData tpd : playerDataMap.values()) {
+                consumer.accept(tpd.getPlayerData());
             }
         }
     }
@@ -97,6 +115,7 @@ public class PlayerDataManager implements Listener {
                 return CompletableFuture.supplyAsync(() -> {
                     PlayerData playerData = loadData(uuid);
                     synchronized (LOCK) { // code is now async
+                        if (onPlayerDataLoad != null) onPlayerDataLoad.accept(new PresentPair<>(uuid, playerData));
                         TrackedPlayerData trackedPlayerData = new TrackedPlayerData(playerData, System.currentTimeMillis());
                         if (Bukkit.getPlayer(uuid) == null) {
                             trackedPlayerData.setShortTerm();
@@ -122,6 +141,7 @@ public class PlayerDataManager implements Listener {
                 playerDataMap.get(uuid).setLongTerm();
             } else {
                 PlayerData playerData = loadData(uuid);
+                if (onPlayerDataLoad != null) onPlayerDataLoad.accept(new PresentPair<>(uuid, playerData));
                 TrackedPlayerData trackedPlayerData = new TrackedPlayerData(playerData, System.currentTimeMillis());
                 trackedPlayerData.setLongTerm();
                 playerDataMap.put(uuid, trackedPlayerData);
@@ -145,9 +165,17 @@ public class PlayerDataManager implements Listener {
         synchronized (LOCK) {
             for (Iterator<Map.Entry<UUID, TrackedPlayerData>> it = playerDataMap.entrySet().iterator(); it.hasNext(); ) {
                 Map.Entry<UUID, TrackedPlayerData> entry = it.next();
-                saveDataIfDirty(entry.getKey(), entry.getValue().getPlayerData());
+                PlayerData playerData = entry.getValue().getPlayerData();
+                boolean toRemove = entry.getValue().isShortTerm() && System.currentTimeMillis() - entry.getValue().getLoadTime() > EXPIRATION_TIME;
 
-                if (entry.getValue().isShortTerm() && System.currentTimeMillis() - entry.getValue().getLoadTime() > EXPIRATION_TIME) {
+                if (toRemove) {
+                    playerData.hibernationStart = System.currentTimeMillis();
+                    playerData.markDirty();
+                }
+
+                saveDataIfDirty(entry.getKey(), playerData);
+
+                if (toRemove) {
                     it.remove();
                     plugin.debug("%s's data now expires", entry.getKey());
                 }

@@ -60,12 +60,14 @@ public final class OreProcessor extends JavaPlugin {
         }
 
         INSTANCE = this;
-        processingPlant = new ProcessingPlant(this);
         playerDataManager = new PlayerDataManager(this);
+        processingPlant = new ProcessingPlant(this);
+
         if (getServer().getPluginManager().isPluginEnabled("AureliumSkills")) {
             getServer().getPluginManager().registerEvents(new AureliumSkillsBridge(this), this);
             getLogger().info("Hooked to AureliumSkills");
         }
+
         reload();
 
         getServer().getPluginManager().registerEvents(new GuiEventListener(), this);
