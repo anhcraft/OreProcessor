@@ -44,6 +44,9 @@ public class ProcessingPlant implements Listener {
             int mul = (int) (hibernationTime / plugin.mainConfig.processingSpeed);
             plugin.debug("Processing hibernated ore for %s, time = %ds, multi = x%d", p.getFirst(), hibernationTime, mul);
             playerData.processOre(mul);
+            // After done, reset hibernation to zero, to prevent any unexpected accidents from causing duplications
+            playerData.hibernationStart = 0;
+            playerData.markDirty();
         });
     }
 

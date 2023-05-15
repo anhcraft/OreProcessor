@@ -80,6 +80,8 @@ public final class OreProcessor extends JavaPlugin {
     @Override
     public void onDisable() {
         getServer().getScheduler().cancelTasks(this);
+
+        playerDataManager.terminate();
     }
 
     private boolean setupEconomy() {

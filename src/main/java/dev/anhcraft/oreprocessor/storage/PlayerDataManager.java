@@ -182,4 +182,17 @@ public class PlayerDataManager implements Listener {
             }
         }
     }
+
+    public void terminate() {
+        synchronized (LOCK) {
+            for (Iterator<Map.Entry<UUID, TrackedPlayerData>> it = playerDataMap.entrySet().iterator(); it.hasNext(); ) {
+                Map.Entry<UUID, TrackedPlayerData> entry = it.next();
+                PlayerData playerData = entry.getValue().getPlayerData();
+                playerData.hibernationStart = System.currentTimeMillis();
+                playerData.markDirty();
+                saveDataIfDirty(entry.getKey(), playerData);
+                it.remove();
+            }
+        }
+    }
 }
