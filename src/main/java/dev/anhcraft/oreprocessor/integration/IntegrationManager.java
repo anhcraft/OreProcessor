@@ -4,7 +4,6 @@ import dev.anhcraft.config.utils.ObjectUtil;
 import dev.anhcraft.oreprocessor.OreProcessor;
 import dev.anhcraft.oreprocessor.integration.shop.ShopGuiPlusBridge;
 import dev.anhcraft.oreprocessor.integration.shop.ShopProvider;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -14,22 +13,22 @@ import java.util.Optional;
 
 public class IntegrationManager {
     private final Map<String, Integration> integrationMap = new HashMap<>();
-    private final OreProcessor plugin;
+    private final OreProcessor mainPlugin;
 
-    public IntegrationManager(OreProcessor plugin) {
-        this.plugin = plugin;
+    public IntegrationManager(OreProcessor mainPlugin) {
+        this.mainPlugin = mainPlugin;
 
         tryHook("AureliumSkills", AureliumSkillsBridge.class);
         tryHook("ShopGUIPlus", ShopGuiPlusBridge.class);
     }
 
     private void tryHook(String plugin, Class<? extends Integration> clazz) {
-        if (this.plugin.getServer().getPluginManager().isPluginEnabled(plugin)) {
+        if (this.mainPlugin.getServer().getPluginManager().isPluginEnabled(plugin)) {
             Object instance = null;
             for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
                 if (constructor.getParameterCount() == 1) {
                     try {
-                        instance = constructor.newInstance(plugin);
+                        instance = constructor.newInstance(this.mainPlugin);
                         break;
                     } catch (InstantiationException | IllegalAccessException |
                              InvocationTargetException e) {
@@ -45,7 +44,7 @@ public class IntegrationManager {
                 }
             }
             integrationMap.put(plugin, (Integration) instance);
-            this.plugin.getLogger().info("[Integration] Hooked to " + plugin);
+            this.mainPlugin.getLogger().info("[Integration] Hooked to " + plugin);
         }
     }
 
