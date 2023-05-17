@@ -2,7 +2,7 @@ title: "&0Ore Processor | Storage"
 layout:
   - "---------"
   - "--X--IO--"
-  - "---------"
+  - "------S--"
   - "++++|++++"
 components:
   "-":
@@ -40,9 +40,30 @@ components:
       - "&fRight:      &eTake x64 {ore}"
       - "&fLeft+Shift:  &eTake x16 {ore}"
       - "&fRight+Shift: &eTake x32 {ore}"
+  "S":
+    type: quick-sell
+    material: emerald
+    name: "&aQuick sell"
+    lore:
+    - "&7▪ Amount: {current}/{capacity}"
+    - ""
+    - "&c[Not available]"
   "|":
     type: back
     material: barrier
     name: "&cBack"
     lore:
       - "&e» Go back to main menu"
+
+quick-sell-available-lore:
+  - "&7▪ Amount: {current}/{capacity}"
+  - ""
+  - "&fLeft:       &eSell all {ore}"
+  - "&fRight:      &eSell x64 {ore}"
+  - "&fLeft+Shift:  &eSell x16 {ore}"
+  - "&fRight+Shift: &eSell x32 {ore}"
+
+quick-sell-unavailable-lore:
+  - "&7▪ Amount: {current}/{capacity}"
+  - ""
+  - "&c[Unable to sell]"

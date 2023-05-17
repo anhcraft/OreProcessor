@@ -8,3 +8,5 @@ first-time-tutorial:
 upgrade-success: "&aSuccessfully upgraded!"
 upgrade-failed: "&cFailed to upgrade!"
 storage-full: "&cReaching storage limit. Please take your resources: /ore"
+quick-sell-success: "&aSold &fx{amount} {ore}&a for &e${profit}."
+quick-sell-failed: "&cFailed to sell. Please contact the server staff."

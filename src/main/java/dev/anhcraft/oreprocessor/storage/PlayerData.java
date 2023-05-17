@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
 
 @Configurable
 public class PlayerData {
@@ -117,6 +118,21 @@ public class PlayerData {
                 markDirty();
             }
             return toTake;
+        }
+    }
+
+    public boolean testAndTakeOre(Material ore, int expectAmount, Function<Integer, Boolean> function) {
+        synchronized (dirty) {
+            int stored = storage.getOrDefault(ore, 0);
+            int toTake = Math.min(stored, expectAmount);
+            if (toTake > 0 && function.apply(toTake)) {
+                int newVal = stored - toTake;
+                if (!Objects.equals(storage.put(ore, newVal), newVal)) {
+                    markDirty();
+                }
+                return true;
+            }
+            return false;
         }
     }
 

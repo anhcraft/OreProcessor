@@ -7,12 +7,10 @@ import dev.anhcraft.jvmkit.utils.IOUtil;
 import dev.anhcraft.oreprocessor.cmd.OreCommand;
 import dev.anhcraft.oreprocessor.config.MainConfig;
 import dev.anhcraft.oreprocessor.config.MessageConfig;
-import dev.anhcraft.oreprocessor.gui.GuiRefreshTask;
-import dev.anhcraft.oreprocessor.gui.GuiRegistry;
-import dev.anhcraft.oreprocessor.gui.MenuGui;
-import dev.anhcraft.oreprocessor.gui.UpgradeGui;
+import dev.anhcraft.oreprocessor.gui.*;
 import dev.anhcraft.oreprocessor.handler.ProcessingPlant;
 import dev.anhcraft.oreprocessor.integration.AureliumSkillsBridge;
+import dev.anhcraft.oreprocessor.integration.IntegrationManager;
 import dev.anhcraft.oreprocessor.storage.PlayerDataManager;
 import dev.anhcraft.oreprocessor.util.ConfigHelper;
 import dev.anhcraft.palette.listener.GuiEventListener;
@@ -32,6 +30,7 @@ public final class OreProcessor extends JavaPlugin {
     private static OreProcessor INSTANCE;
     public MainConfig mainConfig;
     public MessageConfig messageConfig;
+    public IntegrationManager integrationManager;
     public ProcessingPlant processingPlant;
     public PlayerDataManager playerDataManager;
     public Economy economy;
@@ -48,6 +47,9 @@ public final class OreProcessor extends JavaPlugin {
     }
 
     public void msg(CommandSender sender, String str) {
+        if (str == null) {
+            sender.sendMessage(ChatColor.RED + "<Missing message>");
+        }
         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messageConfig.prefix + str));
     }
 
@@ -62,11 +64,7 @@ public final class OreProcessor extends JavaPlugin {
         INSTANCE = this;
         playerDataManager = new PlayerDataManager(this);
         processingPlant = new ProcessingPlant(this);
-
-        if (getServer().getPluginManager().isPluginEnabled("AureliumSkills")) {
-            getServer().getPluginManager().registerEvents(new AureliumSkillsBridge(this), this);
-            getLogger().info("Hooked to AureliumSkills");
-        }
+        integrationManager = new IntegrationManager(this);
 
         reload();
 
@@ -107,7 +105,7 @@ public final class OreProcessor extends JavaPlugin {
         new File(getDataFolder(), "gui").mkdir();
         GuiRegistry.MENU = ConfigHelper.load(MenuGui.class, requestConfig("gui/menu.yml"));
         GuiRegistry.UPGRADE = ConfigHelper.load(UpgradeGui.class, requestConfig("gui/upgrade.yml"));
-        GuiRegistry.STORAGE = ConfigHelper.load(Gui.class, requestConfig("gui/storage.yml"));
+        GuiRegistry.STORAGE = ConfigHelper.load(StorageGui.class, requestConfig("gui/storage.yml"));
 
         processingPlant.reload();
         playerDataManager.reload();

@@ -7,7 +7,7 @@ import org.bukkit.entity.Player;
 public class GuiRegistry {
     public static MenuGui MENU;
     public static UpgradeGui UPGRADE;
-    public static Gui STORAGE;
+    public static StorageGui STORAGE;
 
     public static void openMenuGui(Player player) {
         MENU.open(player, new MenuGuiHandler());

@@ -136,5 +136,11 @@
             <version>Beta1.3.19</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.github.brcdev-minecraft</groupId>
+            <artifactId>shopgui-api</artifactId>
+            <version>3.0.0</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 </project>

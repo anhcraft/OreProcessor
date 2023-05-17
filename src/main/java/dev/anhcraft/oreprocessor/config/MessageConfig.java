@@ -11,4 +11,6 @@ public class MessageConfig {
     public String upgradeFailed;
     public String storageFull;
     public List<String> firstTimeTutorial;
+    public String quickSellSuccess;
+    public String quickSellFailed;
 }

@@ -93,4 +93,5 @@ capacity-upgrade:
   level-4:
     amount: 320
     cost: 100000
+shop-provider: ShopGUIPlus
 dev-mode: false

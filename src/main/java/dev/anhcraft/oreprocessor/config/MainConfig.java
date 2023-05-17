@@ -20,4 +20,6 @@ public class MainConfig {
 
     @Validation(notNull = true, notEmpty = true)
     public LinkedHashMap<String, UpgradeLevel> capacityUpgrade;
+
+    public String shopProvider;
 }

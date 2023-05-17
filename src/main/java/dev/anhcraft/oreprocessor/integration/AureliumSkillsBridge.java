@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
-public class AureliumSkillsBridge implements Listener {
+public class AureliumSkillsBridge implements Integration, Listener {
     private final OreProcessor plugin;
 
     public AureliumSkillsBridge(OreProcessor plugin) {
