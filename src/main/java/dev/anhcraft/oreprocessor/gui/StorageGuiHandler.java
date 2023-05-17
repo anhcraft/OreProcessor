@@ -19,10 +19,12 @@ import java.text.NumberFormat;
 public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
     private final static NumberFormat numberFormat = NumberFormat.getInstance();
     private final OreProcessor plugin;
+    private final String productName;
     private final Material product;
 
     public StorageGuiHandler(Material product) {
         this.plugin = OreProcessor.getInstance();
+        this.productName = this.plugin.mainConfig.ores.get(product).name;
         this.product = product;
     }
 
@@ -109,7 +111,7 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
                                     player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
                                     plugin.msg(player, plugin.messageConfig.quickSellSuccess
                                             .replace("{amount}", Integer.toString(actual))
-                                            .replace("{ore}", product.name())
+                                            .replace("{ore}", productName)
                                             .replace("{profit}", numberFormat.format(profit))
                                     );
                                 } else {
@@ -148,12 +150,11 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
             @Override
             public @NotNull ItemBuilder apply(int slot, @NotNull ItemBuilder itemBuilder) {
                 itemBuilder.material(product);
-                String oreName = plugin.mainConfig.ores.get(product).name;
                 int queued = playerData.countQueuedOre(product);
                 int stored = playerData.countStorage(product);
                 int cap = playerData.getCapacity(product);
                 String throughput = playerData.getThroughputPerMinute(product);
-                itemBuilder.replaceDisplay(s -> s.replace("{ore}", oreName)
+                itemBuilder.replaceDisplay(s -> s.replace("{ore}", productName)
                         .replace("{processing}", Integer.toString(queued))
                         .replace("{storage-current}", Integer.toString(stored))
                         .replace("{storage-capacity}", Integer.toString(cap))
@@ -165,7 +166,7 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
         replaceItem("input", new ItemReplacer() {
             @Override
             public @NotNull ItemBuilder apply(int slot, @NotNull ItemBuilder itemBuilder) {
-                itemBuilder.replaceDisplay(s -> s.replace("{ore}", plugin.mainConfig.ores.get(product).name)
+                itemBuilder.replaceDisplay(s -> s.replace("{ore}", productName)
                         .replace("{current}", Integer.toString(playerData.countStorage(product)))
                         .replace("{capacity}", Integer.toString(playerData.getCapacity(product))));
                 return itemBuilder;
@@ -174,7 +175,7 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
         replaceItem("output", new ItemReplacer() {
             @Override
             public @NotNull ItemBuilder apply(int slot, @NotNull ItemBuilder itemBuilder) {
-                itemBuilder.replaceDisplay(s -> s.replace("{ore}", plugin.mainConfig.ores.get(product).name)
+                itemBuilder.replaceDisplay(s -> s.replace("{ore}", productName)
                         .replace("{current}", Integer.toString(playerData.countStorage(product)))
                         .replace("{capacity}", Integer.toString(playerData.getCapacity(product))));
                 return itemBuilder;
@@ -190,7 +191,7 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
                             else
                                 itemBuilder.lore(GuiRegistry.STORAGE.quickSellUnavailableLore);
                         });
-                itemBuilder.replaceDisplay(s -> s.replace("{ore}", plugin.mainConfig.ores.get(product).name)
+                itemBuilder.replaceDisplay(s -> s.replace("{ore}", productName)
                         .replace("{current}", Integer.toString(playerData.countStorage(product)))
                         .replace("{capacity}", Integer.toString(playerData.getCapacity(product))));
                 return itemBuilder;
