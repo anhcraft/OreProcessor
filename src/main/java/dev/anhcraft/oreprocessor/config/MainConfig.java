@@ -6,6 +6,7 @@ import dev.anhcraft.config.annotations.Example;
 import dev.anhcraft.config.annotations.Validation;
 import dev.anhcraft.oreprocessor.integration.shop.ShopProviderType;
 import org.bukkit.Material;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashMap;
 
@@ -45,5 +46,6 @@ public class MainConfig {
             "Available: ShopGUIPlus, EconomyShopGUI"
     })
     @Example("shop-provider: ShopGUIPlus")
+    @Nullable
     public ShopProviderType shopProvider;
 }

@@ -12,6 +12,7 @@ public class StorageGui extends Gui {
     @Description("The lore indicating that quick-sell feature is available")
     @Validation(notNull = true)
     public List<String> quickSellAvailableLore;
+
     @Description("The lore indicating that quick-sell feature is unavailable")
     @Validation(notNull = true)
     public List<String> quickSellUnavailableLore;
