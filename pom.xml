@@ -113,6 +113,12 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>com.github.anhcraft.config</groupId>
+            <artifactId>config.configdoc</artifactId>
+            <version>-3187565e88-1</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>com.github.anhcraft</groupId>
             <artifactId>JvmKit</artifactId>
             <version>v1.1.5</version>
