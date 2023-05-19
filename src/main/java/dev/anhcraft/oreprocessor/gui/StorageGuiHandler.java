@@ -187,20 +187,22 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
             }
         });
 
-        Optional<ShopProvider> shopProvider = plugin.integrationManager.getShopProvider(plugin.mainConfig.shopProvider);
-        if (shopProvider.isPresent()) {
-            ItemBuilder itemBuilder;
-            if (shopProvider.get().canSell(product)) {
-                itemBuilder = GuiRegistry.STORAGE.quickSellAvailable;
+        if (player.hasPermission("oreprocessor.quick-sell")) {
+            Optional<ShopProvider> shopProvider = plugin.integrationManager.getShopProvider(plugin.mainConfig.shopProvider);
+            if (shopProvider.isPresent()) {
+                ItemBuilder itemBuilder;
+                if (shopProvider.get().canSell(product)) {
+                    itemBuilder = GuiRegistry.STORAGE.quickSellAvailable;
+                } else {
+                    itemBuilder = GuiRegistry.STORAGE.quickSellUnavailable;
+                }
+                itemBuilder.replaceDisplay(s -> s.replace("{ore}", productName)
+                        .replace("{current}", Integer.toString(playerData.countStorage(product)))
+                        .replace("{capacity}", Integer.toString(playerData.getCapacity(product))));
+                setBulk("quick-sell", itemBuilder.build());
             } else {
-                itemBuilder = GuiRegistry.STORAGE.quickSellUnavailable;
+                resetBulk("quick-sell");
             }
-            itemBuilder.replaceDisplay(s -> s.replace("{ore}", productName)
-                    .replace("{current}", Integer.toString(playerData.countStorage(product)))
-                    .replace("{capacity}", Integer.toString(playerData.getCapacity(product))));
-            setBulk("quick-sell", itemBuilder.build());
-        } else {
-            resetBulk("quick-sell");
         }
     }
 }
