@@ -6,6 +6,7 @@ import dev.anhcraft.oreprocessor.integration.shop.EconomyShopGUIBridge;
 import dev.anhcraft.oreprocessor.integration.shop.ShopGuiPlusBridge;
 import dev.anhcraft.oreprocessor.integration.shop.ShopProvider;
 import dev.anhcraft.oreprocessor.integration.shop.ShopProviderType;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -55,7 +56,8 @@ public class IntegrationManager {
         return integrationMap.get(plugin);
     }
 
-    public Optional<ShopProvider> getShopProvider(ShopProviderType shopProviderType) {
+    public Optional<ShopProvider> getShopProvider(@Nullable ShopProviderType shopProviderType) {
+        if (shopProviderType == null) return Optional.empty();
         return Optional.ofNullable(integrationMap.get(shopProviderType.getPlugin()))
                 .filter(i -> i instanceof ShopProvider)
                 .map(i -> (ShopProvider) i);

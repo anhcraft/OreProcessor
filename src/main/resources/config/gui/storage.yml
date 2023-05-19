@@ -42,12 +42,8 @@ components:
       - "&fRight+Shift: &eTake x32 {ore}"
   "S":
     type: quick-sell
-    material: emerald
-    name: "&aQuick sell"
-    lore:
-    - "&7▪ Amount: {current}/{capacity}"
-    - ""
-    - "&c[Not available]"
+    name: "&e"
+    material: gray_stained_glass_pane
   "|":
     type: back
     material: barrier
@@ -55,15 +51,21 @@ components:
     lore:
       - "&e» Go back to main menu"
 
-quick-sell-available-lore:
-  - "&7▪ Amount: {current}/{capacity}"
-  - ""
-  - "&fLeft:       &eSell all {ore}"
-  - "&fRight:      &eSell x64 {ore}"
-  - "&fLeft+Shift:  &eSell x16 {ore}"
-  - "&fRight+Shift: &eSell x32 {ore}"
+quick-sell-available:
+  material: emerald
+  name: "&aQuick sell"
+  lore:
+    - "&7▪ Amount: {current}/{capacity}"
+    - ""
+    - "&fLeft:       &eSell all {ore}"
+    - "&fRight:      &eSell x64 {ore}"
+    - "&fLeft+Shift:  &eSell x16 {ore}"
+    - "&fRight+Shift: &eSell x32 {ore}"
 
-quick-sell-unavailable-lore:
-  - "&7▪ Amount: {current}/{capacity}"
-  - ""
-  - "&c[Unable to sell]"
+quick-sell-unavailable:
+  material: emerald
+  name: "&aQuick sell"
+  lore:
+    - "&7▪ Amount: {current}/{capacity}"
+    - ""
+    - "&c[Unable to sell]"

@@ -2,6 +2,7 @@ package dev.anhcraft.oreprocessor.gui;
 
 import dev.anhcraft.config.bukkit.utils.ItemBuilder;
 import dev.anhcraft.oreprocessor.OreProcessor;
+import dev.anhcraft.oreprocessor.integration.shop.ShopProvider;
 import dev.anhcraft.oreprocessor.storage.PlayerData;
 import dev.anhcraft.palette.event.ClickEvent;
 import dev.anhcraft.palette.ui.GuiHandler;
@@ -15,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.NumberFormat;
+import java.util.Optional;
 
 public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
     private final static NumberFormat numberFormat = NumberFormat.getInstance();
@@ -146,6 +148,7 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
     @Override
     public void refresh(Player player) {
         PlayerData playerData = plugin.playerDataManager.getData(player);
+
         replaceItem("ore", new ItemReplacer() {
             @Override
             public @NotNull ItemBuilder apply(int slot, @NotNull ItemBuilder itemBuilder) {
@@ -163,6 +166,7 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
                 return itemBuilder;
             }
         });
+
         replaceItem("input", new ItemReplacer() {
             @Override
             public @NotNull ItemBuilder apply(int slot, @NotNull ItemBuilder itemBuilder) {
@@ -172,6 +176,7 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
                 return itemBuilder;
             }
         });
+
         replaceItem("output", new ItemReplacer() {
             @Override
             public @NotNull ItemBuilder apply(int slot, @NotNull ItemBuilder itemBuilder) {
@@ -181,21 +186,21 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
                 return itemBuilder;
             }
         });
-        replaceItem("quick-sell", new ItemReplacer() {
-            @Override
-            public @NotNull ItemBuilder apply(int slot, @NotNull ItemBuilder itemBuilder) {
-                plugin.integrationManager.getShopProvider(plugin.mainConfig.shopProvider)
-                        .ifPresent(shopProvider -> {
-                            if (shopProvider.canSell(product))
-                                itemBuilder.lore(GuiRegistry.STORAGE.quickSellAvailableLore);
-                            else
-                                itemBuilder.lore(GuiRegistry.STORAGE.quickSellUnavailableLore);
-                        });
-                itemBuilder.replaceDisplay(s -> s.replace("{ore}", productName)
-                        .replace("{current}", Integer.toString(playerData.countStorage(product)))
-                        .replace("{capacity}", Integer.toString(playerData.getCapacity(product))));
-                return itemBuilder;
+
+        Optional<ShopProvider> shopProvider = plugin.integrationManager.getShopProvider(plugin.mainConfig.shopProvider);
+        if (shopProvider.isPresent()) {
+            ItemBuilder itemBuilder;
+            if (shopProvider.get().canSell(product)) {
+                itemBuilder = GuiRegistry.STORAGE.quickSellAvailable;
+            } else {
+                itemBuilder = GuiRegistry.STORAGE.quickSellUnavailable;
             }
-        });
+            itemBuilder.replaceDisplay(s -> s.replace("{ore}", productName)
+                    .replace("{current}", Integer.toString(playerData.countStorage(product)))
+                    .replace("{capacity}", Integer.toString(playerData.getCapacity(product))));
+            setBulk("quick-sell", itemBuilder.build());
+        } else {
+            resetBulk("quick-sell");
+        }
     }
 }
