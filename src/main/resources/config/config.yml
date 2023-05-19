@@ -21,13 +21,13 @@ ores:
     raw-materials:
       - gold_ore
       - raw_gold
-  # Copper is for 1.17+
-  #copper_ingot:
-  #  name: "Copper"
-  #  blocks:
-  #    - copper_ore
-  #  raw-materials:
-  #    - raw_copper
+# Copper is for 1.17+
+#  copper_ingot:
+#    name: "Copper"
+#    blocks:
+#      - copper_ore
+#    raw-materials:
+#      - raw_copper
   lapis_lazuli:
     name: "Lapis Lazuli"
     blocks:
