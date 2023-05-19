@@ -1,0 +1,105 @@
+ores:
+  coal:
+    name: "Coal"
+    icon: coal
+    blocks:
+      - coal_ore
+      - deepslate_coal_ore
+    transform:
+      default:
+        - coal > coal
+  iron:
+    name: "Iron"
+    icon: iron_ingot
+    blocks:
+      - iron_ore
+      - deepslate_iron_ore
+    transform:
+      default:
+        - iron_ore > iron_ore
+        - raw_iron > raw_iron
+      auto-smelt:
+        - iron_ore > iron_ingot
+        - raw_iron > iron_ingot
+  gold:
+    name: "Gold"
+    icon: gold_ingot
+    blocks:
+      - gold_ore
+      - deepslate_gold_ore
+    transform:
+      default:
+        - gold_ore > gold_ore
+        - raw_gold > raw_gold
+      auto-smelt:
+        - gold_ore > gold_ingot
+        - raw_gold > gold_ingot
+#  #Copper is for 1.17+
+#  copper:
+#    name: "Copper"
+#    icon: copper_ingot
+#    blocks:
+#      - copper_ore
+#      - deepslate_copper_ore
+#    transform:
+#      default:
+#        - raw_copper > raw_copper
+#      auto-smelt:
+#        - raw_copper > copper_ingot
+  lapis_lazuli:
+    name: "Lapis Lazuli"
+    icon: lapis_lazuli
+    blocks:
+      - lapis_ore
+      - deepslate_lapis_ore
+    transform:
+      default:
+        - lapis_lazuli > lapis_lazuli
+  redstone:
+    name: "Redstone"
+    icon: redstone
+    blocks:
+      - redstone_ore
+      - deepslate_redstone_ore
+    transform:
+      default:
+        - redstone > redstone
+  diamond:
+    name: "Diamond"
+    icon: diamond
+    blocks:
+      - diamond_ore
+      - deepslate_diamond_ore
+    transform:
+      default:
+        - diamond > diamond
+  emerald:
+    name: "Emerald"
+    icon: emerald
+    blocks:
+      - emerald_ore
+      - deepslate_emerald_ore
+    transform:
+      default:
+        - emerald > emerald
+  quartz:
+    name: "Quartz"
+    icon: quartz
+    blocks:
+      - nether_quartz_ore
+    transform:
+      default:
+        - quartz > quartz
+  netherite:
+    name: "Netherite"
+    icon: netherite_ingot
+    blocks:
+      - ancient_debris
+    transform:
+      default:
+        - ancient_debris > netherite_scrap
+      vip:
+        - ancient_debris > netherite_ingot
+processing-speed: 5
+shop-provider: ShopGUIPlus
+dev-mode: false

@@ -7,9 +7,14 @@
     <groupId>dev.anhcraft</groupId>
     <artifactId>oreprocessor</artifactId>
     <version>1.0.2</version>
-    <packaging>jar</packaging>
+    <packaging>pom</packaging>
 
     <name>OreProcessor</name>
+
+    <modules>
+        <module>api</module>
+        <module>plugin</module>
+    </modules>
 
     <properties>
         <java.version>1.8</java.version>
@@ -68,7 +73,7 @@
         </plugins>
         <resources>
             <resource>
-                <directory>src/main/resources</directory>
+                <directory>plugin/src/main/resources</directory>
                 <filtering>true</filtering>
             </resource>
         </resources>
@@ -98,60 +103,6 @@
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
             <version>1.14.4-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.anhcraft</groupId>
-            <artifactId>palette</artifactId>
-            <version>v1.0.3</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.anhcraft.config</groupId>
-            <artifactId>config.bukkit</artifactId>
-            <version>-3187565e88-1</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.anhcraft.config</groupId>
-            <artifactId>config.configdoc</artifactId>
-            <version>-3187565e88-1</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.anhcraft</groupId>
-            <artifactId>JvmKit</artifactId>
-            <version>v1.1.5</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>co.aikar</groupId>
-            <artifactId>acf-paper</artifactId>
-            <version>0.5.1-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.MilkBowl</groupId>
-            <artifactId>VaultAPI</artifactId>
-            <version>1.7</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.Archy-X</groupId>
-            <artifactId>AureliumSkills</artifactId>
-            <version>Beta1.3.19</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.brcdev-minecraft</groupId>
-            <artifactId>shopgui-api</artifactId>
-            <version>3.0.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.github.Gypopo</groupId>
-            <artifactId>EconomyShopGUI-API</artifactId>
-            <version>1.5.0</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
