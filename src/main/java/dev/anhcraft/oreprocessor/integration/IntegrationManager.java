@@ -4,6 +4,7 @@ import dev.anhcraft.config.utils.ObjectUtil;
 import dev.anhcraft.oreprocessor.OreProcessor;
 import dev.anhcraft.oreprocessor.integration.shop.ShopGuiPlusBridge;
 import dev.anhcraft.oreprocessor.integration.shop.ShopProvider;
+import dev.anhcraft.oreprocessor.integration.shop.ShopProviderType;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -52,8 +53,8 @@ public class IntegrationManager {
         return integrationMap.get(plugin);
     }
 
-    public Optional<ShopProvider> getShopProvider(String plugin) {
-        return Optional.ofNullable(integrationMap.get(plugin))
+    public Optional<ShopProvider> getShopProvider(ShopProviderType shopProviderType) {
+        return Optional.ofNullable(integrationMap.get(shopProviderType.getPlugin()))
                 .filter(i -> i instanceof ShopProvider)
                 .map(i -> (ShopProvider) i);
     }

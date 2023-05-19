@@ -2,6 +2,7 @@ package dev.anhcraft.oreprocessor.config;
 
 import dev.anhcraft.config.annotations.Configurable;
 import dev.anhcraft.config.annotations.Validation;
+import dev.anhcraft.oreprocessor.integration.shop.ShopProviderType;
 import org.bukkit.Material;
 
 import java.util.LinkedHashMap;
@@ -21,5 +22,5 @@ public class MainConfig {
     @Validation(notNull = true, notEmpty = true)
     public LinkedHashMap<String, UpgradeLevel> capacityUpgrade;
 
-    public String shopProvider;
+    public ShopProviderType shopProvider;
 }
