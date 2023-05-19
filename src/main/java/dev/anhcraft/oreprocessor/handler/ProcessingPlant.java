@@ -20,10 +20,7 @@ import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.EnumMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 public class ProcessingPlant implements Listener {
     private final OreProcessor plugin;
@@ -37,17 +34,39 @@ public class ProcessingPlant implements Listener {
 
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
         plugin.playerDataManager.setOnPlayerDataLoad(p -> {
-            PlayerData playerData = p.getSecond();
-            if (playerData.hibernationStart == 0) return;
-            long hibernationTime = (System.currentTimeMillis() - playerData.hibernationStart) / 1000;
-            if (hibernationTime <= 0) return;
-            int mul = (int) (hibernationTime / plugin.mainConfig.processingSpeed);
-            plugin.debug("Processing hibernated ore for %s, time = %ds, multi = x%d", p.getFirst(), hibernationTime, mul);
-            playerData.processOre(mul);
-            // After done, reset hibernation to zero, to prevent any unexpected accidents from causing duplications
-            playerData.hibernationStart = 0;
-            playerData.markDirty();
+            validateUpgrade(p.getFirst(), p.getSecond());
+            processHibernation(p.getFirst(), p.getSecond());
         });
+    }
+
+    private void validateUpgrade(UUID who, PlayerData playerData) {
+        for (Material product : plugin.mainConfig.ores.keySet()) {
+            int throughput = playerData.getThroughput(product);
+            int defaultThroughput = plugin.getDefaultThroughput();
+            if (throughput < defaultThroughput) {
+                playerData.setThroughput(product, defaultThroughput);
+                plugin.debug("Upgrade %s's %s throughput to default value: %d → %d", who, product, throughput, defaultThroughput);
+            }
+
+            int capacity = playerData.getCapacity(product);
+            int defaultCapacity = plugin.getDefaultThroughput();
+            if (capacity < defaultCapacity) {
+                playerData.setCapacity(product, defaultCapacity);
+                plugin.debug("Upgrade %s's %s capacity to default value: %d → %d", who, product, capacity, defaultCapacity);
+            }
+        }
+    }
+
+    private void processHibernation(UUID who, PlayerData playerData) {
+        if (playerData.hibernationStart == 0) return;
+        long hibernationTime = (System.currentTimeMillis() - playerData.hibernationStart) / 1000;
+        if (hibernationTime <= 0) return;
+        int mul = (int) (hibernationTime / plugin.mainConfig.processingSpeed);
+        plugin.debug("Processing hibernated ore for %s, time = %ds, multi = x%d", who, hibernationTime, mul);
+        playerData.processOre(mul);
+        // After done, reset hibernation to zero, to prevent any unexpected accidents from causing duplications
+        playerData.hibernationStart = 0;
+        playerData.markDirty();
     }
 
     public void reload() {
