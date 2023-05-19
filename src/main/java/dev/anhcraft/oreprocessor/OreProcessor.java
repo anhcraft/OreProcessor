@@ -7,14 +7,13 @@ import dev.anhcraft.jvmkit.utils.IOUtil;
 import dev.anhcraft.oreprocessor.cmd.OreCommand;
 import dev.anhcraft.oreprocessor.config.MainConfig;
 import dev.anhcraft.oreprocessor.config.MessageConfig;
+import dev.anhcraft.oreprocessor.config.UpgradeConfig;
 import dev.anhcraft.oreprocessor.gui.*;
 import dev.anhcraft.oreprocessor.handler.ProcessingPlant;
-import dev.anhcraft.oreprocessor.integration.AureliumSkillsBridge;
 import dev.anhcraft.oreprocessor.integration.IntegrationManager;
 import dev.anhcraft.oreprocessor.storage.PlayerDataManager;
 import dev.anhcraft.oreprocessor.util.ConfigHelper;
 import dev.anhcraft.palette.listener.GuiEventListener;
-import dev.anhcraft.palette.ui.Gui;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -29,6 +28,7 @@ import java.io.IOException;
 public final class OreProcessor extends JavaPlugin {
     private static OreProcessor INSTANCE;
     public MainConfig mainConfig;
+    public UpgradeConfig upgradeConfig;
     public MessageConfig messageConfig;
     public IntegrationManager integrationManager;
     public ProcessingPlant processingPlant;
@@ -101,6 +101,7 @@ public final class OreProcessor extends JavaPlugin {
         getDataFolder().mkdir();
         mainConfig = ConfigHelper.load(MainConfig.class, requestConfig("config.yml"));
         messageConfig = ConfigHelper.load(MessageConfig.class, requestConfig("messages.yml"));
+        upgradeConfig = ConfigHelper.load(UpgradeConfig.class, requestConfig("upgrades.yml"));
 
         new File(getDataFolder(), "gui").mkdir();
         GuiRegistry.MENU = ConfigHelper.load(MenuGui.class, requestConfig("gui/menu.yml"));
@@ -127,6 +128,10 @@ public final class OreProcessor extends JavaPlugin {
     }
 
     public int getDefaultCapacity() {
-        return mainConfig.capacityUpgrade.get("default").amount;
+        return upgradeConfig.capacityUpgrade.get("default").amount;
+    }
+
+    public Integer getDefaultThroughput() {
+        return upgradeConfig.throughputUpgrade.get("default").amount;
     }
 }

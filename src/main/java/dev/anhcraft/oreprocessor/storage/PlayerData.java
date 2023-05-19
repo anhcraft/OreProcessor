@@ -38,7 +38,7 @@ public class PlayerData {
     }
 
     public int getThroughput(Material product) {
-        return throughput.getOrDefault(product, OreProcessor.getInstance().mainConfig.throughputUpgrade.get("default").amount);
+        return throughput.getOrDefault(product, OreProcessor.getInstance().getDefaultThroughput());
     }
 
     public String getThroughputPerMinute(Material ore) {

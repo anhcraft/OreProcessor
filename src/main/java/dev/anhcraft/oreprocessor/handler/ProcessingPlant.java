@@ -66,12 +66,12 @@ public class ProcessingPlant implements Listener {
         }
 
         throughputUpgrades = new TreeMap<>();
-        for (UpgradeLevel upgradeLevel : plugin.mainConfig.throughputUpgrade.values()) {
+        for (UpgradeLevel upgradeLevel : plugin.upgradeConfig.throughputUpgrade.values()) {
             throughputUpgrades.put(upgradeLevel.amount, upgradeLevel);
         }
 
         capacityUpgrade = new TreeMap<>();
-        for (UpgradeLevel upgradeLevel : plugin.mainConfig.capacityUpgrade.values()) {
+        for (UpgradeLevel upgradeLevel : plugin.upgradeConfig.capacityUpgrade.values()) {
             capacityUpgrade.put(upgradeLevel.amount, upgradeLevel);
         }
     }

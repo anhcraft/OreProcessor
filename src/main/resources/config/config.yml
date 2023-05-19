@@ -69,29 +69,5 @@ ores:
     raw-materials:
       - ancient_debris
 processing-speed: 5
-throughput-upgrade:
-  default:
-    amount: 1
-  level-1:
-    amount: 2
-    cost: 50000
-  level-3:
-    amount: 3
-    cost: 100000
-  level-4:
-    amount: 4
-    cost: 300000
-capacity-upgrade:
-  default:
-    amount: 128
-  level-1:
-    amount: 192
-    cost: 30000
-  level-3:
-    amount: 256
-    cost: 50000
-  level-4:
-    amount: 320
-    cost: 100000
 shop-provider: ShopGUIPlus
 dev-mode: false
