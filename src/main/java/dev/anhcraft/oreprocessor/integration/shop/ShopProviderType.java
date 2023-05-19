@@ -1,7 +1,8 @@
 package dev.anhcraft.oreprocessor.integration.shop;
 
 public enum ShopProviderType {
-    SHOPGUIPLUS("ShopGUIPlus");
+    SHOPGUIPLUS("ShopGUIPlus"),
+    ECONOMYSHOPGUI("EconomyShopGUI");
 
     private final String plugin;
 

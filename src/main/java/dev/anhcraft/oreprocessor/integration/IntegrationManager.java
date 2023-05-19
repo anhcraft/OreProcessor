@@ -2,6 +2,7 @@ package dev.anhcraft.oreprocessor.integration;
 
 import dev.anhcraft.config.utils.ObjectUtil;
 import dev.anhcraft.oreprocessor.OreProcessor;
+import dev.anhcraft.oreprocessor.integration.shop.EconomyShopGUIBridge;
 import dev.anhcraft.oreprocessor.integration.shop.ShopGuiPlusBridge;
 import dev.anhcraft.oreprocessor.integration.shop.ShopProvider;
 import dev.anhcraft.oreprocessor.integration.shop.ShopProviderType;
@@ -21,6 +22,7 @@ public class IntegrationManager {
 
         tryHook("AureliumSkills", AureliumSkillsBridge.class);
         tryHook("ShopGUIPlus", ShopGuiPlusBridge.class);
+        tryHook("EconomyShopGUI", EconomyShopGUIBridge.class);
     }
 
     private void tryHook(String plugin, Class<? extends Integration> clazz) {

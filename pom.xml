@@ -142,5 +142,11 @@
             <version>3.0.0</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.github.Gypopo</groupId>
+            <artifactId>EconomyShopGUI-API</artifactId>
+            <version>1.5.0</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 </project>
