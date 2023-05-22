@@ -49,7 +49,7 @@ public class ProcessingPlant implements Listener {
             }
 
             int capacity = playerData.getCapacity(product);
-            int defaultCapacity = plugin.getDefaultThroughput();
+            int defaultCapacity = plugin.getDefaultCapacity();
             if (capacity < defaultCapacity) {
                 playerData.setCapacity(product, defaultCapacity);
                 plugin.debug("Upgrade %s's %s capacity to default value: %d → %d", who, product, capacity, defaultCapacity);
