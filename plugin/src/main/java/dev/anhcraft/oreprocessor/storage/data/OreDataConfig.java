@@ -22,4 +22,8 @@ class OreDataConfig {
 
     @Nullable
     public LinkedHashMap<Material, Integer> products;
+
+    public void markDirty() {
+        dirty.set(true);
+    }
 }

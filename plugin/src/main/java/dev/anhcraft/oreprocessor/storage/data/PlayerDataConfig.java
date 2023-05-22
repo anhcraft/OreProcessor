@@ -29,19 +29,6 @@ class PlayerDataConfig {
         dirty.set(true);
     }
 
-    public boolean isStorageFull(Material product) {
-        synchronized (dirty) {
-            return storage.getOrDefault(product, 0) + queuedOre.getOrDefault(product, 0) >= capacity.getOrDefault(product, OreProcessor.getInstance().getDefaultCapacity());
-        }
-    }
-
-    public void queueOre(Material product, int amount) {
-        synchronized (dirty) {
-            queuedOre.put(product, queuedOre.getOrDefault(product, 0) + amount);
-            markDirty();
-        }
-    }
-
     public void processOre(int throughputMultiplier) {
         synchronized (dirty) {
             for (Map.Entry<Material, Integer> en : queuedOre.entrySet()) {
@@ -62,46 +49,6 @@ class PlayerDataConfig {
 
     public void processOre() {
         processOre(1);
-    }
-
-    public int storeOre(Material ore, int expectAmount) {
-        synchronized (dirty) {
-            int stored = storage.getOrDefault(ore, 0);
-            int cap = getCapacity(ore);
-            int toStore = Math.min(expectAmount, cap - stored);
-            int newVal = stored + toStore;
-            if (!Objects.equals(storage.put(ore, newVal), newVal)) {
-                markDirty();
-            }
-            return toStore;
-        }
-    }
-
-    public int takeOre(Material ore, int expectAmount) {
-        synchronized (dirty) {
-            int stored = storage.getOrDefault(ore, 0);
-            int toTake = Math.min(stored, expectAmount);
-            int newVal = stored - toTake;
-            if (!Objects.equals(storage.put(ore, newVal), newVal)) {
-                markDirty();
-            }
-            return toTake;
-        }
-    }
-
-    public boolean testAndTakeOre(Material ore, int expectAmount, Function<Integer, Boolean> function) {
-        synchronized (dirty) {
-            int stored = storage.getOrDefault(ore, 0);
-            int toTake = Math.min(stored, expectAmount);
-            if (toTake > 0 && function.apply(toTake)) {
-                int newVal = stored - toTake;
-                if (!Objects.equals(storage.put(ore, newVal), newVal)) {
-                    markDirty();
-                }
-                return true;
-            }
-            return false;
-        }
     }
 
     public void setThroughput(Material ore, int amount) {
