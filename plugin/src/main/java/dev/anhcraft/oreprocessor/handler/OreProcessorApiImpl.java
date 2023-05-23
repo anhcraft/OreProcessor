@@ -3,7 +3,8 @@ package dev.anhcraft.oreprocessor.handler;
 import dev.anhcraft.oreprocessor.OreProcessor;
 import dev.anhcraft.oreprocessor.api.Ore;
 import dev.anhcraft.oreprocessor.api.OreProcessorApi;
-import dev.anhcraft.oreprocessor.storage.data.PlayerDataConfig;
+import dev.anhcraft.oreprocessor.api.data.IPlayerData;
+import dev.anhcraft.oreprocessor.storage.PlayerData;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,17 +31,17 @@ public final class OreProcessorApiImpl implements OreProcessorApi {
     }
 
     @Override
-    public @NotNull PlayerDataConfig getPlayerData(@NotNull Player player) {
-        return plugin.playerDataManager.getData(player);
+    public @NotNull IPlayerData getPlayerData(@NotNull Player player) {
+        return new PlayerData(plugin.playerDataManager.getData(player));
     }
 
     @Override
-    public @NotNull Optional<PlayerDataConfig> getPlayerData(@NotNull UUID id) {
-        return plugin.playerDataManager.getData(id);
+    public @NotNull Optional<IPlayerData> getPlayerData(@NotNull UUID id) {
+        return plugin.playerDataManager.getData(id).map(PlayerData::new);
     }
 
     @Override
-    public @NotNull CompletableFuture<PlayerDataConfig> requirePlayerData(@NotNull UUID id) {
+    public @NotNull CompletableFuture<IPlayerData> requirePlayerData(@NotNull UUID id) {
         return plugin.playerDataManager.requireData(id);
     }
 }

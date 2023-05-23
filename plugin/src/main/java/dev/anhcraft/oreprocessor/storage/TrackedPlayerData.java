@@ -1,6 +1,5 @@
 package dev.anhcraft.oreprocessor.storage;
 
-import dev.anhcraft.oreprocessor.storage.data.PlayerDataConfig;
 import org.jetbrains.annotations.NotNull;
 
 public class TrackedPlayerData {

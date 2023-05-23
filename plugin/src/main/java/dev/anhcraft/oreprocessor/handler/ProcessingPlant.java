@@ -40,7 +40,7 @@ public class ProcessingPlant implements Listener {
     }
 
     private void validateUpgrade(UUID who, PlayerDataConfig playerData) {
-        for (Material product : plugin.mainConfig.ores.keySet()) {
+        for (String product : plugin.mainConfig.ores.keySet()) {
             int throughput = playerData.getThroughput(product);
             int defaultThroughput = plugin.getDefaultThroughput();
             if (throughput < defaultThroughput) {

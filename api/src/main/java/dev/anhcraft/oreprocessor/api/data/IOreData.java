@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 public interface IOreData extends ModifiableData {
     int getThroughput();
@@ -31,7 +32,7 @@ public interface IOreData extends ModifiableData {
 
     int takeProduct(@NotNull Material material, int expectedAmount);
 
-    boolean testAndTakeProduct(@NotNull Material material, int expectedAmount, Function<Integer, Boolean> function);
+    boolean testAndTakeProduct(@NotNull Material material, int expectedAmount, @NotNull Function<Integer, Boolean> function);
 
     int countProduct(@NotNull Material material);
 
@@ -40,4 +41,6 @@ public interface IOreData extends ModifiableData {
     default boolean isFull() {
         return countAllFeedstock() + countAllProducts() >= getCapacity();
     }
+
+    void process(int throughputMultiplier, @NotNull UnaryOperator<Material> function);
 }

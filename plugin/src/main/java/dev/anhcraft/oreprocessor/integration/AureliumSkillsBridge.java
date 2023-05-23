@@ -2,6 +2,8 @@ package dev.anhcraft.oreprocessor.integration;
 
 import com.archyx.aureliumskills.api.event.PlayerLootDropEvent;
 import dev.anhcraft.oreprocessor.OreProcessor;
+import dev.anhcraft.oreprocessor.api.data.IPlayerData;
+import dev.anhcraft.oreprocessor.storage.PlayerData;
 import dev.anhcraft.oreprocessor.storage.data.PlayerDataConfig;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -19,7 +21,7 @@ public class AureliumSkillsBridge implements Integration, Listener {
     @EventHandler
     private void onDropLoot(PlayerLootDropEvent event) {
         Player player = event.getPlayer();
-        PlayerDataConfig playerData = plugin.playerDataManager.getData(player);
+        IPlayerData playerData = plugin.playerDataManager.getData(player);
         Material product = plugin.processingPlant.rawToProductMap.get(event.getItemStack().getType());
         if (product != null) {
             playerData.queueOre(product, event.getItemStack().getAmount());

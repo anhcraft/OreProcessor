@@ -3,7 +3,7 @@ package dev.anhcraft.oreprocessor.storage;
 import com.google.common.base.Preconditions;
 import dev.anhcraft.jvmkit.utils.PresentPair;
 import dev.anhcraft.oreprocessor.OreProcessor;
-import dev.anhcraft.oreprocessor.storage.data.PlayerDataConfig;
+import dev.anhcraft.oreprocessor.api.data.IPlayerData;
 import dev.anhcraft.oreprocessor.util.ConfigHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -83,35 +83,35 @@ public class PlayerDataManager implements Listener {
         }
     }
 
-    public void streamData(Consumer<PlayerDataConfig> consumer) {
+    public void streamData(Consumer<IPlayerData> consumer) {
         synchronized (LOCK) {
             for (TrackedPlayerData tpd : playerDataMap.values()) {
-                consumer.accept(tpd.getPlayerData());
+                consumer.accept(new PlayerData(tpd.getPlayerData()));
             }
         }
     }
 
     @NotNull
-    public Optional<PlayerDataConfig> getData(@NotNull UUID uuid) {
+    public Optional<IPlayerData> getData(@NotNull UUID uuid) {
         synchronized (LOCK) {
-            return Optional.ofNullable(playerDataMap.get(uuid)).map(TrackedPlayerData::getPlayerData);
+            return Optional.ofNullable(playerDataMap.get(uuid)).map(TrackedPlayerData::getPlayerData).map(PlayerData::new);
         }
     }
 
     @NotNull
-    public PlayerDataConfig getData(@NotNull Player player) {
+    public IPlayerData getData(@NotNull Player player) {
         Preconditions.checkArgument(player.isOnline(), "Player must be online");
 
         synchronized (LOCK) {
-            return Objects.requireNonNull(playerDataMap.get(player.getUniqueId())).getPlayerData();
+            return new PlayerData(Objects.requireNonNull(playerDataMap.get(player.getUniqueId())).getPlayerData());
         }
     }
 
     @NotNull
-    public CompletableFuture<PlayerDataConfig> requireData(@NotNull UUID uuid) {
+    public CompletableFuture<IPlayerData> requireData(@NotNull UUID uuid) {
         synchronized (LOCK) {
             if (playerDataMap.containsKey(uuid)) {
-                return CompletableFuture.completedFuture(playerDataMap.get(uuid).getPlayerData());
+                return CompletableFuture.completedFuture(new PlayerData(playerDataMap.get(uuid).getPlayerData()));
             } else {
                 return CompletableFuture.supplyAsync(() -> {
                     PlayerDataConfig playerData = loadData(uuid);
@@ -127,7 +127,7 @@ public class PlayerDataManager implements Listener {
                         }
                         playerDataMap.put(uuid, trackedPlayerData);
                     }
-                    return playerData;
+                    return new PlayerData(playerData);
                 });
             }
         }
