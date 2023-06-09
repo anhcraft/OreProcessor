@@ -2,6 +2,7 @@ package dev.anhcraft.oreprocessor.gui;
 
 import dev.anhcraft.config.bukkit.utils.ItemBuilder;
 import dev.anhcraft.oreprocessor.OreProcessor;
+import dev.anhcraft.oreprocessor.api.Ore;
 import dev.anhcraft.oreprocessor.integration.shop.ShopProvider;
 import dev.anhcraft.oreprocessor.storage.data.PlayerDataConfig;
 import dev.anhcraft.palette.event.ClickEvent;
@@ -21,13 +22,13 @@ import java.util.Optional;
 public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
     private final static NumberFormat numberFormat = NumberFormat.getInstance();
     private final OreProcessor plugin;
-    private final String productName;
-    private final Material product;
+    private final Ore ore;
+    private final String oreId;
 
-    public StorageGuiHandler(Material product) {
+    public StorageGuiHandler(String oreId) {
         this.plugin = OreProcessor.getInstance();
-        this.productName = this.plugin.mainConfig.ores.get(product).name;
-        this.product = product;
+        this.oreId = oreId;
+        this.ore = OreProcessor.getApi().requireOre(oreId);
     }
 
     @Override

@@ -58,10 +58,15 @@ public class OreData implements IOreData {
     @Override
     public void addFeedstock(@NotNull Material material, int amount) {
         synchronized (config) {
+            int newVal = amount;
             if (config.feedstock == null)
                 config.feedstock = new LinkedHashMap<>();
+            else
+                newVal += config.feedstock.getOrDefault(material, 0);
 
-            config.feedstock.put(material, amount);
+            if (!Objects.equals(config.feedstock.put(material, newVal), newVal)) {
+                config.markDirty();
+            }
         }
     }
 
@@ -202,9 +207,9 @@ public class OreData implements IOreData {
                     it.remove();
                 else
                     en.setValue(newQueued);
-            }
 
-            config.markDirty();
+                config.markDirty();
+            }
         }
     }
 

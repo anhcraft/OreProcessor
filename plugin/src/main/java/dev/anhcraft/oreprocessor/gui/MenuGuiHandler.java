@@ -3,7 +3,8 @@ package dev.anhcraft.oreprocessor.gui;
 import dev.anhcraft.config.bukkit.utils.ItemBuilder;
 import dev.anhcraft.oreprocessor.OreProcessor;
 import dev.anhcraft.oreprocessor.api.Ore;
-import dev.anhcraft.oreprocessor.storage.data.PlayerDataConfig;
+import dev.anhcraft.oreprocessor.api.data.IOreData;
+import dev.anhcraft.oreprocessor.api.data.IPlayerData;
 import dev.anhcraft.palette.event.ClickEvent;
 import dev.anhcraft.palette.ui.GuiHandler;
 import dev.anhcraft.palette.util.ItemReplacer;
@@ -19,16 +20,15 @@ public class MenuGuiHandler extends GuiHandler implements AutoRefresh {
 
     @Override
     public void onPreOpen(@NotNull Player player) {
-        PlayerDataConfig playerData = OreProcessor.getInstance().playerDataManager.getData(player);
-        playerData.hideTutorial = true;
-        playerData.markDirty();
+        IPlayerData playerData = OreProcessor.getInstance().playerDataManager.getData(player);
+        playerData.setHideTutorial(true);
 
         refresh(player);
     }
 
     @Override
     public void refresh(Player player) {
-        PlayerDataConfig playerData = OreProcessor.getInstance().playerDataManager.getData(player);
+        IPlayerData playerData = OreProcessor.getInstance().playerDataManager.getData(player);
         List<Integer> slots = new ArrayList<>(locateComponent("ore"));
         Collections.sort(slots);
         List<String> ores = OreProcessor.getApi().getOres();
@@ -37,6 +37,7 @@ public class MenuGuiHandler extends GuiHandler implements AutoRefresh {
             int slot = slots.get(i);
             String oreId = ores.get(i);
             Ore ore = OreProcessor.getApi().requireOre(oreId);
+            IOreData oreData = playerData.requireOreData(oreId);
 
             replaceItem(slot, new ItemReplacer() {
                 @Override
@@ -44,16 +45,16 @@ public class MenuGuiHandler extends GuiHandler implements AutoRefresh {
                     itemBuilder.material(ore.getIcon());
                     itemBuilder.name(GuiRegistry.MENU.oreName);
                     itemBuilder.lore(GuiRegistry.MENU.oreLore);
-                    int queued = playerData.countQueuedOre(ore);
-                    int stored = playerData.countStorage(ore);
-                    int cap = playerData.getCapacity(ore);
-                    String throughput = (getThroughput(ore) * 60d / OreProcessor.getInstance().mainConfig.processingSpeed);
-                    itemBuilder.replaceDisplay(s -> s.replace("{ore}", oreName)
-                            .replace("{processing}", Integer.toString(queued))
+                    int processing = oreData.countAllFeedstock();
+                    int stored = oreData.countAllProducts();
+                    int cap = oreData.getCapacity();
+                    double throughputM = (oreData.getThroughput() * 60d / OreProcessor.getInstance().mainConfig.processingSpeed);
+                    itemBuilder.replaceDisplay(s -> s.replace("{ore}", ore.getName())
+                            .replace("{processing}", Integer.toString(processing))
                             .replace("{storage-current}", Integer.toString(stored))
                             .replace("{storage-capacity}", Integer.toString(cap))
                             .replace("{storage-ratio}", Integer.toString((int) (((double) stored) / cap * 100d)))
-                            .replace("{throughput}", throughput));
+                            .replace("{throughput}", Integer.toString((int) throughputM)));
                     return itemBuilder;
                 }
             });
@@ -62,9 +63,9 @@ public class MenuGuiHandler extends GuiHandler implements AutoRefresh {
                 @Override
                 public void onClick(@NotNull InventoryClickEvent clickEvent, @NotNull Player player, int slot) {
                     if (clickEvent.isLeftClick()) {
-                        GuiRegistry.openStorageGui(player, ore);
+                        GuiRegistry.openStorageGui(player, oreId);
                     } else if (clickEvent.isRightClick()) {
-                        GuiRegistry.openUpgradeGui(player, ore);
+                        GuiRegistry.openUpgradeGui(player, oreId);
                     }
                 }
             });

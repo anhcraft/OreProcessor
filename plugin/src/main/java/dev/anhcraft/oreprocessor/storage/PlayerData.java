@@ -31,6 +31,7 @@ public class PlayerData implements IPlayerData {
     @Override
     public void setHideTutorial(boolean value) {
         config.hideTutorial = value;
+        config.markDirty();
     }
 
     @Override
@@ -52,11 +53,11 @@ public class PlayerData implements IPlayerData {
     @Override
     public @NotNull IOreData requireOreData(@NotNull String ore) {
         if (config.ores == null)
-            config.ores = new LinkedHashMap<>();
+            config.ores = new LinkedHashMap<>(); // marking dirty is redundant
         if (config.ores.containsKey(ore))
             return new OreData(config.ores.get(ore));
         OreDataConfig oreDataConfig = new OreDataConfig();
-        config.ores.put(ore, oreDataConfig);
+        config.ores.put(ore, oreDataConfig); // marking dirty is redundant
         return new OreData(oreDataConfig);
     }
 

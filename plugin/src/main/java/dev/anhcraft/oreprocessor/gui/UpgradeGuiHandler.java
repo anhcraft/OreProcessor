@@ -2,6 +2,7 @@ package dev.anhcraft.oreprocessor.gui;
 
 import dev.anhcraft.config.bukkit.utils.ItemBuilder;
 import dev.anhcraft.oreprocessor.OreProcessor;
+import dev.anhcraft.oreprocessor.api.Ore;
 import dev.anhcraft.oreprocessor.config.UpgradeLevel;
 import dev.anhcraft.oreprocessor.storage.data.PlayerDataConfig;
 import dev.anhcraft.palette.event.ClickEvent;
@@ -19,10 +20,14 @@ import static dev.anhcraft.oreprocessor.gui.GuiRegistry.UPGRADE;
 
 public class UpgradeGuiHandler extends GuiHandler {
     private final static NumberFormat numberFormat = NumberFormat.getInstance();
-    private final Material product;
+    private final OreProcessor plugin;
+    private final Ore ore;
+    private final String oreId;
 
-    public UpgradeGuiHandler(Material product) {
-        this.product = product;
+    public UpgradeGuiHandler(String oreId) {
+        this.plugin = OreProcessor.getInstance();
+        this.oreId = oreId;
+        this.ore = OreProcessor.getApi().requireOre(oreId);
     }
 
     @Override
