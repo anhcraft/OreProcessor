@@ -1,9 +1,9 @@
 title: "&0Ore Processor | Storage"
 layout:
   - "---------"
-  - "--X--IO--"
-  - "------S--"
-  - "++++|++++"
+  - "-PPPPPPP-"
+  - "---------"
+  - "+X++|+S++"
 components:
   "-":
     name: "&e"
@@ -20,26 +20,11 @@ components:
       - "&7▪ In storage: {storage-current}/{storage-capacity}"
       - "&7▪ Throughput: {throughput}/m"
       - ""
-      - "&e» Click to upgrade."
-  "I":
-    type: input
-    material: hopper
-    name: "&aStore {ore}"
-    lore:
-      - "&7▪ Amount: {current}/{capacity}"
-      - ""
-      - "&e» Drop {ore} into the hopper to store."
-  "O":
-    type: output
-    material: chest
-    name: "&aTake {ore}"
-    lore:
-      - "&7▪ Amount: {current}/{capacity}"
-      - ""
-      - "&fLeft:       &eTake x1 {ore}"
-      - "&fRight:      &eTake x64 {ore}"
-      - "&fLeft+Shift:  &eTake x16 {ore}"
-      - "&fRight+Shift: &eTake x32 {ore}"
+      - "&e» Click to upgrade"
+  "P":
+    type: product
+    name: "&e"
+    material: black_stained_glass_pane
   "S":
     type: quick-sell
     name: "&e"
@@ -51,21 +36,24 @@ components:
     lore:
       - "&e» Go back to main menu"
 
-quick-sell-available:
-  material: emerald
-  name: "&aQuick sell"
+product-icon:
   lore:
-    - "&7▪ Amount: {current}/{capacity}"
+    - "&7▪ Amount: {current}"
+    - "&7▪ In storage: {storage-current}/{storage-capacity}"
     - ""
-    - "&fLeft:       &eSell all {ore}"
-    - "&fRight:      &eSell x64 {ore}"
-    - "&fLeft+Shift:  &eSell x16 {ore}"
-    - "&fRight+Shift: &eSell x32 {ore}"
+    - "&fDrop:       &eAdd from cursor"
+    - "&fLeft:       &eTake x1"
+    - "&fRight:      &eTake x64"
+    - "&fLeft+Shift:  &eTake x16"
+    - "&fRight+Shift: &eTake x32"
 
-quick-sell-unavailable:
+quick-sell-icon:
   material: emerald
   name: "&aQuick sell"
   lore:
-    - "&7▪ Amount: {current}/{capacity}"
+    - "&7▪ In storage: {storage-current}/{storage-capacity}"
     - ""
-    - "&c[Unable to sell]"
+    - "&fLeft:       &eSell all"
+    - "&fRight:      &eSell 1/2"
+    - "&fLeft+Shift:  &eSell 1/4"
+    - "&fRight+Shift: &eSell 1/10"

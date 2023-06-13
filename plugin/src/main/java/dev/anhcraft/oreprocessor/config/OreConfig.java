@@ -31,7 +31,7 @@ public class OreConfig {
             "This option exists to prevent conflicts with other custom drop plugins"
     })
     @Validation(notNull = true, notEmpty = true)
-    public List<Material> blocks = Collections.emptyList();
+    public Set<Material> blocks = Collections.emptySet();
 
     @Description({
             "A list of categories of material transformation",
@@ -45,19 +45,27 @@ public class OreConfig {
 
     @PostHandler
     private void postProcess() {
-        blocks = blocks.stream().filter(Objects::nonNull).collect(Collectors.toList());
+        blocks = blocks.stream().filter(Objects::nonNull).collect(Collectors.toSet());
 
         for (Map.Entry<String, List<String>> e : rawTransform.entrySet()) {
             Map<Material, Material> map = new EnumMap<>(Material.class);
             for (String str : e.getValue()) {
                 String[] split = str.split(">");
                 if (split.length != 2) continue;
-                Material from = (Material) EnumUtil.findEnum(Material.class, split[0].toUpperCase());
-                Material to = (Material) EnumUtil.findEnum(Material.class, split[1].toUpperCase());
+                Material from = (Material) EnumUtil.findEnum(Material.class, split[0].trim().toUpperCase());
+                Material to = (Material) EnumUtil.findEnum(Material.class, split[1].trim().toUpperCase());
                 if (from == null || to == null) continue;
                 map.put(from, to);
             }
             transform.put(e.getKey(), map);
+        }
+
+        if (!transform.containsKey("default")) {
+            throw new RuntimeException("Default transform must always exist");
+        }
+
+        if (!transform.keySet().iterator().next().equals("default")) {
+            throw new RuntimeException("Default transform must be at first");
         }
     }
 }

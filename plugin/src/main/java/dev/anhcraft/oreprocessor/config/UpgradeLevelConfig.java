@@ -4,7 +4,7 @@ import dev.anhcraft.config.annotations.Configurable;
 import dev.anhcraft.config.annotations.Description;
 
 @Configurable(keyNamingStyle = Configurable.NamingStyle.TRAIN_CASE)
-public class UpgradeLevel {
+public class UpgradeLevelConfig {
     @Description("New throughput or storage-capacity value")
     public int amount;
 

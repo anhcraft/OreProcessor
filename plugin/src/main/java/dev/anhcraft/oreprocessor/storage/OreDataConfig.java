@@ -1,17 +1,14 @@
 package dev.anhcraft.oreprocessor.storage;
 
 import dev.anhcraft.config.annotations.Configurable;
-import dev.anhcraft.config.annotations.Exclude;
+import dev.anhcraft.config.annotations.PostHandler;
 import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashMap;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @Configurable
 class OreDataConfig {
-    @Exclude
-    public final AtomicBoolean dirty = new AtomicBoolean(false);
 
     public int throughput;
 
@@ -23,7 +20,11 @@ class OreDataConfig {
     @Nullable
     public LinkedHashMap<Material, Integer> products;
 
-    public void markDirty() {
-        dirty.set(true);
+    @PostHandler
+    private void handle() {
+        if (feedstock != null)
+            feedstock.keySet().removeIf(material -> feedstock.get(material) <= 0);
+        if (products != null)
+            products.keySet().removeIf(material -> products.get(material) <= 0);
     }
 }

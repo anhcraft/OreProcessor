@@ -8,11 +8,19 @@ import dev.anhcraft.palette.ui.Gui;
 
 @Configurable(keyNamingStyle = Configurable.NamingStyle.TRAIN_CASE)
 public class StorageGui extends Gui {
-    @Description("The icon indicating that quick-sell feature is available")
+    @Description("Product representation")
     @Validation(notNull = true)
-    public ItemBuilder quickSellAvailable;
+    private ItemBuilder productIcon;
 
-    @Description("The icon indicating that quick-sell feature is unavailable")
+    @Description("Quick-sell icon")
     @Validation(notNull = true)
-    public ItemBuilder quickSellUnavailable;
+    private ItemBuilder quickSellIcon;
+
+    public ItemBuilder getProductIcon() {
+        return productIcon.duplicate();
+    }
+
+    public ItemBuilder getQuickSellIcon() {
+        return quickSellIcon.duplicate();
+    }
 }

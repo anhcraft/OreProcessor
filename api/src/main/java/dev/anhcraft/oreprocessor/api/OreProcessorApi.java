@@ -1,6 +1,8 @@
 package dev.anhcraft.oreprocessor.api;
 
 import dev.anhcraft.oreprocessor.api.data.IPlayerData;
+import dev.anhcraft.oreprocessor.api.integration.ShopProviderType;
+import dev.anhcraft.oreprocessor.api.upgrade.UpgradeLevel;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,6 +27,12 @@ public interface OreProcessorApi {
 
     int getProcessingSpeed();
 
+    int getDefaultCapacity();
+
+    int getDefaultThroughput();
+
+    int getThroughputPerMinute(int throughput);
+
     @NotNull
     IPlayerData getPlayerData(@NotNull Player player);
 
@@ -33,4 +41,12 @@ public interface OreProcessorApi {
 
     @NotNull
     CompletableFuture<IPlayerData> requirePlayerData(@NotNull UUID id);
+
+    @Nullable
+    UpgradeLevel getNextThroughputUpgrade(int currentThroughput);
+
+    @Nullable
+    UpgradeLevel getNextCapacityUpgrade(int currentCapacity);
+
+    ShopProviderType getShopProvider();
 }

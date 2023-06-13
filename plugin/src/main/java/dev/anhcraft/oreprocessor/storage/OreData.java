@@ -6,20 +6,23 @@ import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 public class OreData implements IOreData {
     private final OreDataConfig config;
+    private final AtomicBoolean dirty; 
 
-    public OreData(@NotNull OreDataConfig config) {
+    public OreData(@NotNull OreDataConfig config, @NotNull AtomicBoolean dirty) {
         this.config = config;
+        this.dirty = dirty;
     }
 
     @Override
     public int getThroughput() {
         synchronized (config) {
-            return config.throughput <= 0 ? OreProcessor.getInstance().getDefaultThroughput() : config.throughput;
+            return config.throughput <= 0 ? OreProcessor.getApi().getDefaultThroughput() : config.throughput;
         }
     }
 
@@ -28,14 +31,14 @@ public class OreData implements IOreData {
         synchronized (config) {
             if (config.throughput == amount) return;
             config.throughput = amount;
-            config.markDirty();
+            markDirty();
         }
     }
 
     @Override
     public int getCapacity() {
         synchronized (config) {
-            return config.capacity <= 0 ? OreProcessor.getInstance().getDefaultCapacity() : config.capacity;
+            return config.capacity <= 0 ? OreProcessor.getApi().getDefaultCapacity() : config.capacity;
         }
     }
 
@@ -44,7 +47,7 @@ public class OreData implements IOreData {
         synchronized (config) {
             if (config.capacity == amount) return;
             config.capacity = amount;
-            config.markDirty();
+            markDirty();
         }
     }
 
@@ -65,7 +68,7 @@ public class OreData implements IOreData {
                 newVal += config.feedstock.getOrDefault(material, 0);
 
             if (!Objects.equals(config.feedstock.put(material, newVal), newVal)) {
-                config.markDirty();
+                markDirty();
             }
         }
     }
@@ -108,7 +111,7 @@ public class OreData implements IOreData {
                 config.products = new LinkedHashMap<>();
 
             if (!Objects.equals(config.products.put(material, newVal), newVal)) {
-                config.markDirty();
+                markDirty();
             }
 
             return expectedAmount - toStore;
@@ -126,9 +129,9 @@ public class OreData implements IOreData {
                 toTake = 0;
             } else if (newVal == 0) {
                 config.products.remove(material);
-                config.markDirty();
+                markDirty();
             } else if (!Objects.equals(config.products.put(material, newVal), newVal)) {
-                config.markDirty();
+                markDirty();
             }
 
             return expectedAmount - toTake;
@@ -146,9 +149,9 @@ public class OreData implements IOreData {
 
                 if (newVal == 0) {
                     config.products.remove(material);
-                    config.markDirty();
+                    markDirty();
                 } else if (!Objects.equals(config.products.put(material, newVal), newVal)) {
-                    config.markDirty();
+                    markDirty();
                 }
 
                 return true;
@@ -208,13 +211,17 @@ public class OreData implements IOreData {
                 else
                     en.setValue(newQueued);
 
-                config.markDirty();
+                markDirty();
             }
         }
     }
 
+    private void markDirty() {
+        dirty.set(true);
+    }
+
     @Override
     public boolean isDirty() {
-        return config.dirty.get();
+        return dirty.get();
     }
 }

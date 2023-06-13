@@ -1,4 +1,4 @@
-package dev.anhcraft.oreprocessor.integration.shop;
+package dev.anhcraft.oreprocessor.api.integration;
 
 public enum ShopProviderType {
     SHOPGUIPLUS("ShopGUIPlus"),

@@ -1,9 +1,6 @@
 package dev.anhcraft.oreprocessor.config;
 
-import dev.anhcraft.config.annotations.Configurable;
-import dev.anhcraft.config.annotations.Description;
-import dev.anhcraft.config.annotations.Example;
-import dev.anhcraft.config.annotations.Validation;
+import dev.anhcraft.config.annotations.*;
 
 import java.util.LinkedHashMap;
 
@@ -25,7 +22,7 @@ public class UpgradeConfig {
             "    cost: 300000"
     )
     @Validation(notNull = true, notEmpty = true)
-    public LinkedHashMap<String, UpgradeLevel> throughputUpgrade;
+    public LinkedHashMap<String, UpgradeLevelConfig> throughputUpgrade;
 
     @Description("Capacity upgrade configuration")
     @Example(
@@ -43,5 +40,12 @@ public class UpgradeConfig {
             "    cost: 100000"
     )
     @Validation(notNull = true, notEmpty = true)
-    public LinkedHashMap<String, UpgradeLevel> capacityUpgrade;
+    public LinkedHashMap<String, UpgradeLevelConfig> capacityUpgrade;
+
+    @PostHandler
+    private void handle() {
+        if (!throughputUpgrade.containsKey("default") || !capacityUpgrade.containsKey("default")) {
+            throw new RuntimeException("Default upgrade must always exist");
+        }
+    }
 }

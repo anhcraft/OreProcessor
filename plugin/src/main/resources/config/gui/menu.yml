@@ -19,5 +19,5 @@ ore-lore:
   - "&7▪ In storage: {storage-current}/{storage-capacity}"
   - "&7▪ Throughput: {throughput}/m"
   - ""
-  - "&e» Left-click to open storage."
-  - "&e» Right-click to upgrade."
+  - "&e» Left-click to open storage"
+  - "&e» Right-click to upgrade"

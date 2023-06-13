@@ -5,7 +5,7 @@ import dev.anhcraft.oreprocessor.OreProcessor;
 import dev.anhcraft.oreprocessor.integration.shop.EconomyShopGUIBridge;
 import dev.anhcraft.oreprocessor.integration.shop.ShopGuiPlusBridge;
 import dev.anhcraft.oreprocessor.integration.shop.ShopProvider;
-import dev.anhcraft.oreprocessor.integration.shop.ShopProviderType;
+import dev.anhcraft.oreprocessor.api.integration.ShopProviderType;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;

@@ -10,7 +10,6 @@ import dev.anhcraft.oreprocessor.config.MainConfig;
 import dev.anhcraft.oreprocessor.config.MessageConfig;
 import dev.anhcraft.oreprocessor.config.UpgradeConfig;
 import dev.anhcraft.oreprocessor.gui.*;
-import dev.anhcraft.oreprocessor.handler.OreProcessorApiImpl;
 import dev.anhcraft.oreprocessor.handler.ProcessingPlant;
 import dev.anhcraft.oreprocessor.integration.IntegrationManager;
 import dev.anhcraft.oreprocessor.storage.PlayerDataManager;
@@ -30,13 +29,13 @@ import java.io.IOException;
 public final class OreProcessor extends JavaPlugin {
     private static OreProcessor INSTANCE;
     private static OreProcessorApiImpl API;
-    public MainConfig mainConfig;
-    public UpgradeConfig upgradeConfig;
     public MessageConfig messageConfig;
     public IntegrationManager integrationManager;
-    public ProcessingPlant processingPlant;
-    public PlayerDataManager playerDataManager;
+    private ProcessingPlant processingPlant;
     public Economy economy;
+    MainConfig mainConfig;
+    UpgradeConfig upgradeConfig;
+    public PlayerDataManager playerDataManager;
 
     @NotNull
     public static OreProcessor getInstance() {
@@ -104,7 +103,6 @@ public final class OreProcessor extends JavaPlugin {
 
     public void reload() {
         getServer().getScheduler().cancelTasks(this);
-        new GuiRefreshTask().runTaskTimer(this, 0L, 20L);
 
         getDataFolder().mkdir();
         mainConfig = ConfigHelper.load(MainConfig.class, requestConfig("config.yml"));
@@ -118,6 +116,9 @@ public final class OreProcessor extends JavaPlugin {
 
         processingPlant.reload();
         playerDataManager.reload();
+        API.reload();
+
+        new GuiRefreshTask().runTaskTimer(this, 0L, 20L);
     }
 
     public YamlConfiguration requestConfig(String path) {
@@ -133,13 +134,5 @@ public final class OreProcessor extends JavaPlugin {
         }
 
         return YamlConfiguration.loadConfiguration(f);
-    }
-
-    public int getDefaultCapacity() {
-        return upgradeConfig.capacityUpgrade.get("default").amount;
-    }
-
-    public Integer getDefaultThroughput() {
-        return upgradeConfig.throughputUpgrade.get("default").amount;
     }
 }

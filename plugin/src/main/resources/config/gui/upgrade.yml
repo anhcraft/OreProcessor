@@ -13,12 +13,10 @@ components:
     material: black_stained_glass_pane
   "T":
     type: throughput
-    material: hopper
-    name: "&dUpgrade throughput"
+    material: gray_stained_glass_pane
   "C":
     type: capacity
-    material: chest
-    name: "&dUpgrade capacity"
+    material: gray_stained_glass_pane
   "|":
     type: back
     material: barrier
@@ -26,52 +24,70 @@ components:
     lore:
       - "&e» Go back to main menu"
 
-throughput-upgradable-lore:
-  - "&fIncrease processing rate to obtain {ore} faster."
-  - ""
-  - "&7▪ Current: {current-throughput}/m"
-  - "&7▪ Next level: {next-throughput}/m"
-  - "&7▪ Upgrade cost: ${cost}"
-  - ""
-  - "&e» Click to confirm upgrade."
+throughput-upgradable-icon:
+  material: hopper
+  name: "&dUpgrade throughput"
+  lore:
+    - "&fIncrease processing rate to obtain {ore} faster."
+    - ""
+    - "&7▪ Current: {current-throughput}/m"
+    - "&7▪ Next level: {next-throughput}/m"
+    - "&7▪ Upgrade cost: ${cost}"
+    - ""
+    - "&e» Click to confirm upgrade."
 
-throughput-unaffordable-lore:
-  - "&fIncrease processing rate to obtain {ore} faster."
-  - ""
-  - "&7▪ Current: {current-throughput}/m"
-  - "&7▪ Next level: {next-throughput}/m"
-  - "&7▪ Upgrade cost: ${cost}"
-  - ""
-  - "&c[Not enough balance]"
+throughput-unaffordable-icon:
+  material: barrier
+  name: "&dUpgrade throughput"
+  lore:
+    - "&fIncrease processing rate to obtain {ore} faster."
+    - ""
+    - "&7▪ Current: {current-throughput}/m"
+    - "&7▪ Next level: {next-throughput}/m"
+    - "&7▪ Upgrade cost: ${cost}"
+    - ""
+    - "&c[Not enough balance]"
 
-throughput-maximized-lore:
-  - "&fIncrease processing rate to obtain {ore} faster."
-  - ""
-  - "&7▪ Current: {current-throughput}/m"
-  - ""
-  - "&c[Maximum level reached]"
+throughput-maximized-icon:
+  material: barrier
+  name: "&dUpgrade throughput"
+  lore:
+    - "&fIncrease processing rate to obtain {ore} faster."
+    - ""
+    - "&7▪ Current: {current-throughput}/m"
+    - ""
+    - "&c[Maximum level reached]"
 
-capacity-upgradable-lore:
-  - "&fIncrease {ore} storage capacity."
-  - ""
-  - "&7▪ Current: {current-capacity}"
-  - "&7▪ Next level: {next-capacity}"
-  - "&7▪ Upgrade cost: ${cost}"
-  - ""
-  - "&e» Click to confirm upgrade."
+capacity-upgradable-icon:
+  material: chest
+  name: "&dUpgrade capacity"
+  lore:
+    - "&fIncrease {ore} storage capacity."
+    - ""
+    - "&7▪ Current: {current-capacity}"
+    - "&7▪ Next level: {next-capacity}"
+    - "&7▪ Upgrade cost: ${cost}"
+    - ""
+    - "&e» Click to confirm upgrade."
 
-capacity-unaffordable-lore:
-  - "&fIncrease {ore} storage capacity."
-  - ""
-  - "&7▪ Current: {current-capacity}"
-  - "&7▪ Next level: {next-capacity}"
-  - "&7▪ Upgrade cost: ${cost}"
-  - ""
-  - "&c[Not enough balance]"
+capacity-unaffordable-icon:
+  material: barrier
+  name: "&dUpgrade capacity"
+  lore:
+    - "&fIncrease {ore} storage capacity."
+    - ""
+    - "&7▪ Current: {current-capacity}"
+    - "&7▪ Next level: {next-capacity}"
+    - "&7▪ Upgrade cost: ${cost}"
+    - ""
+    - "&c[Not enough balance]"
 
-capacity-maximized-lore:
-  - "&fIncrease {ore} storage capacity."
-  - ""
-  - "&7▪ Current: {current-capacity}"
-  - ""
-  - "&c[Maximum level reached]"
+capacity-maximized-icon:
+  material: barrier
+  name: "&dUpgrade capacity"
+  lore:
+    - "&fIncrease {ore} storage capacity."
+    - ""
+    - "&7▪ Current: {current-capacity}"
+    - ""
+    - "&c[Maximum level reached]"

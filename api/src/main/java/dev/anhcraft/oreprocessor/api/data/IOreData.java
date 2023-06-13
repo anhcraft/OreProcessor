@@ -1,6 +1,7 @@
 package dev.anhcraft.oreprocessor.api.data;
 
 import org.bukkit.Material;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -42,5 +43,6 @@ public interface IOreData extends ModifiableData {
         return countAllFeedstock() + countAllProducts() >= getCapacity();
     }
 
+    @ApiStatus.Internal
     void process(int throughputMultiplier, @NotNull UnaryOperator<Material> function);
 }

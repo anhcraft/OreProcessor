@@ -1,5 +1,6 @@
 package dev.anhcraft.oreprocessor.api.data;
 
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -10,17 +11,20 @@ public interface IPlayerData extends ModifiableData {
 
     boolean hasHideTutorial();
 
+    @ApiStatus.Internal
     void setHideTutorial(boolean value);
 
     @NotNull
     List<String> listOreIds();
-
-    @NotNull
-    List<IOreData> listOreData();
 
     @Nullable
     IOreData getOreData(@NotNull String ore);
 
     @NotNull
     IOreData requireOreData(@NotNull String ore);
+
+    long getHibernationStart();
+
+    @ApiStatus.Internal
+    void setHibernationStart(long hibernationStart);
 }

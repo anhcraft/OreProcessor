@@ -12,7 +12,7 @@ class PlayerDataConfig {
     @Exclude
     public final AtomicBoolean dirty = new AtomicBoolean(false);
 
-    public int dataVersion;
+    public int dataVersion = 1; // TODO Change this on new data version
 
     public boolean hideTutorial;
 

@@ -3,12 +3,11 @@ package dev.anhcraft.oreprocessor.gui;
 import dev.anhcraft.config.bukkit.utils.ItemBuilder;
 import dev.anhcraft.oreprocessor.OreProcessor;
 import dev.anhcraft.oreprocessor.api.Ore;
-import dev.anhcraft.oreprocessor.config.UpgradeLevel;
-import dev.anhcraft.oreprocessor.storage.data.PlayerDataConfig;
+import dev.anhcraft.oreprocessor.api.data.IOreData;
+import dev.anhcraft.oreprocessor.api.data.IPlayerData;
+import dev.anhcraft.oreprocessor.api.upgrade.UpgradeLevel;
 import dev.anhcraft.palette.event.ClickEvent;
 import dev.anhcraft.palette.ui.GuiHandler;
-import dev.anhcraft.palette.util.ItemReplacer;
-import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -20,9 +19,10 @@ import static dev.anhcraft.oreprocessor.gui.GuiRegistry.UPGRADE;
 
 public class UpgradeGuiHandler extends GuiHandler {
     private final static NumberFormat numberFormat = NumberFormat.getInstance();
-    private final OreProcessor plugin;
-    private final Ore ore;
     private final String oreId;
+    private final Ore ore;
+    private final OreProcessor plugin;
+    private IOreData oreData;
 
     public UpgradeGuiHandler(String oreId) {
         this.plugin = OreProcessor.getInstance();
@@ -32,6 +32,9 @@ public class UpgradeGuiHandler extends GuiHandler {
 
     @Override
     public void onPreOpen(@NotNull Player player) {
+        IPlayerData playerData = OreProcessor.getApi().getPlayerData(player);
+        this.oreData = playerData.requireOreData(oreId);
+
         listen("back", new ClickEvent() {
             @Override
             public void onClick(@NotNull InventoryClickEvent clickEvent, @NotNull Player player, int slot) {
@@ -43,111 +46,106 @@ public class UpgradeGuiHandler extends GuiHandler {
     }
 
     public void refresh(Player player) {
-        PlayerDataConfig playerData = OreProcessor.getInstance().playerDataManager.getData(player);
+        refreshThroughput(player);
+        refreshCapacity(player);
+    }
 
-        int currentThroughput = playerData.getThroughput(product);
-        UpgradeLevel nextThroughput = OreProcessor.getInstance().processingPlant.findNextThroughputUpgrade(currentThroughput);
+    private void refreshThroughput(Player player) {
+        int currentThroughput = oreData.getThroughput();
+        UpgradeLevel nextThroughput = OreProcessor.getApi().getNextThroughputUpgrade(currentThroughput);
+        String currentThroughputM = Integer.toString(OreProcessor.getApi().getThroughputPerMinute(currentThroughput));
 
         if (nextThroughput == null) {
+            ItemBuilder itemBuilder = UPGRADE.getThroughputMaximizedIcon();
+            itemBuilder.replaceDisplay(s -> s.replace("{ore}", ore.getName())
+                    .replace("{current-throughput}", currentThroughputM));
+
             for (int slot : locateComponent("throughput")) {
                 getSlot(slot).setEvents();
-
-                replaceItem(slot, new ItemReplacer() {
-                    @Override
-                    public @NotNull ItemBuilder apply(int slot, @NotNull ItemBuilder itemBuilder) {
-                        itemBuilder.lore().addAll(UPGRADE.throughputMaximizedLore);
-                        itemBuilder.replaceDisplay(s -> s.replace("{ore}", OreProcessor.getInstance().mainConfig.ores.get(product).name)
-                                .replace("{current-throughput}", playerData.getThroughputPerMinute(product)));
-                        return itemBuilder;
-                    }
-                });
+                getInventory().setItem(slot, itemBuilder.build());
             }
         } else {
-            boolean canUpgradeThroughput = OreProcessor.getInstance().economy.getBalance(player) >= nextThroughput.cost;
+            boolean affordable = plugin.economy.getBalance(player) >= nextThroughput.getCost();
 
-            for (int slot : locateComponent("throughput")) {
-                if (canUpgradeThroughput)
+            ItemBuilder itemBuilder = affordable ? UPGRADE.getThroughputUpgradableIcon() : UPGRADE.getThroughputUnaffordableIcon();
+            String nextThroughputM = Integer.toString(OreProcessor.getApi().getThroughputPerMinute(nextThroughput.getAmount()));
+            itemBuilder.replaceDisplay(s -> s.replace("{ore}", ore.getName())
+                    .replace("{current-throughput}", currentThroughputM)
+                    .replace("{next-throughput}", nextThroughputM)
+                    .replace("{cost}", numberFormat.format(nextThroughput.getCost())));
+
+            if (affordable) {
+                for (int slot : locateComponent("throughput")) {
                     getSlot(slot).setEvents((ClickEvent) (clickEvent, player1, slot1) -> upgradeThroughput(player1, nextThroughput));
-                else
-                    getSlot(slot).setEvents((ClickEvent) (clickEvent, player1, slot1) -> player1.playSound(player1.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1f, 1f));
-
-                replaceItem(slot, new ItemReplacer() {
-                    @Override
-                    public @NotNull ItemBuilder apply(int slot, @NotNull ItemBuilder itemBuilder) {
-                        itemBuilder.lore().addAll(canUpgradeThroughput ? UPGRADE.throughputUpgradableLore : UPGRADE.throughputUnaffordableLore);
-                        itemBuilder.replaceDisplay(s -> s.replace("{ore}", OreProcessor.getInstance().mainConfig.ores.get(product).name)
-                                .replace("{current-throughput}", playerData.getThroughputPerMinute(product))
-                                .replace("{next-throughput}", Integer.toString((int) (nextThroughput.amount * 60d / OreProcessor.getInstance().mainConfig.processingSpeed)))
-                                .replace("{cost}", numberFormat.format(nextThroughput.cost)));
-                        return itemBuilder;
-                    }
-                });
+                    getInventory().setItem(slot, itemBuilder.build());
+                }
+            } else {
+                for (int slot : locateComponent("throughput")) {
+                    getSlot(slot).setEvents();
+                    getInventory().setItem(slot, itemBuilder.build());
+                }
             }
         }
+    }
 
-        int currentCapacity = playerData.getCapacity(product);
-        UpgradeLevel nextCapacity = OreProcessor.getInstance().processingPlant.findNextCapacityUpgrade(currentCapacity);
+    private void refreshCapacity(Player player) {
+        int currentCapacity = oreData.getCapacity();
+        UpgradeLevel nextCapacity = OreProcessor.getApi().getNextCapacityUpgrade(currentCapacity);
 
         if (nextCapacity == null) {
+            ItemBuilder itemBuilder = UPGRADE.getCapacityMaximizedIcon();
+            itemBuilder.replaceDisplay(s -> s.replace("{ore}", ore.getName())
+                    .replace("{current-capacity}", Integer.toString(currentCapacity)));
+
             for (int slot : locateComponent("capacity")) {
                 getSlot(slot).setEvents();
-
-                replaceItem(slot, new ItemReplacer() {
-                    @Override
-                    public @NotNull ItemBuilder apply(int slot, @NotNull ItemBuilder itemBuilder) {
-                        itemBuilder.lore().addAll(UPGRADE.capacityMaximizedLore);
-                        itemBuilder.replaceDisplay(s -> s.replace("{ore}", OreProcessor.getInstance().mainConfig.ores.get(product).name)
-                                .replace("{current-capacity}", Integer.toString(currentCapacity)));
-                        return itemBuilder;
-                    }
-                });
+                getInventory().setItem(slot, itemBuilder.build());
             }
         } else {
-            boolean canUpgradeCapacity = OreProcessor.getInstance().economy.getBalance(player) >= nextCapacity.cost;
+            boolean affordable = plugin.economy.getBalance(player) >= nextCapacity.getCost();
 
-            for (int slot : locateComponent("capacity")) {
-                if (canUpgradeCapacity)
+            ItemBuilder itemBuilder = affordable ? UPGRADE.getCapacityUpgradableIcon() : UPGRADE.getCapacityUnaffordableIcon();
+            itemBuilder.replaceDisplay(s -> s.replace("{ore}", ore.getName())
+                    .replace("{current-capacity}", Integer.toString(currentCapacity))
+                    .replace("{next-capacity}", Integer.toString(nextCapacity.getAmount()))
+                    .replace("{cost}", numberFormat.format(nextCapacity.getCost())));
+
+            if (affordable) {
+                for (int slot : locateComponent("capacity")) {
                     getSlot(slot).setEvents((ClickEvent) (clickEvent, player1, slot1) -> upgradeCapacity(player1, nextCapacity));
-                else
-                    getSlot(slot).setEvents((ClickEvent) (clickEvent, player1, slot1) -> player1.playSound(player1.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1f, 1f));
-
-                replaceItem(slot, new ItemReplacer() {
-                    @Override
-                    public @NotNull ItemBuilder apply(int slot, @NotNull ItemBuilder itemBuilder) {
-                        itemBuilder.lore().addAll(canUpgradeCapacity ? UPGRADE.capacityUpgradableLore : UPGRADE.capacityUnaffordableLore);
-                        itemBuilder.replaceDisplay(s -> s.replace("{ore}", OreProcessor.getInstance().mainConfig.ores.get(product).name)
-                                .replace("{current-capacity}", Integer.toString(currentCapacity))
-                                .replace("{next-capacity}", Integer.toString(nextCapacity.amount))
-                                .replace("{cost}", numberFormat.format(nextCapacity.cost)));
-                        return itemBuilder;
-                    }
-                });
+                    getInventory().setItem(slot, itemBuilder.build());
+                }
+            } else {
+                for (int slot : locateComponent("capacity")) {
+                    getSlot(slot).setEvents();
+                    getInventory().setItem(slot, itemBuilder.build());
+                }
             }
         }
     }
 
     private void upgradeThroughput(Player player, UpgradeLevel nextThroughput) {
-        if (OreProcessor.getInstance().economy.withdrawPlayer(player, nextThroughput.cost).transactionSuccess()) {
-            PlayerDataConfig playerData = OreProcessor.getInstance().playerDataManager.getData(player);
-            playerData.setThroughput(product, nextThroughput.amount);
+        if (plugin.economy.withdrawPlayer(player, nextThroughput.getCost()).transactionSuccess()) {
+            oreData.setThroughput(nextThroughput.getAmount());
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
-            OreProcessor.getInstance().msg(player, OreProcessor.getInstance().messageConfig.upgradeSuccess);
+            plugin.msg(player, plugin.messageConfig.upgradeThroughputSuccess.replace("{ore}", ore.getName())
+                    .replace("{amount}", Integer.toString(OreProcessor.getApi().getThroughputPerMinute(nextThroughput.getAmount()))));
         } else {
             player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f);
-            OreProcessor.getInstance().msg(player, OreProcessor.getInstance().messageConfig.upgradeFailed);
+            plugin.msg(player, plugin.messageConfig.upgradeThroughputFailed);
         }
         refresh(player);
     }
 
     private void upgradeCapacity(Player player, UpgradeLevel nextCapacity) {
-        if (OreProcessor.getInstance().economy.withdrawPlayer(player, nextCapacity.cost).transactionSuccess()) {
-            PlayerDataConfig playerData = OreProcessor.getInstance().playerDataManager.getData(player);
-            playerData.setCapacity(product, nextCapacity.amount);
+        if (plugin.economy.withdrawPlayer(player, nextCapacity.getCost()).transactionSuccess()) {
+            oreData.setCapacity(nextCapacity.getAmount());
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
-            OreProcessor.getInstance().msg(player, OreProcessor.getInstance().messageConfig.upgradeSuccess);
+            plugin.msg(player, plugin.messageConfig.upgradeCapacitySuccess.replace("{ore}", ore.getName())
+                    .replace("{amount}", Integer.toString(nextCapacity.getAmount())));
         } else {
             player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f);
-            OreProcessor.getInstance().msg(player, OreProcessor.getInstance().messageConfig.upgradeFailed);
+            plugin.msg(player, plugin.messageConfig.upgradeCapacityFailed);
         }
         refresh(player);
     }

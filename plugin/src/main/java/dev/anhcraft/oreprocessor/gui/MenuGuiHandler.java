@@ -17,10 +17,11 @@ import java.util.Collections;
 import java.util.List;
 
 public class MenuGuiHandler extends GuiHandler implements AutoRefresh {
+    private IPlayerData playerData;
 
     @Override
     public void onPreOpen(@NotNull Player player) {
-        IPlayerData playerData = OreProcessor.getInstance().playerDataManager.getData(player);
+        playerData = OreProcessor.getApi().getPlayerData(player);
         playerData.setHideTutorial(true);
 
         refresh(player);
@@ -28,7 +29,6 @@ public class MenuGuiHandler extends GuiHandler implements AutoRefresh {
 
     @Override
     public void refresh(Player player) {
-        IPlayerData playerData = OreProcessor.getInstance().playerDataManager.getData(player);
         List<Integer> slots = new ArrayList<>(locateComponent("ore"));
         Collections.sort(slots);
         List<String> ores = OreProcessor.getApi().getOres();
@@ -48,13 +48,13 @@ public class MenuGuiHandler extends GuiHandler implements AutoRefresh {
                     int processing = oreData.countAllFeedstock();
                     int stored = oreData.countAllProducts();
                     int cap = oreData.getCapacity();
-                    double throughputM = (oreData.getThroughput() * 60d / OreProcessor.getInstance().mainConfig.processingSpeed);
+                    int throughputM = OreProcessor.getApi().getThroughputPerMinute(oreData.getThroughput());
                     itemBuilder.replaceDisplay(s -> s.replace("{ore}", ore.getName())
                             .replace("{processing}", Integer.toString(processing))
                             .replace("{storage-current}", Integer.toString(stored))
                             .replace("{storage-capacity}", Integer.toString(cap))
                             .replace("{storage-ratio}", Integer.toString((int) (((double) stored) / cap * 100d)))
-                            .replace("{throughput}", Integer.toString((int) throughputM)));
+                            .replace("{throughput}", Integer.toString(throughputM)));
                     return itemBuilder;
                 }
             });

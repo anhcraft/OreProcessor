@@ -10,15 +10,17 @@ public class MessageConfig {
     @Validation(notNull = true)
     public String prefix;
     @Validation(notNull = true)
-    public String upgradeSuccess;
+    public String upgradeThroughputSuccess;
     @Validation(notNull = true)
-    public String upgradeFailed;
+    public String upgradeThroughputFailed;
+    @Validation(notNull = true)
+    public String upgradeCapacitySuccess;
+    @Validation(notNull = true)
+    public String upgradeCapacityFailed;
     @Validation(notNull = true)
     public String storageFull;
     @Validation(notNull = true)
     public List<String> firstTimeTutorial;
     @Validation(notNull = true)
     public String quickSellSuccess;
-    @Validation(notNull = true)
-    public String quickSellFailed;
 }

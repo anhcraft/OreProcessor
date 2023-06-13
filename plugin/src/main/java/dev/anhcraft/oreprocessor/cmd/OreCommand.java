@@ -9,7 +9,7 @@ import dev.anhcraft.oreprocessor.OreProcessor;
 import dev.anhcraft.oreprocessor.config.MainConfig;
 import dev.anhcraft.oreprocessor.config.MessageConfig;
 import dev.anhcraft.oreprocessor.config.OreConfig;
-import dev.anhcraft.oreprocessor.config.UpgradeLevel;
+import dev.anhcraft.oreprocessor.config.UpgradeLevelConfig;
 import dev.anhcraft.oreprocessor.gui.GuiRegistry;
 import dev.anhcraft.oreprocessor.gui.MenuGui;
 import dev.anhcraft.oreprocessor.gui.StorageGui;
@@ -45,7 +45,7 @@ public class OreCommand extends BaseCommand {
         new ConfigDocGenerator()
                 .withSchemaOf(MainConfig.class)
                 .withSchemaOf(OreConfig.class)
-                .withSchemaOf(UpgradeLevel.class)
+                .withSchemaOf(UpgradeLevelConfig.class)
                 .withSchemaOf(MessageConfig.class)
                 .withSchemaOf(MenuGui.class)
                 .withSchemaOf(StorageGui.class)
