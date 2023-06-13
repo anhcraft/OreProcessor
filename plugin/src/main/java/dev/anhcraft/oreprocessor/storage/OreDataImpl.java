@@ -1,7 +1,7 @@
 package dev.anhcraft.oreprocessor.storage;
 
 import dev.anhcraft.oreprocessor.OreProcessor;
-import dev.anhcraft.oreprocessor.api.data.IOreData;
+import dev.anhcraft.oreprocessor.api.data.OreData;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,11 +10,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
-public class OreData implements IOreData {
+public class OreDataImpl implements OreData {
     private final OreDataConfig config;
-    private final AtomicBoolean dirty; 
+    private final AtomicBoolean dirty;
 
-    public OreData(@NotNull OreDataConfig config, @NotNull AtomicBoolean dirty) {
+    public OreDataImpl(@NotNull OreDataConfig config, @NotNull AtomicBoolean dirty) {
         this.config = config;
         this.dirty = dirty;
     }
@@ -102,9 +102,7 @@ public class OreData implements IOreData {
     @Override
     public int addProduct(@NotNull Material material, int expectedAmount, boolean force) {
         synchronized (config) {
-            int totalStored = countAllProducts();
-            int cap = getCapacity();
-            int toStore = force ? expectedAmount : Math.min(expectedAmount, cap - totalStored);
+            int toStore = force ? expectedAmount : Math.min(expectedAmount, getCapacity() - countAllProducts());
             int newVal = countProduct(material) + toStore;
 
             if (config.products == null)
@@ -114,7 +112,7 @@ public class OreData implements IOreData {
                 markDirty();
             }
 
-            return expectedAmount - toStore;
+            return toStore;
         }
     }
 
@@ -134,7 +132,7 @@ public class OreData implements IOreData {
                 markDirty();
             }
 
-            return expectedAmount - toTake;
+            return toTake;
         }
     }
 
@@ -192,6 +190,9 @@ public class OreData implements IOreData {
                 Map.Entry<Material, Integer> en = it.next();
                 Material source = en.getKey();
                 Material output = function.apply(source);
+                if (output == null || !output.isItem())
+                    continue;
+
                 int queued = en.getValue();
 
                 int toStore = Math.min(queued, getThroughput() * throughputMultiplier);

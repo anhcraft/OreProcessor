@@ -3,8 +3,8 @@ package dev.anhcraft.oreprocessor.gui;
 import dev.anhcraft.config.bukkit.utils.ItemBuilder;
 import dev.anhcraft.oreprocessor.OreProcessor;
 import dev.anhcraft.oreprocessor.api.Ore;
-import dev.anhcraft.oreprocessor.api.data.IOreData;
-import dev.anhcraft.oreprocessor.api.data.IPlayerData;
+import dev.anhcraft.oreprocessor.api.data.OreData;
+import dev.anhcraft.oreprocessor.api.data.PlayerData;
 import dev.anhcraft.oreprocessor.api.upgrade.UpgradeLevel;
 import dev.anhcraft.palette.event.ClickEvent;
 import dev.anhcraft.palette.ui.GuiHandler;
@@ -22,7 +22,7 @@ public class UpgradeGuiHandler extends GuiHandler {
     private final String oreId;
     private final Ore ore;
     private final OreProcessor plugin;
-    private IOreData oreData;
+    private OreData oreData;
 
     public UpgradeGuiHandler(String oreId) {
         this.plugin = OreProcessor.getInstance();
@@ -32,7 +32,7 @@ public class UpgradeGuiHandler extends GuiHandler {
 
     @Override
     public void onPreOpen(@NotNull Player player) {
-        IPlayerData playerData = OreProcessor.getApi().getPlayerData(player);
+        PlayerData playerData = OreProcessor.getApi().getPlayerData(player);
         this.oreData = playerData.requireOreData(oreId);
 
         listen("back", new ClickEvent() {

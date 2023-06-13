@@ -1,9 +1,12 @@
 package dev.anhcraft.oreprocessor;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 import dev.anhcraft.oreprocessor.api.Ore;
 import dev.anhcraft.oreprocessor.api.OreProcessorApi;
 import dev.anhcraft.oreprocessor.api.OreTransform;
-import dev.anhcraft.oreprocessor.api.data.IPlayerData;
+import dev.anhcraft.oreprocessor.api.data.PlayerData;
 import dev.anhcraft.oreprocessor.api.integration.ShopProviderType;
 import dev.anhcraft.oreprocessor.api.upgrade.UpgradeLevel;
 import dev.anhcraft.oreprocessor.config.OreConfig;
@@ -19,6 +22,8 @@ import java.util.concurrent.CompletableFuture;
 public final class OreProcessorApiImpl implements OreProcessorApi {
     private final OreProcessor plugin;
     private Map<String, Ore> ores;
+    private Map<Material, Ore> block2ores;
+    private Multimap<Material, Ore> feedstock2ores;
     private TreeMap<Integer, UpgradeLevel> throughputUpgrades;
     private TreeMap<Integer, UpgradeLevel> capacityUpgrade;
 
@@ -27,25 +32,58 @@ public final class OreProcessorApiImpl implements OreProcessorApi {
     }
 
     public void reload() {
-        Map<String, Ore> oreMap = new HashMap<>();
+        Map<String, Ore> oreMap = new LinkedHashMap<>();
+        feedstock2ores = HashMultimap.create();
 
         for (Map.Entry<String, OreConfig> entry : plugin.mainConfig.ores.entrySet()) {
             OreConfig oreConfig = entry.getValue();
+
             LinkedHashMap<String, OreTransform> transformMap = new LinkedHashMap<>();
+
             for (Map.Entry<String, Map<Material, Material>> e : oreConfig.transform.entrySet()) {
                 transformMap.put(e.getKey(), new OreTransform(Collections.unmodifiableMap(e.getValue())));
             }
 
-            oreMap.put(entry.getKey(), new Ore(
+            Set<Material> referenceFeedstock = null;
+
+            for (Iterator<OreTransform> it = transformMap.values().iterator(); it.hasNext(); ) {
+                OreTransform value = it.next();
+
+                if (referenceFeedstock == null)
+                    referenceFeedstock = value.getFeedstock();
+                else if (!value.getFeedstock().equals(referenceFeedstock)) {
+                    plugin.getLogger().warning(String.format("Ore '%s' has inconsistent feedstock", entry.getKey()));
+                    it.remove();
+                }
+            }
+
+            if (referenceFeedstock == null || transformMap.isEmpty()) {
+                plugin.getLogger().warning(String.format("Ore '%s' has no transform config", entry.getKey()));
+                continue;
+            }
+
+            if (!transformMap.containsKey("default")) {
+                plugin.getLogger().warning(String.format("Ore '%s' has no default transform config", entry.getKey()));
+                continue;
+            }
+
+            Ore ore = new Ore(
                     entry.getKey(),
                     oreConfig.name,
                     oreConfig.icon,
                     Collections.unmodifiableSet(oreConfig.blocks),
-                    Collections.unmodifiableMap(transformMap)
-            ));
+                    Collections.unmodifiableMap(transformMap),
+                    Collections.unmodifiableSet(referenceFeedstock)
+            );
+            oreMap.put(entry.getKey(), ore);
+
+            for (Material material : referenceFeedstock) {
+                feedstock2ores.put(material, ore);
+            }
         }
 
         ores = Collections.unmodifiableMap(oreMap);
+        feedstock2ores = ImmutableMultimap.copyOf(feedstock2ores);
 
         throughputUpgrades = new TreeMap<>();
         for (UpgradeLevelConfig upgradeLevelConfig : plugin.upgradeConfig.throughputUpgrade.values()) {
@@ -56,13 +94,22 @@ public final class OreProcessorApiImpl implements OreProcessorApi {
         for (UpgradeLevelConfig upgradeLevelConfig : plugin.upgradeConfig.capacityUpgrade.values()) {
             capacityUpgrade.put(upgradeLevelConfig.amount, new UpgradeLevel(upgradeLevelConfig.amount, upgradeLevelConfig.cost));
         }
+
+        block2ores = new HashMap<>();
+        for (Ore ore : oreMap.values()) {
+            for (Material block : ore.getBlocks()) {
+                if (block2ores.put(block, ore) != null) {
+                    plugin.getLogger().warning("Duplication detected: Ore '"+ore.getName()+"' exists in multiple blocks!");
+                }
+            }
+        }
     }
 
     @Override
-    public @NotNull List<String> getOres() {
+    public @NotNull Set<String> getOres() {
         if (ores == null)
             throw new UnsupportedOperationException("API is not ready yet");
-        return new ArrayList<>(ores.keySet());
+        return ores.keySet(); // immutable
     }
 
     @Override
@@ -70,6 +117,16 @@ public final class OreProcessorApiImpl implements OreProcessorApi {
         if (ores == null)
             throw new UnsupportedOperationException("API is not ready yet");
         return ores.get(id);
+    }
+
+    @Override
+    public @Nullable Ore getBlockOre(Material block) {
+        return block2ores.get(block);
+    }
+
+    @Override
+    public @NotNull Collection<Ore> getOresAllowFeedstock(Material feedstock) {
+        return feedstock2ores.get(feedstock);
     }
 
     @Override
@@ -93,17 +150,17 @@ public final class OreProcessorApiImpl implements OreProcessorApi {
     }
 
     @Override
-    public @NotNull IPlayerData getPlayerData(@NotNull Player player) {
+    public @NotNull PlayerData getPlayerData(@NotNull Player player) {
         return plugin.playerDataManager.getData(player);
     }
 
     @Override
-    public @NotNull Optional<IPlayerData> getPlayerData(@NotNull UUID id) {
+    public @NotNull Optional<PlayerData> getPlayerData(@NotNull UUID id) {
         return plugin.playerDataManager.getData(id);
     }
 
     @Override
-    public @NotNull CompletableFuture<IPlayerData> requirePlayerData(@NotNull UUID id) {
+    public @NotNull CompletableFuture<PlayerData> requirePlayerData(@NotNull UUID id) {
         return plugin.playerDataManager.requireData(id);
     }
 

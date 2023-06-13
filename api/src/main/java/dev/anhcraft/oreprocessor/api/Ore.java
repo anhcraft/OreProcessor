@@ -15,13 +15,15 @@ public class Ore {
     private final Material icon;
     private final Set<Material> blocks;
     private final Map<String, OreTransform> transform;
+    private final Set<Material> acceptableFeedstock;
 
-    public Ore(String id, String name, Material icon, Set<Material> blocks, Map<String, OreTransform> transform) {
+    public Ore(String id, String name, Material icon, Set<Material> blocks, Map<String, OreTransform> transform, Set<Material> acceptableFeedstock) {
         this.id = id;
         this.name = name;
         this.icon = icon;
         this.blocks = blocks; // unmodifiable
         this.transform = transform; // unmodifiable
+        this.acceptableFeedstock = acceptableFeedstock; // unmodifiable
     }
 
     @NotNull
@@ -80,5 +82,14 @@ public class Ore {
         }
 
         return getDefaultTransform();
+    }
+
+    @NotNull
+    public Set<Material> getAcceptableFeedstock() {
+        return acceptableFeedstock; // unmodifiable
+    }
+
+    public boolean isAcceptableFeedstock(Material material) {
+        return acceptableFeedstock.contains(material);
     }
 }

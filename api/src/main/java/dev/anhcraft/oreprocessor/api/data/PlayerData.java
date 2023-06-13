@@ -6,22 +6,22 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public interface IPlayerData extends ModifiableData {
+public interface PlayerData extends ModifiableData {
     int getDataVersion();
 
-    boolean hasHideTutorial();
+    boolean isTutorialHidden();
 
     @ApiStatus.Internal
-    void setHideTutorial(boolean value);
+    void hideTutorial(boolean value);
 
     @NotNull
     List<String> listOreIds();
 
     @Nullable
-    IOreData getOreData(@NotNull String ore);
+    OreData getOreData(@NotNull String ore);
 
     @NotNull
-    IOreData requireOreData(@NotNull String ore);
+    OreData requireOreData(@NotNull String ore);
 
     long getHibernationStart();
 

@@ -8,6 +8,7 @@ import dev.anhcraft.config.bukkit.BukkitConfigSerializer;
 import dev.anhcraft.config.bukkit.struct.YamlConfigSection;
 import dev.anhcraft.config.schema.SchemaScanner;
 import org.bukkit.configuration.ConfigurationSection;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -20,12 +21,12 @@ public class ConfigHelper {
         DESERIALIZER = new BukkitConfigDeserializer(BukkitConfigProvider.YAML);
     }
 
+    @NotNull
     public static <T> T load(Class<T> clazz, ConfigurationSection section) {
         try {
             return DESERIALIZER.transformConfig(Objects.requireNonNull(SchemaScanner.scanConfig(clazz)), new YamlConfigSection(section));
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            throw new RuntimeException(e);
         }
     }
 

@@ -1,9 +1,11 @@
 package dev.anhcraft.oreprocessor.storage;
 
 import com.google.common.base.Preconditions;
-import dev.anhcraft.jvmkit.utils.PresentPair;
 import dev.anhcraft.oreprocessor.OreProcessor;
-import dev.anhcraft.oreprocessor.api.data.IPlayerData;
+import dev.anhcraft.oreprocessor.api.data.PlayerData;
+import dev.anhcraft.oreprocessor.api.event.AsyncPlayerDataLoadEvent;
+import dev.anhcraft.oreprocessor.storage.compat.GenericPlayerDataConfig;
+import dev.anhcraft.oreprocessor.storage.compat.PlayerDataConfigV0;
 import dev.anhcraft.oreprocessor.util.ConfigHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -21,7 +23,7 @@ import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 public class PlayerDataManager implements Listener {
     private final static long EXPIRATION_TIME = Duration.ofMinutes(5).toMillis();
@@ -29,7 +31,6 @@ public class PlayerDataManager implements Listener {
     private final Map<UUID, TrackedPlayerData> playerDataMap = new HashMap<>();
     private final Object LOCK = new Object();
     private final File folder;
-    private Consumer<PresentPair<UUID, PlayerDataConfig>> onPlayerDataLoad;
 
     public PlayerDataManager(OreProcessor plugin) {
         this.plugin = plugin;
@@ -51,30 +52,56 @@ public class PlayerDataManager implements Listener {
         plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, this::checkTask, 20, 200);
     }
 
-    public void setOnPlayerDataLoad(Consumer<PresentPair<UUID, PlayerDataConfig>> onPlayerDataLoad) {
-        if (this.onPlayerDataLoad != null) {
-            throw new IllegalStateException("onPlayerDataLoad already set");
-        }
-        this.onPlayerDataLoad = onPlayerDataLoad;
-    }
-
     @NotNull
-    private PlayerDataConfig loadData(UUID uuid) {
+    private PlayerDataConfigV1 loadData(UUID uuid) {
         File file = new File(folder, uuid + ".yml");
         if (file.exists()) {
-            return Objects.requireNonNull(ConfigHelper.load(PlayerDataConfig.class, YamlConfiguration.loadConfiguration(file)));
+            YamlConfiguration conf = YamlConfiguration.loadConfiguration(file);
+
+            // attempt to check version first
+            GenericPlayerDataConfig genericData = ConfigHelper.load(GenericPlayerDataConfig.class, conf);
+            if (genericData.dataVersion > OreProcessor.LATEST_PLAYER_DATA_VERSION) {
+                plugin.getLogger().severe(String.format(
+                        "Attempting to load player data '%s' from newer version (v%d) while maximum supported version is v%d",
+                        uuid, genericData.dataVersion, OreProcessor.LATEST_PLAYER_DATA_VERSION
+                ));
+                throw new RuntimeException();
+            }
+
+            if (genericData.dataVersion < 0) {
+                plugin.getLogger().severe(String.format(
+                        "Player data '%s' is broken as its version is v%d (while minimum is v0)",
+                        uuid, genericData.dataVersion
+                ));
+                throw new RuntimeException();
+            }
+
+            // --start: old data upgrade--
+            if (genericData.dataVersion == 0) {
+                PlayerDataConfigV0 playerData = ConfigHelper.load(PlayerDataConfigV0.class, conf);
+                genericData = PlayerDataConverter.convert(playerData); // data is now V1
+                plugin.debug("Player data '%s' has been upgraded to V1!", uuid);
+            }
+            // --end--
+
+            // If the version is already latest or went through all data upgrades successfully
+            if (genericData.dataVersion == OreProcessor.LATEST_PLAYER_DATA_VERSION) {
+                genericData = ConfigHelper.load(PlayerDataConfigV1.class, conf);
+            }
+
+            return (PlayerDataConfigV1) genericData;
         } else {
-            // If data not exists, don't create file
-            return new PlayerDataConfig();
+            // If data not exists, don't create file (it is unneeded)
+            return new PlayerDataConfigV1();
         }
     }
 
-    private void saveDataIfDirty(UUID uuid, @NotNull PlayerDataConfig playerData) {
+    private void saveDataIfDirty(UUID uuid, @NotNull PlayerDataConfigV1 playerData) {
         if (playerData.dirty.compareAndSet(true, false)) {
             plugin.debug("Saving %s's data...", uuid);
             File file = new File(folder, uuid + ".yml");
             YamlConfiguration conf = new YamlConfiguration();
-            ConfigHelper.save(PlayerDataConfig.class, conf, playerData);
+            ConfigHelper.save(PlayerDataConfigV1.class, conf, playerData);
             try {
                 conf.save(file);
             } catch (IOException e) {
@@ -83,40 +110,40 @@ public class PlayerDataManager implements Listener {
         }
     }
 
-    public void streamData(Consumer<IPlayerData> consumer) {
+    public void streamData(BiConsumer<UUID, PlayerData> consumer) {
         synchronized (LOCK) {
-            for (TrackedPlayerData tpd : playerDataMap.values()) {
-                consumer.accept(new PlayerData(tpd.getPlayerData()));
+            for (Map.Entry<UUID, TrackedPlayerData> e : playerDataMap.entrySet()) {
+                consumer.accept(e.getKey(), new PlayerDataImpl(e.getValue().getPlayerData()));
             }
         }
     }
 
     @NotNull
-    public Optional<IPlayerData> getData(@NotNull UUID uuid) {
+    public Optional<PlayerData> getData(@NotNull UUID uuid) {
         synchronized (LOCK) {
-            return Optional.ofNullable(playerDataMap.get(uuid)).map(TrackedPlayerData::getPlayerData).map(PlayerData::new);
+            return Optional.ofNullable(playerDataMap.get(uuid)).map(TrackedPlayerData::getPlayerData).map(PlayerDataImpl::new);
         }
     }
 
     @NotNull
-    public IPlayerData getData(@NotNull Player player) {
+    public PlayerData getData(@NotNull Player player) {
         Preconditions.checkArgument(player.isOnline(), "Player must be online");
 
         synchronized (LOCK) {
-            return new PlayerData(Objects.requireNonNull(playerDataMap.get(player.getUniqueId())).getPlayerData());
+            return new PlayerDataImpl(Objects.requireNonNull(playerDataMap.get(player.getUniqueId())).getPlayerData());
         }
     }
 
     @NotNull
-    public CompletableFuture<IPlayerData> requireData(@NotNull UUID uuid) {
+    public CompletableFuture<PlayerData> requireData(@NotNull UUID uuid) {
         synchronized (LOCK) {
             if (playerDataMap.containsKey(uuid)) {
-                return CompletableFuture.completedFuture(new PlayerData(playerDataMap.get(uuid).getPlayerData()));
+                return CompletableFuture.completedFuture(new PlayerDataImpl(playerDataMap.get(uuid).getPlayerData()));
             } else {
                 return CompletableFuture.supplyAsync(() -> {
-                    PlayerDataConfig playerData = loadData(uuid);
+                    PlayerDataConfigV1 playerData = loadData(uuid);
                     synchronized (LOCK) { // code is now async
-                        if (onPlayerDataLoad != null) onPlayerDataLoad.accept(new PresentPair<>(uuid, playerData));
+                        Bukkit.getPluginManager().callEvent(new AsyncPlayerDataLoadEvent(uuid, new PlayerDataImpl(playerData)));
                         TrackedPlayerData trackedPlayerData = new TrackedPlayerData(playerData, System.currentTimeMillis());
                         if (Bukkit.getPlayer(uuid) == null) {
                             trackedPlayerData.setShortTerm();
@@ -127,7 +154,7 @@ public class PlayerDataManager implements Listener {
                         }
                         playerDataMap.put(uuid, trackedPlayerData);
                     }
-                    return new PlayerData(playerData);
+                    return new PlayerDataImpl(playerData);
                 });
             }
         }
@@ -141,8 +168,10 @@ public class PlayerDataManager implements Listener {
                 plugin.debug("%s's data changed: ? term → long term", uuid);
                 playerDataMap.get(uuid).setLongTerm();
             } else {
-                PlayerDataConfig playerData = loadData(uuid);
-                if (onPlayerDataLoad != null) onPlayerDataLoad.accept(new PresentPair<>(uuid, playerData));
+                PlayerDataConfigV1 playerData = loadData(uuid);
+                CompletableFuture.runAsync(() -> {
+                    Bukkit.getPluginManager().callEvent(new AsyncPlayerDataLoadEvent(uuid, new PlayerDataImpl(playerData)));
+                });
                 TrackedPlayerData trackedPlayerData = new TrackedPlayerData(playerData, System.currentTimeMillis());
                 trackedPlayerData.setLongTerm();
                 playerDataMap.put(uuid, trackedPlayerData);
@@ -166,7 +195,7 @@ public class PlayerDataManager implements Listener {
         synchronized (LOCK) {
             for (Iterator<Map.Entry<UUID, TrackedPlayerData>> it = playerDataMap.entrySet().iterator(); it.hasNext(); ) {
                 Map.Entry<UUID, TrackedPlayerData> entry = it.next();
-                PlayerDataConfig playerData = entry.getValue().getPlayerData();
+                PlayerDataConfigV1 playerData = entry.getValue().getPlayerData();
                 boolean toRemove = entry.getValue().isShortTerm() && System.currentTimeMillis() - entry.getValue().getLoadTime() > EXPIRATION_TIME;
 
                 if (toRemove) {
@@ -188,7 +217,7 @@ public class PlayerDataManager implements Listener {
         synchronized (LOCK) {
             for (Iterator<Map.Entry<UUID, TrackedPlayerData>> it = playerDataMap.entrySet().iterator(); it.hasNext(); ) {
                 Map.Entry<UUID, TrackedPlayerData> entry = it.next();
-                PlayerDataConfig playerData = entry.getValue().getPlayerData();
+                PlayerDataConfigV1 playerData = entry.getValue().getPlayerData();
                 playerData.hibernationStart = System.currentTimeMillis();
                 playerData.markDirty();
                 saveDataIfDirty(entry.getKey(), playerData);

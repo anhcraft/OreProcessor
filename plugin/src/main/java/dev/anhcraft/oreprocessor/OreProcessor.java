@@ -27,15 +27,16 @@ import java.io.File;
 import java.io.IOException;
 
 public final class OreProcessor extends JavaPlugin {
+    public static final int LATEST_PLAYER_DATA_VERSION = 1;
     private static OreProcessor INSTANCE;
     private static OreProcessorApiImpl API;
-    public MessageConfig messageConfig;
     public IntegrationManager integrationManager;
+    public PlayerDataManager playerDataManager;
     private ProcessingPlant processingPlant;
     public Economy economy;
+    public MessageConfig messageConfig;
     MainConfig mainConfig;
     UpgradeConfig upgradeConfig;
-    public PlayerDataManager playerDataManager;
 
     @NotNull
     public static OreProcessor getInstance() {
@@ -118,7 +119,7 @@ public final class OreProcessor extends JavaPlugin {
         playerDataManager.reload();
         API.reload();
 
-        new GuiRefreshTask().runTaskTimer(this, 0L, 20L);
+        new GuiRefreshTask().runTaskTimer(this, 0L, 10L);
     }
 
     public YamlConfiguration requestConfig(String path) {

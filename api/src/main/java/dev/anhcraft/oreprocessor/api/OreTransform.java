@@ -4,6 +4,7 @@ import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,7 +22,7 @@ public class OreTransform {
 
     @NotNull
     public Set<Material> getProducts() {
-        return transformMap.keySet(); // unmodifiable
+        return new HashSet<>(transformMap.values()); // unmodifiable
     }
 
     public boolean hasFeedstock(Material material) {

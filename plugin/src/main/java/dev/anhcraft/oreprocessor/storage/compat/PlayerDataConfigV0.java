@@ -1,4 +1,4 @@
-package dev.anhcraft.oreprocessor.storage.converter;
+package dev.anhcraft.oreprocessor.storage.compat;
 
 import dev.anhcraft.config.annotations.Configurable;
 import dev.anhcraft.config.annotations.Exclude;
@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
 @Configurable
-public class PlayerDataV0 {
+public class PlayerDataConfigV0 extends GenericPlayerDataConfig {
     @Exclude
     public final AtomicBoolean dirty = new AtomicBoolean(false);
 
@@ -38,15 +38,11 @@ public class PlayerDataV0 {
     }
 
     public int getThroughput(Material product) {
-        return throughput.getOrDefault(product, OreProcessor.getInstance().getDefaultThroughput());
-    }
-
-    public String getThroughputPerMinute(Material ore) {
-        return Integer.toString((int) (getThroughput(ore) * 60d / OreProcessor.getInstance().mainConfig.processingSpeed));
+        return throughput.getOrDefault(product, OreProcessor.getApi().getDefaultThroughput());
     }
 
     public int getCapacity(Material product) {
-        return capacity.getOrDefault(product, OreProcessor.getInstance().getDefaultCapacity());
+        return capacity.getOrDefault(product, OreProcessor.getApi().getDefaultCapacity());
     }
 
     public int countQueuedOre(Material product) {
@@ -63,7 +59,7 @@ public class PlayerDataV0 {
 
     public boolean isStorageFull(Material product) {
         synchronized (dirty) {
-            return storage.getOrDefault(product, 0) + queuedOre.getOrDefault(product, 0) >= capacity.getOrDefault(product, OreProcessor.getInstance().getDefaultCapacity());
+            return storage.getOrDefault(product, 0) + queuedOre.getOrDefault(product, 0) >= capacity.getOrDefault(product, OreProcessor.getApi().getDefaultCapacity());
         }
     }
 

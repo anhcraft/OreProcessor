@@ -1,21 +1,19 @@
 package dev.anhcraft.oreprocessor.api;
 
-import dev.anhcraft.oreprocessor.api.data.IPlayerData;
+import dev.anhcraft.oreprocessor.api.data.PlayerData;
 import dev.anhcraft.oreprocessor.api.integration.ShopProviderType;
 import dev.anhcraft.oreprocessor.api.upgrade.UpgradeLevel;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 public interface OreProcessorApi {
     @NotNull
-    List<String> getOres();
+    Set<String> getOres();
 
     @Nullable
     Ore getOre(@NotNull String id);
@@ -24,6 +22,12 @@ public interface OreProcessorApi {
     default Ore requireOre(@NotNull String id) {
         return Objects.requireNonNull(getOre(id), "Ore not found: " + id);
     }
+
+    @Nullable
+    Ore getBlockOre(Material block);
+
+    @NotNull
+    Collection<Ore> getOresAllowFeedstock(Material feedstock);
 
     int getProcessingSpeed();
 
@@ -34,13 +38,13 @@ public interface OreProcessorApi {
     int getThroughputPerMinute(int throughput);
 
     @NotNull
-    IPlayerData getPlayerData(@NotNull Player player);
+    PlayerData getPlayerData(@NotNull Player player);
 
     @NotNull
-    Optional<IPlayerData> getPlayerData(@NotNull UUID id);
+    Optional<PlayerData> getPlayerData(@NotNull UUID id);
 
     @NotNull
-    CompletableFuture<IPlayerData> requirePlayerData(@NotNull UUID id);
+    CompletableFuture<PlayerData> requirePlayerData(@NotNull UUID id);
 
     @Nullable
     UpgradeLevel getNextThroughputUpgrade(int currentThroughput);

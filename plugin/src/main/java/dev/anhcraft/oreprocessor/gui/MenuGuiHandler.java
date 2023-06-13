@@ -3,8 +3,8 @@ package dev.anhcraft.oreprocessor.gui;
 import dev.anhcraft.config.bukkit.utils.ItemBuilder;
 import dev.anhcraft.oreprocessor.OreProcessor;
 import dev.anhcraft.oreprocessor.api.Ore;
-import dev.anhcraft.oreprocessor.api.data.IOreData;
-import dev.anhcraft.oreprocessor.api.data.IPlayerData;
+import dev.anhcraft.oreprocessor.api.data.OreData;
+import dev.anhcraft.oreprocessor.api.data.PlayerData;
 import dev.anhcraft.palette.event.ClickEvent;
 import dev.anhcraft.palette.ui.GuiHandler;
 import dev.anhcraft.palette.util.ItemReplacer;
@@ -17,12 +17,12 @@ import java.util.Collections;
 import java.util.List;
 
 public class MenuGuiHandler extends GuiHandler implements AutoRefresh {
-    private IPlayerData playerData;
+    private PlayerData playerData;
 
     @Override
     public void onPreOpen(@NotNull Player player) {
         playerData = OreProcessor.getApi().getPlayerData(player);
-        playerData.setHideTutorial(true);
+        playerData.hideTutorial(true);
 
         refresh(player);
     }
@@ -31,13 +31,13 @@ public class MenuGuiHandler extends GuiHandler implements AutoRefresh {
     public void refresh(Player player) {
         List<Integer> slots = new ArrayList<>(locateComponent("ore"));
         Collections.sort(slots);
-        List<String> ores = OreProcessor.getApi().getOres();
+        List<String> ores = new ArrayList<>(OreProcessor.getApi().getOres());
 
         for (int i = 0; i < Math.min(slots.size(), ores.size()); i++) {
             int slot = slots.get(i);
             String oreId = ores.get(i);
             Ore ore = OreProcessor.getApi().requireOre(oreId);
-            IOreData oreData = playerData.requireOreData(oreId);
+            OreData oreData = playerData.requireOreData(oreId);
 
             replaceItem(slot, new ItemReplacer() {
                 @Override

@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
-public interface IOreData extends ModifiableData {
+public interface OreData extends ModifiableData {
     int getThroughput();
 
     void setThroughput(int amount);

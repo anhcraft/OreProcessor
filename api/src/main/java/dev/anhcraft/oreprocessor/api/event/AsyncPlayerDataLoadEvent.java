@@ -1,6 +1,6 @@
 package dev.anhcraft.oreprocessor.api.event;
 
-import dev.anhcraft.oreprocessor.api.data.IPlayerData;
+import dev.anhcraft.oreprocessor.api.data.PlayerData;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.ApiStatus;
@@ -13,9 +13,9 @@ public class AsyncPlayerDataLoadEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
 
     private final UUID uuid;
-    private final IPlayerData data;
+    private final PlayerData data;
 
-    public AsyncPlayerDataLoadEvent(@NotNull UUID uuid, @NotNull IPlayerData data) {
+    public AsyncPlayerDataLoadEvent(@NotNull UUID uuid, @NotNull PlayerData data) {
         super(true);
         this.uuid = uuid;
         this.data = data;
@@ -27,7 +27,7 @@ public class AsyncPlayerDataLoadEvent extends Event {
     }
 
     @NotNull
-    public IPlayerData getData() {
+    public PlayerData getData() {
         return data;
     }
 

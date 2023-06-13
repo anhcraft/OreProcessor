@@ -3,8 +3,8 @@ package dev.anhcraft.oreprocessor.gui;
 import dev.anhcraft.config.bukkit.utils.ItemBuilder;
 import dev.anhcraft.oreprocessor.OreProcessor;
 import dev.anhcraft.oreprocessor.api.Ore;
-import dev.anhcraft.oreprocessor.api.data.IOreData;
-import dev.anhcraft.oreprocessor.api.data.IPlayerData;
+import dev.anhcraft.oreprocessor.api.data.OreData;
+import dev.anhcraft.oreprocessor.api.data.PlayerData;
 import dev.anhcraft.oreprocessor.integration.shop.ShopProvider;
 import dev.anhcraft.palette.event.ClickEvent;
 import dev.anhcraft.palette.ui.GuiHandler;
@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,7 +29,7 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
     private final OreProcessor plugin;
     private final String oreId;
     private final Ore ore;
-    private IOreData oreData;
+    private OreData oreData;
 
     public StorageGuiHandler(String oreId) {
         this.plugin = OreProcessor.getInstance();
@@ -38,7 +39,7 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
 
     @Override
     public void onPreOpen(@NotNull Player player) {
-        IPlayerData playerData = OreProcessor.getApi().getPlayerData(player);
+        PlayerData playerData = OreProcessor.getApi().getPlayerData(player);
         this.oreData = playerData.requireOreData(oreId);
 
         listen("quick-sell", new ClickEvent() {
@@ -137,10 +138,11 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
         });
 
         List<Integer> productSlots = new ArrayList<>(locateComponent("product"));
+        Collections.sort(productSlots);
         List<Material> products = new ArrayList<>(oreData.getProducts());
         if (products.size() > productSlots.size()) {
             plugin.getLogger().warning(String.format(
-                    "%s has %d products while GUI's display capability is %d; ore: %s",
+                    "%s has %d products while GUI's display capability is %d (ore=%s)",
                     player.getName(), products.size(), productSlots.size(), ore.getName()
             ));
         }
@@ -149,6 +151,7 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
             int slot = productSlots.get(i);
 
             if (i >= products.size()) {
+                resetItem(slot);
                 getSlot(slot).setEvents();
                 continue;
             }
@@ -157,11 +160,7 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
             ItemBuilder itemBuilder = GuiRegistry.STORAGE.getProductIcon();
             itemBuilder.material(product);
 
-            itemBuilder.replaceDisplay(s -> s
-                    .replace("{current}", Integer.toString(oreData.countProduct(product)))
-                    .replace("{storage-current}", Integer.toString(stored))
-                    .replace("{storage-capacity}", Integer.toString(cap))
-            );
+            itemBuilder.replaceDisplay(s -> s.replace("{current}", Integer.toString(oreData.countProduct(product))));
 
             getInventory().setItem(slot, itemBuilder.build());
             getSlot(slot).setEvents(new ClickEvent() {
@@ -198,7 +197,7 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
                     }
 
                     // ADD
-                    else if (cursor.getType() == product) {
+                    else if (cursor.getType() == product && !oreData.isFull()) {
                         int stored = oreData.addProduct(product, cursor.getAmount(), false);
                         int remain = cursor.getAmount() - stored;
                         if (remain == 0) {
@@ -209,8 +208,10 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
                             player.setItemOnCursor(clone);
                         }
                         player.playSound(player.getLocation(), Sound.ENTITY_ITEM_FRAME_ADD_ITEM, 1f, 1f);
-
+                    } else {
+                        player.playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1f, 1f);
                     }
+
                 }
             });
         }
