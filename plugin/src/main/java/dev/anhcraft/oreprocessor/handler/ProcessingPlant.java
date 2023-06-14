@@ -6,8 +6,10 @@ import dev.anhcraft.oreprocessor.api.OreTransform;
 import dev.anhcraft.oreprocessor.api.data.OreData;
 import dev.anhcraft.oreprocessor.api.data.PlayerData;
 import dev.anhcraft.oreprocessor.api.event.AsyncPlayerDataLoadEvent;
+import dev.anhcraft.oreprocessor.api.event.OreMineEvent;
 import dev.anhcraft.oreprocessor.storage.stats.StatisticHelper;
 import dev.anhcraft.palette.util.ItemUtil;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.BlockState;
@@ -89,15 +91,16 @@ public class ProcessingPlant implements Listener {
 
         PlayerData playerData = OreProcessor.getApi().getPlayerData(player);
         OreData oreData = playerData.getOreData(ore.getId());
-        if (oreData == null || !oreData.isFull()) {
-            // can break & collect
+        boolean isFull = oreData != null && oreData.isFull();
+        Bukkit.getPluginManager().callEvent(new OreMineEvent(player, event.getBlock(), ore, isFull));
+
+        if (isFull) {
+            OreProcessor.getInstance().msg(player, OreProcessor.getInstance().messageConfig.storageFull);
+            event.setCancelled(true);
+        } else {
             StatisticHelper.increaseMiningCount(ore.getId(), playerData);
             StatisticHelper.increaseMiningCount(ore.getId(), OreProcessor.getApi().getServerData());
-            return;
         }
-
-        OreProcessor.getInstance().msg(player, OreProcessor.getInstance().messageConfig.storageFull);
-        event.setCancelled(true);
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
