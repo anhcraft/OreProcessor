@@ -34,8 +34,8 @@ public class PlayerDataManager implements Listener {
 
     public PlayerDataManager(OreProcessor plugin) {
         this.plugin = plugin;
-        folder = new File(plugin.getDataFolder(), "data");
-        folder.mkdir();
+        folder = new File(plugin.getDataFolder(), "data/players");
+        folder.mkdirs();
 
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
 
