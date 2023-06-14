@@ -1,5 +1,7 @@
 package dev.anhcraft.oreprocessor;
 
+import co.aikar.commands.BukkitCommandCompletionContext;
+import co.aikar.commands.CommandCompletions;
 import co.aikar.commands.PaperCommandManager;
 import com.google.common.base.Preconditions;
 import dev.anhcraft.jvmkit.utils.FileUtil;
@@ -85,6 +87,8 @@ public final class OreProcessor extends JavaPlugin {
         PaperCommandManager pcm = new PaperCommandManager(this);
         pcm.enableUnstableAPI("help");
         pcm.registerCommand(new OreCommand(this));
+        CommandCompletions<BukkitCommandCompletionContext> cmpl = pcm.getCommandCompletions();
+        cmpl.registerAsyncCompletion("ores", context -> API.getOres());
     }
 
     @Override
