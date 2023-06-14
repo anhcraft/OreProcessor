@@ -179,9 +179,11 @@ public class OreDataImpl implements OreData {
     }
 
     @Override
-    public void process(int throughputMultiplier, @NotNull UnaryOperator<Material> function) {
+    public int process(int throughputMultiplier, @NotNull UnaryOperator<Material> function) {
+        int totalProcessed = 0;
+
         synchronized (config) {
-            if (config.feedstock == null) return;
+            if (config.feedstock == null) return 0;
 
             int totalStored = countAllProducts();
             int cap = getCapacity();
@@ -194,7 +196,6 @@ public class OreDataImpl implements OreData {
                     continue;
 
                 int queued = en.getValue();
-
                 int toStore = Math.min(queued, getThroughput() * throughputMultiplier);
                 toStore = Math.min(toStore, cap - totalStored);
                 if (toStore == 0) break;
@@ -203,6 +204,7 @@ public class OreDataImpl implements OreData {
                     config.products = new LinkedHashMap<>();
 
                 config.products.put(output, config.products.getOrDefault(output, 0) + toStore);
+                totalProcessed += toStore;
                 totalStored += toStore;
 
                 int newQueued = queued - toStore;
@@ -214,6 +216,8 @@ public class OreDataImpl implements OreData {
 
                 markDirty();
             }
+
+            return totalProcessed;
         }
     }
 

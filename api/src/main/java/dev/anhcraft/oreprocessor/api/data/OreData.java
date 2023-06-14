@@ -64,5 +64,5 @@ public interface OreData extends Modifiable {
     }
 
     @ApiStatus.Internal
-    void process(int throughputMultiplier, @NotNull UnaryOperator<Material> function);
+    int process(int throughputMultiplier, @NotNull UnaryOperator<Material> function);
 }

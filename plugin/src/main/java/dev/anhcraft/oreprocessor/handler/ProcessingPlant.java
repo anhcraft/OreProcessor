@@ -63,7 +63,9 @@ public class ProcessingPlant implements Listener {
 
                 for (String oreId : event.getData().listOreIds()) {
                     OreTransform oreTransform = OreProcessor.getApi().requireOre(oreId).getBestTransform(event.getPlayerId());
-                    event.getData().requireOreData(oreId).process(mul, oreTransform::convert);
+                    int processed = event.getData().requireOreData(oreId).process(mul, oreTransform::convert);
+                    StatisticHelper.increaseProductCount(oreId, processed, event.getData());
+                    StatisticHelper.increaseProductCount(oreId, processed, OreProcessor.getApi().getServerData());
                 }
 
                 // then reset hibernation to prevent any unexpected accidents causing duplication
@@ -127,6 +129,8 @@ public class ProcessingPlant implements Listener {
             int amount = eventItem.getItemStack().getAmount();
 
             if (ore.isAcceptableFeedstock(feedstock)) {
+                StatisticHelper.increaseFeedstockCount(ore.getId(), amount, playerData);
+                StatisticHelper.increaseFeedstockCount(ore.getId(), amount, OreProcessor.getApi().getServerData());
                 oreData.addFeedstock(feedstock, amount);
                 has = true;
                 iterator.remove();
