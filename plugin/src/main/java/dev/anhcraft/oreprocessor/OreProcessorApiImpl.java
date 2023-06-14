@@ -7,10 +7,12 @@ import dev.anhcraft.oreprocessor.api.Ore;
 import dev.anhcraft.oreprocessor.api.OreProcessorApi;
 import dev.anhcraft.oreprocessor.api.OreTransform;
 import dev.anhcraft.oreprocessor.api.data.PlayerData;
+import dev.anhcraft.oreprocessor.api.data.ServerData;
 import dev.anhcraft.oreprocessor.api.integration.ShopProviderType;
 import dev.anhcraft.oreprocessor.api.upgrade.UpgradeLevel;
 import dev.anhcraft.oreprocessor.config.OreConfig;
 import dev.anhcraft.oreprocessor.config.UpgradeLevelConfig;
+import dev.anhcraft.oreprocessor.storage.server.ServerDataImpl;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -162,6 +164,11 @@ public final class OreProcessorApiImpl implements OreProcessorApi {
     @Override
     public @NotNull CompletableFuture<PlayerData> requirePlayerData(@NotNull UUID id) {
         return plugin.playerDataManager.requireData(id);
+    }
+
+    @Override
+    public @NotNull ServerData getServerData() {
+        return new ServerDataImpl(plugin.serverDataManager.getData());
     }
 
     @Override

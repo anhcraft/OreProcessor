@@ -13,6 +13,7 @@ import dev.anhcraft.oreprocessor.gui.*;
 import dev.anhcraft.oreprocessor.handler.ProcessingPlant;
 import dev.anhcraft.oreprocessor.integration.IntegrationManager;
 import dev.anhcraft.oreprocessor.storage.player.PlayerDataManager;
+import dev.anhcraft.oreprocessor.storage.server.ServerDataManager;
 import dev.anhcraft.oreprocessor.util.ConfigHelper;
 import dev.anhcraft.palette.listener.GuiEventListener;
 import net.milkbowl.vault.economy.Economy;
@@ -28,10 +29,12 @@ import java.io.IOException;
 
 public final class OreProcessor extends JavaPlugin {
     public static final int LATEST_PLAYER_DATA_VERSION = 1;
+    public static final int LATEST_SERVER_DATA_VERSION = 1;
     private static OreProcessor INSTANCE;
     private static OreProcessorApiImpl API;
     public IntegrationManager integrationManager;
     public PlayerDataManager playerDataManager;
+    public ServerDataManager serverDataManager;
     private ProcessingPlant processingPlant;
     public Economy economy;
     public MessageConfig messageConfig;
@@ -70,6 +73,7 @@ public final class OreProcessor extends JavaPlugin {
 
         INSTANCE = this;
         API = new OreProcessorApiImpl(this);
+        serverDataManager = new ServerDataManager(this);
         playerDataManager = new PlayerDataManager(this);
         processingPlant = new ProcessingPlant(this);
         integrationManager = new IntegrationManager(this);
@@ -88,6 +92,7 @@ public final class OreProcessor extends JavaPlugin {
         getServer().getScheduler().cancelTasks(this);
 
         playerDataManager.terminate();
+        serverDataManager.terminate();
     }
 
     private boolean setupEconomy() {
@@ -116,6 +121,7 @@ public final class OreProcessor extends JavaPlugin {
         GuiRegistry.STORAGE = ConfigHelper.load(StorageGui.class, requestConfig("gui/storage.yml"));
 
         processingPlant.reload();
+        serverDataManager.reload();
         playerDataManager.reload();
         API.reload();
 

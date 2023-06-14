@@ -1,6 +1,7 @@
 package dev.anhcraft.oreprocessor.api;
 
 import dev.anhcraft.oreprocessor.api.data.PlayerData;
+import dev.anhcraft.oreprocessor.api.data.ServerData;
 import dev.anhcraft.oreprocessor.api.integration.ShopProviderType;
 import dev.anhcraft.oreprocessor.api.upgrade.UpgradeLevel;
 import org.bukkit.Material;
@@ -45,6 +46,9 @@ public interface OreProcessorApi {
 
     @NotNull
     CompletableFuture<PlayerData> requirePlayerData(@NotNull UUID id);
+
+    @NotNull
+    ServerData getServerData();
 
     @Nullable
     UpgradeLevel getNextThroughputUpgrade(int currentThroughput);
