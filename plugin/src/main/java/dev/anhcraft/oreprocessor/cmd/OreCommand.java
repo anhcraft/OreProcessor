@@ -56,7 +56,7 @@ public class OreCommand extends BaseCommand {
         sender.sendMessage(ChatColor.GREEN + "Configuration documentation generated in plugins/OreProcessor/docs");
     }
 
-    @Subcommand("ore throughput set")
+    @Subcommand("upgrade throughput set")
     @CommandPermission("oreprocessor.upgrade.throughput.set")
     @CommandCompletion("@players @ores")
     public void setThroughputUpgrade(CommandSender sender, OfflinePlayer player, String ore, int amount) {
