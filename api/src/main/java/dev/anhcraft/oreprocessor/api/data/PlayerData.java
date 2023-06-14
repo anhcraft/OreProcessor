@@ -1,12 +1,13 @@
 package dev.anhcraft.oreprocessor.api.data;
 
+import dev.anhcraft.oreprocessor.api.data.stats.TrackedData;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public interface PlayerData extends ModifiableData {
+public interface PlayerData extends ModifiableData, TrackedData {
     int getDataVersion();
 
     boolean isTutorialHidden();

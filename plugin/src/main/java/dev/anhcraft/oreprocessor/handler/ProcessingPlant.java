@@ -6,6 +6,7 @@ import dev.anhcraft.oreprocessor.api.OreTransform;
 import dev.anhcraft.oreprocessor.api.data.OreData;
 import dev.anhcraft.oreprocessor.api.data.PlayerData;
 import dev.anhcraft.oreprocessor.api.event.AsyncPlayerDataLoadEvent;
+import dev.anhcraft.oreprocessor.storage.stats.StatisticHelper;
 import dev.anhcraft.palette.util.ItemUtil;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -88,7 +89,12 @@ public class ProcessingPlant implements Listener {
 
         PlayerData playerData = OreProcessor.getApi().getPlayerData(player);
         OreData oreData = playerData.getOreData(ore.getId());
-        if (oreData == null || !oreData.isFull()) return;
+        if (oreData == null || !oreData.isFull()) {
+            // can break & collect
+            StatisticHelper.increaseMiningCount(ore.getId(), playerData);
+            StatisticHelper.increaseMiningCount(ore.getId(), OreProcessor.getApi().getServerData());
+            return;
+        }
 
         OreProcessor.getInstance().msg(player, OreProcessor.getInstance().messageConfig.storageFull);
         event.setCancelled(true);

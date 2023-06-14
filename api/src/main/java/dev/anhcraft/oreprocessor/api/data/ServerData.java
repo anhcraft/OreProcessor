@@ -1,5 +1,7 @@
 package dev.anhcraft.oreprocessor.api.data;
 
-public interface ServerData extends ModifiableData {
+import dev.anhcraft.oreprocessor.api.data.stats.TrackedData;
+
+public interface ServerData extends ModifiableData, TrackedData {
     int getDataVersion();
 }

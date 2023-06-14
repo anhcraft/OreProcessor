@@ -3,6 +3,8 @@ package dev.anhcraft.oreprocessor.storage.player;
 import dev.anhcraft.oreprocessor.OreProcessor;
 import dev.anhcraft.oreprocessor.api.data.OreData;
 import dev.anhcraft.oreprocessor.api.data.PlayerData;
+import dev.anhcraft.oreprocessor.api.data.stats.Statistics;
+import dev.anhcraft.oreprocessor.storage.stats.StatisticsImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -74,5 +76,15 @@ public class PlayerDataImpl implements PlayerData {
     @Override
     public boolean isDirty() {
         return config.dirty.get();
+    }
+
+    @Override
+    public @NotNull Statistics getCumulativeStats() {
+        return new StatisticsImpl(config.dirty, config.getStats().getCumulativeStats());
+    }
+
+    @Override
+    public @NotNull Statistics getHourlyStats(long timestamp) {
+        return new StatisticsImpl(config.dirty, config.getStats().getHourlyStat(timestamp));
     }
 }
