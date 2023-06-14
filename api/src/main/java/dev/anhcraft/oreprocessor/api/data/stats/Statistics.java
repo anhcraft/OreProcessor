@@ -1,8 +1,8 @@
 package dev.anhcraft.oreprocessor.api.data.stats;
 
-import dev.anhcraft.oreprocessor.api.data.ModifiableData;
+import dev.anhcraft.oreprocessor.api.data.Modifiable;
 
-public interface Statistics extends ModifiableData {
+public interface Statistics extends Modifiable {
     long getMiningCount(String ore);
 
     void setMiningCount(String ore, long amount);

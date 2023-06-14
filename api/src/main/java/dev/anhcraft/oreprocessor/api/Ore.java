@@ -9,6 +9,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
+/**
+ * Represents an ore.
+ */
 public class Ore {
     private final String id;
     private final String name;
@@ -66,6 +69,15 @@ public class Ore {
         return getBestTransform(Bukkit.getOfflinePlayer(player));
     }
 
+    /**
+     * Returns the best ore transformation for given player.<br>
+     * If the player is offline, the default one is always selected. Otherwise, this performs permission tests from<br>
+     * the bottom transformation in the config (indicating the best) upwards to the top one. If none is found,<br>
+     * the default one is returned.<br>
+     * The permission format is: {@code oreprocessor.transform.<ORE ID>.<TRANSFORM ID>}
+     * @param player the player
+     * @return the best transformation
+     */
     @NotNull
     public OreTransform getBestTransform(@NotNull OfflinePlayer player) {
         if (!(player instanceof Player))
@@ -76,7 +88,7 @@ public class Ore {
         List<String> reversedKeys = new ArrayList<>(transform.keySet());
         Collections.reverse(reversedKeys);
         for (String key : reversedKeys) {
-            if (p.hasPermission("oreprocessor.ore." + getId() + "." + key)) {
+            if (p.hasPermission("oreprocessor.transform." + getId() + "." + key)) {
                 return transform.get(key);
             }
         }

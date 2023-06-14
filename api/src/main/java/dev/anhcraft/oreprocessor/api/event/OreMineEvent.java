@@ -8,6 +8,9 @@ import org.bukkit.event.player.PlayerEvent;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Called when a player mines an ore which is accepted by OreProcessor.
+ */
 @ApiStatus.Experimental
 public class OreMineEvent extends PlayerEvent {
     private static final HandlerList handlers = new HandlerList();
@@ -32,6 +35,11 @@ public class OreMineEvent extends PlayerEvent {
         return ore;
     }
 
+    /**
+     * Checks if the storage is full.<br>
+     * When the storage is full, the block can't be mined.
+     * @return true if the storage is full
+     */
     public boolean isStorageFull() {
         return storageFull;
     }

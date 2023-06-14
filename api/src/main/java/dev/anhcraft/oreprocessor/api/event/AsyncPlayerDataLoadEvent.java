@@ -8,6 +8,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
+/**
+ * Called when {@link PlayerData} is loaded.
+ */
 @ApiStatus.Experimental
 public class AsyncPlayerDataLoadEvent extends Event {
     private static final HandlerList handlers = new HandlerList();

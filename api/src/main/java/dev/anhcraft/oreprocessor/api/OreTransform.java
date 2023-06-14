@@ -8,6 +8,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Represents an ore transformation in which feedstock undergoes a process and turns into products.
+ */
 public class OreTransform {
     private final Map<Material, Material> transformMap;
 
@@ -33,6 +36,11 @@ public class OreTransform {
         return transformMap.containsValue(material);
     }
 
+    /**
+     * Converts the given feedstock to its corresponding product.
+     * @param feedstock the feedstock
+     * @return the corresponding product or {@code null} if not exists
+     */
     @Nullable
     public Material convert(Material feedstock) {
         return transformMap.get(feedstock);
