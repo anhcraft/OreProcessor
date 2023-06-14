@@ -1,9 +1,9 @@
-package dev.anhcraft.oreprocessor.storage;
+package dev.anhcraft.oreprocessor.storage.player;
 
 import dev.anhcraft.config.annotations.Configurable;
 import dev.anhcraft.config.annotations.Exclude;
 import dev.anhcraft.config.annotations.PostHandler;
-import dev.anhcraft.oreprocessor.storage.compat.GenericPlayerDataConfig;
+import dev.anhcraft.oreprocessor.storage.player.compat.GenericPlayerDataConfig;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashMap;

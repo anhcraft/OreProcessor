@@ -1,4 +1,4 @@
-package dev.anhcraft.oreprocessor.storage;
+package dev.anhcraft.oreprocessor.storage.player;
 
 import dev.anhcraft.config.annotations.Configurable;
 import dev.anhcraft.config.annotations.PostHandler;

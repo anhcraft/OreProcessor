@@ -12,7 +12,7 @@ import dev.anhcraft.oreprocessor.config.UpgradeConfig;
 import dev.anhcraft.oreprocessor.gui.*;
 import dev.anhcraft.oreprocessor.handler.ProcessingPlant;
 import dev.anhcraft.oreprocessor.integration.IntegrationManager;
-import dev.anhcraft.oreprocessor.storage.PlayerDataManager;
+import dev.anhcraft.oreprocessor.storage.player.PlayerDataManager;
 import dev.anhcraft.oreprocessor.util.ConfigHelper;
 import dev.anhcraft.palette.listener.GuiEventListener;
 import net.milkbowl.vault.economy.Economy;

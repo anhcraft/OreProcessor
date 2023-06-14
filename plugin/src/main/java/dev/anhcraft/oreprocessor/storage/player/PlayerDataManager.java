@@ -1,11 +1,11 @@
-package dev.anhcraft.oreprocessor.storage;
+package dev.anhcraft.oreprocessor.storage.player;
 
 import com.google.common.base.Preconditions;
 import dev.anhcraft.oreprocessor.OreProcessor;
 import dev.anhcraft.oreprocessor.api.data.PlayerData;
 import dev.anhcraft.oreprocessor.api.event.AsyncPlayerDataLoadEvent;
-import dev.anhcraft.oreprocessor.storage.compat.GenericPlayerDataConfig;
-import dev.anhcraft.oreprocessor.storage.compat.PlayerDataConfigV0;
+import dev.anhcraft.oreprocessor.storage.player.compat.GenericPlayerDataConfig;
+import dev.anhcraft.oreprocessor.storage.player.compat.PlayerDataConfigV0;
 import dev.anhcraft.oreprocessor.util.ConfigHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;

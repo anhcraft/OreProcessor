@@ -1,4 +1,4 @@
-package dev.anhcraft.oreprocessor.storage;
+package dev.anhcraft.oreprocessor.storage.player;
 
 import dev.anhcraft.oreprocessor.OreProcessor;
 import dev.anhcraft.oreprocessor.api.data.OreData;

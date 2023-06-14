@@ -1,4 +1,4 @@
-package dev.anhcraft.oreprocessor.storage;
+package dev.anhcraft.oreprocessor.storage.player;
 
 import org.jetbrains.annotations.NotNull;
 

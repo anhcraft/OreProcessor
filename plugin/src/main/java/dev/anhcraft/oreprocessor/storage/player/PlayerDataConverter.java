@@ -1,7 +1,7 @@
-package dev.anhcraft.oreprocessor.storage;
+package dev.anhcraft.oreprocessor.storage.player;
 
-import dev.anhcraft.oreprocessor.storage.compat.GenericPlayerDataConfig;
-import dev.anhcraft.oreprocessor.storage.compat.PlayerDataConfigV0;
+import dev.anhcraft.oreprocessor.storage.player.compat.GenericPlayerDataConfig;
+import dev.anhcraft.oreprocessor.storage.player.compat.PlayerDataConfigV0;
 
 public class PlayerDataConverter {
     public static GenericPlayerDataConfig convert(PlayerDataConfigV0 config) {
