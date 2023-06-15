@@ -53,8 +53,13 @@ public final class OreProcessor extends JavaPlugin {
     }
 
     public void debug(@NotNull String format, @NotNull Object... args) {
-        if (mainConfig != null && mainConfig.devMode) {
-            getServer().getConsoleSender().sendMessage(ChatColor.GOLD + "[OreProcessor#Dev] " + String.format(format, args));
+        debug(1, format, args);
+    }
+
+    public void debug(int level, @NotNull String format, @NotNull Object... args) {
+        if (mainConfig != null && mainConfig.debugLevel >= level) {
+            ChatColor color = level == 2 ? ChatColor.RED : ChatColor.GOLD;
+            getServer().getConsoleSender().sendMessage(color + "[Ore#DEBUG] " + String.format(format, args));
         }
     }
 

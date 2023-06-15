@@ -22,7 +22,7 @@ public class MineralProcessingTask extends BukkitRunnable {
                 int processed = oreData.process(1, oreTransform::convert);
                 StatisticHelper.increaseProductCount(oreId, processed, playerData);
                 StatisticHelper.increaseProductCount(oreId, processed, OreProcessor.getApi().getServerData());
-                OreProcessor.getInstance().debug(String.format(
+                OreProcessor.getInstance().debug(2, String.format(
                         "Processed x%d %s for %s using transform #%s",
                         processed, ore.getName(), uuid, oreTransform.getId()
                 ));

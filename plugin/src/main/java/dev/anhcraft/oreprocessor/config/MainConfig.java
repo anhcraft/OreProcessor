@@ -15,6 +15,14 @@ public class MainConfig {
     public boolean devMode;
 
     @Description({
+            "Set debug level (does not require dev mode)",
+            "0: no debug messages",
+            "1: common debug messages",
+            "2: more debug messages",
+    })
+    public int debugLevel;
+
+    @Description({
             "The interval at which the plugin will process ores (in seconds)",
             "The maximum amount of ore processed per time is: <code>processingSpeed x throughput</code>",
             "Reducing the value results in faster processing time but a downgrade in performance. It is",

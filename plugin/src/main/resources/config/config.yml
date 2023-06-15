@@ -18,7 +18,7 @@ ores:
       default:
         - iron_ore > iron_ore
         - raw_iron > raw_iron
-      # You can specify custom transformation, requires permission: oreprocessor.transform.<ORE ID>.<TRANSFORM ID>
+      # You can specify custom processing circuit, requires permission: oreprocessor.transform.<ORE ID>.<TRANSFORM ID>
       auto-smelt: # Permission: oreprocessor.transform.iron.auto-smelt
         - iron_ore > iron_ingot
         - raw_iron > iron_ingot
@@ -110,3 +110,4 @@ ores:
 processing-speed: 5
 shop-provider: ShopGUIPlus
 dev-mode: false
+debug-level: 0
