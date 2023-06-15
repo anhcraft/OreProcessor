@@ -1,10 +1,10 @@
 package dev.anhcraft.oreprocessor.api;
 
+import dev.anhcraft.oreprocessor.api.util.WheelSelection;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,10 +12,17 @@ import java.util.Set;
  * Represents an ore transformation in which feedstock undergoes a process and turns into products.
  */
 public class OreTransform {
-    private final Map<Material, Material> transformMap;
+    private final String id;
+    private final Map<Material, WheelSelection<Material>> transformMap;
 
-    public OreTransform(Map<Material, Material> transformMap) {
+    public OreTransform(String id, Map<Material, WheelSelection<Material>> transformMap) {
+        this.id = id;
         this.transformMap = transformMap; // unmodifiable
+    }
+
+    @NotNull
+    public String getId() {
+        return id;
     }
 
     @NotNull
@@ -23,17 +30,17 @@ public class OreTransform {
         return transformMap.keySet(); // unmodifiable
     }
 
-    @NotNull
-    public Set<Material> getProducts() {
-        return new HashSet<>(transformMap.values()); // unmodifiable
-    }
-
     public boolean hasFeedstock(Material material) {
         return transformMap.containsKey(material);
     }
 
+    @Nullable
+    public WheelSelection<Material> getProduct(Material material) {
+        return transformMap.get(material);
+    }
+
     public boolean hasProduct(Material material) {
-        return transformMap.containsValue(material);
+        return transformMap.values().stream().anyMatch(selection -> selection.contains(material));
     }
 
     /**
@@ -43,6 +50,7 @@ public class OreTransform {
      */
     @Nullable
     public Material convert(Material feedstock) {
-        return transformMap.get(feedstock);
+        WheelSelection<Material> w = transformMap.get(feedstock);
+        return w != null ? w.roll() : null;
     }
 }

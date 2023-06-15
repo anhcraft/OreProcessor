@@ -18,7 +18,8 @@ ores:
       default:
         - iron_ore > iron_ore
         - raw_iron > raw_iron
-      auto-smelt:
+      # You can specify custom transformation, requires permission: oreprocessor.transform.<ORE ID>.<TRANSFORM ID>
+      auto-smelt: # Permission: oreprocessor.transform.iron.auto-smelt
         - iron_ore > iron_ingot
         - raw_iron > iron_ingot
   gold:
@@ -96,10 +97,16 @@ ores:
     blocks:
       - ancient_debris
     transform:
-      default:
+      default: # Fallback/Default
         - ancient_debris > netherite_scrap
-      vip:
-        - ancient_debris > netherite_ingot
+      # You can specify multiple outputs with chance/weight to create randomization.
+      # - If the total weight is 100%, the calculation is in percentage
+      # - Otherwise, the plugin calculates the weight and rescales to match a total of 100%
+      # If chance/weight is not specified, it implies 100%
+      vip: # Permission: oreprocessor.transform.netherite.vip (Check second)
+        - ancient_debris > 30% netherite_ingot, 70% netherite_scrap
+      mvp: # Permission: oreprocessor.transform.netherite.mvp (Check first)
+        - ancient_debris > 50% netherite_ingot, 50% netherite_scrap
 processing-speed: 5
 shop-provider: ShopGUIPlus
 dev-mode: false

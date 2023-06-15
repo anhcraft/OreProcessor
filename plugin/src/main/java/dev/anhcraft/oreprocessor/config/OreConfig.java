@@ -2,6 +2,8 @@ package dev.anhcraft.oreprocessor.config;
 
 import dev.anhcraft.config.annotations.*;
 import dev.anhcraft.jvmkit.utils.EnumUtil;
+import dev.anhcraft.oreprocessor.OreProcessor;
+import dev.anhcraft.oreprocessor.api.util.WheelSelection;
 import org.bukkit.Material;
 
 import java.util.*;
@@ -41,20 +43,22 @@ public class OreConfig {
     @Path("transform")
     private LinkedHashMap<String, List<String>> rawTransform;
 
-    public LinkedHashMap<String, Map<Material, Material>> transform = new LinkedHashMap<>();
+    public LinkedHashMap<String, Map<Material, WheelSelection<Material>>> transform = new LinkedHashMap<>();
 
     @PostHandler
     private void postProcess() {
         blocks = blocks.stream().filter(Objects::nonNull).collect(Collectors.toSet());
 
         for (Map.Entry<String, List<String>> e : rawTransform.entrySet()) {
-            Map<Material, Material> map = new EnumMap<>(Material.class);
+            Map<Material, WheelSelection<Material>> map = new EnumMap<>(Material.class);
             for (String str : e.getValue()) {
                 String[] split = str.split(">");
                 if (split.length != 2) continue;
                 Material from = (Material) EnumUtil.findEnum(Material.class, split[0].trim().toUpperCase());
-                Material to = (Material) EnumUtil.findEnum(Material.class, split[1].trim().toUpperCase());
-                if (from == null || to == null) continue;
+                WheelSelection<Material> to = parseSelectionSet(split[1]);
+                if (from == null || to.isEmpty())
+                    continue;
+
                 map.put(from, to);
             }
             transform.put(e.getKey(), map);
@@ -67,5 +71,36 @@ public class OreConfig {
         if (!transform.keySet().iterator().next().equals("default")) {
             throw new RuntimeException("Default transform must be at first");
         }
+    }
+
+    private WheelSelection<Material> parseSelectionSet(String str) {
+        WheelSelection<Material> map = new WheelSelection<>();
+
+        String[] choices = str.trim().split(",");
+        for (String choice : choices) {
+            String[] args = choice.trim().split("\\s+");
+
+            if (args.length == 1) {
+                Material material = (Material) EnumUtil.findEnum(Material.class, args[0].toUpperCase());
+                if (material != null)
+                    map.add(material, 100d);
+                else
+                    OreProcessor.getInstance().getLogger().warning(String.format("Unknown material '%s' in phase '%s'", args[0], str));
+            }
+
+            else if (args.length == 2) {
+                Material material = (Material) EnumUtil.findEnum(Material.class, args[1].toUpperCase());
+                if (material != null)
+                    map.add(material, Double.parseDouble(args[0].replace("%", "")));
+                else
+                    OreProcessor.getInstance().getLogger().warning(String.format("Unknown material '%s' in phase '%s'", args[0], str));
+            }
+
+            else {
+                OreProcessor.getInstance().getLogger().warning(String.format("Invalid choice format '%s' in phase '%s'", choice, str));
+            }
+        }
+
+        return map;
     }
 }

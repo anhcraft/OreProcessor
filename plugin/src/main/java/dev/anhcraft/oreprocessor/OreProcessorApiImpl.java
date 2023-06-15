@@ -10,6 +10,7 @@ import dev.anhcraft.oreprocessor.api.data.PlayerData;
 import dev.anhcraft.oreprocessor.api.data.ServerData;
 import dev.anhcraft.oreprocessor.api.integration.ShopProviderType;
 import dev.anhcraft.oreprocessor.api.upgrade.UpgradeLevel;
+import dev.anhcraft.oreprocessor.api.util.WheelSelection;
 import dev.anhcraft.oreprocessor.config.OreConfig;
 import dev.anhcraft.oreprocessor.config.UpgradeLevelConfig;
 import dev.anhcraft.oreprocessor.storage.server.ServerDataImpl;
@@ -42,8 +43,8 @@ public final class OreProcessorApiImpl implements OreProcessorApi {
 
             LinkedHashMap<String, OreTransform> transformMap = new LinkedHashMap<>();
 
-            for (Map.Entry<String, Map<Material, Material>> e : oreConfig.transform.entrySet()) {
-                transformMap.put(e.getKey(), new OreTransform(Collections.unmodifiableMap(e.getValue())));
+            for (Map.Entry<String, Map<Material, WheelSelection<Material>>> e : oreConfig.transform.entrySet()) {
+                transformMap.put(e.getKey(), new OreTransform(e.getKey(), Collections.unmodifiableMap(e.getValue())));
             }
 
             Set<Material> referenceFeedstock = null;
