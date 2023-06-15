@@ -8,10 +8,7 @@ import dev.anhcraft.oreprocessor.storage.stats.StatisticsImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 public class PlayerDataImpl implements PlayerData {
     private final PlayerDataConfigV1 config;
@@ -48,7 +45,7 @@ public class PlayerDataImpl implements PlayerData {
     }
 
     @Override
-    public @NotNull OreData requireOreData(@NotNull String ore) {
+    public @NotNull synchronized OreData requireOreData(@NotNull String ore) {
         if (OreProcessor.getApi().getOre(ore) == null) // TODO: inform player name and UUID
             OreProcessor.getInstance().getLogger().warning(String.format("Attempting to require ore '%s' which does not exist in config", ore));
 

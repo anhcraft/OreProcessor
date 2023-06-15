@@ -54,7 +54,7 @@ public class OreDataImpl implements OreData {
     @Override
     public @NotNull Set<Material> getFeedstock() {
         synchronized (config) {
-            return config.feedstock == null ? Collections.emptySet() : Collections.unmodifiableSet(config.feedstock.keySet());
+            return config.feedstock == null ? Collections.emptySet() : new HashSet<>(config.feedstock.keySet()); // clone to prevent CME
         }
     }
 
@@ -95,7 +95,7 @@ public class OreDataImpl implements OreData {
     @Override
     public @NotNull Set<Material> getProducts() {
         synchronized (config) {
-            return config.products == null ? Collections.emptySet() : Collections.unmodifiableSet(config.products.keySet());
+            return config.products == null ? Collections.emptySet() : new HashSet<>(config.products.keySet()); // clone to prevent CME
         }
     }
 
