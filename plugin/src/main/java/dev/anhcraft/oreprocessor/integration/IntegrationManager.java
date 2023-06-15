@@ -24,6 +24,7 @@ public class IntegrationManager {
         tryHook("AureliumSkills", AureliumSkillsBridge.class);
         tryHook("ShopGUIPlus", ShopGuiPlusBridge.class);
         tryHook("EconomyShopGUI", EconomyShopGUIBridge.class);
+        tryHook("EconomyShopGUI-Premium", EconomyShopGUIBridge.class);
     }
 
     private void tryHook(String plugin, Class<? extends Integration> clazz) {
