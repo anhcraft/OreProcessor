@@ -22,6 +22,13 @@ ores:
       auto-smelt: # Permission: oreprocessor.transform.iron.auto-smelt
         - iron_ore > iron_ingot
         - raw_iron > iron_ingot
+      # You can specify multiple outputs with chance/weight to create randomization.
+      # - If the total weight is 100%, the calculation is in percentage
+      # - Otherwise, the plugin calculates the weight and rescales to match a total of 100%
+      # If chance/weight is not specified, it implies 100%
+      custom: # Permission: oreprocessor.transform.iron.custom
+        - iron_ore > 80% cobblestone, 60% iron_ingot, 10% gold_ingot, 5% diamond # weight mode (since the sum is over 100%)
+        - raw_iron > 80 cobblestone, 60 iron_ingot, 10 gold_ingot, 5 diamond # '%' is optional
   gold:
     name: "Gold"
     icon: gold_ingot
@@ -99,10 +106,6 @@ ores:
     transform:
       default: # Fallback/Default
         - ancient_debris > netherite_scrap
-      # You can specify multiple outputs with chance/weight to create randomization.
-      # - If the total weight is 100%, the calculation is in percentage
-      # - Otherwise, the plugin calculates the weight and rescales to match a total of 100%
-      # If chance/weight is not specified, it implies 100%
       vip: # Permission: oreprocessor.transform.netherite.vip (Check second)
         - ancient_debris > 30% netherite_ingot, 70% netherite_scrap
       mvp: # Permission: oreprocessor.transform.netherite.mvp (Check first)
