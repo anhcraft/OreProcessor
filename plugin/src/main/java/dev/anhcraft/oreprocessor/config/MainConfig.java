@@ -35,8 +35,8 @@ public class MainConfig {
             "The key specifies the id",
             "The value is the ore configuration section"
     })
-    @Example(
-            "  coal: # the ID\n" +
+    @Example("ores:\n" +
+            "  coal:\n" +
             "    name: \"Coal\"\n" +
             "    icon: coal\n" +
             "    blocks:\n" +

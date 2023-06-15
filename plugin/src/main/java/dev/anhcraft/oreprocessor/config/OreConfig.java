@@ -10,13 +10,15 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Configurable(keyNamingStyle = Configurable.NamingStyle.TRAIN_CASE)
-@Example(
-        "  coal:\n" +
-        "    name: \"Coal\"\n" +
-        "    blocks:\n" +
-        "      - coal_ore\n" +
-        "    raw-materials:\n" +
-        "      - coal"
+@Example("coal:\n" +
+        "  name: \"Coal\"\n" +
+        "  icon: coal\n" +
+        "  blocks:\n" +
+        "    - coal_ore\n" +
+        "    - deepslate_coal_ore\n" +
+        "  transform:\n" +
+        "    default:\n" +
+        "      - coal > coal"
 )
 public class OreConfig {
 
