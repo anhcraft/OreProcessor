@@ -34,6 +34,7 @@ public class StatisticsImpl implements Statistics {
         if (config.miningCount == null)
             config.miningCount = new HashMap<>();
         config.miningCount.put(ore, amount);
+        markDirty();
     }
 
     @Override
@@ -52,6 +53,7 @@ public class StatisticsImpl implements Statistics {
         if (config.feedstockCount == null)
             config.feedstockCount = new HashMap<>();
         config.feedstockCount.put(ore, amount);
+        markDirty();
     }
 
     @Override
@@ -70,6 +72,7 @@ public class StatisticsImpl implements Statistics {
         if (config.productCount == null)
             config.productCount = new HashMap<>();
         config.productCount.put(ore, amount);
+        markDirty();
     }
 
     @Override
