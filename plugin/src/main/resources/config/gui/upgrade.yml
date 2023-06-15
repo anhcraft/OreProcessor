@@ -34,7 +34,7 @@ throughput-upgradable-icon:
     - "&7▪ Next level: {next-throughput}/m"
     - "&7▪ Upgrade cost: ${cost}"
     - ""
-    - "&e» Click to confirm upgrade."
+    - "&e» Click to confirm upgrade"
 
 throughput-unaffordable-icon:
   material: barrier
@@ -68,7 +68,7 @@ capacity-upgradable-icon:
     - "&7▪ Next level: {next-capacity}"
     - "&7▪ Upgrade cost: ${cost}"
     - ""
-    - "&e» Click to confirm upgrade."
+    - "&e» Click to confirm upgrade"
 
 capacity-unaffordable-icon:
   material: barrier

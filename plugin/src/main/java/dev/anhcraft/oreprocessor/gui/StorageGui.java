@@ -12,15 +12,23 @@ public class StorageGui extends Gui {
     @Validation(notNull = true)
     private ItemBuilder productIcon;
 
-    @Description("Quick-sell icon")
+    @Description("Quick-sell available icon")
     @Validation(notNull = true)
-    private ItemBuilder quickSellIcon;
+    private ItemBuilder quickSellAvailableIcon;
+
+    @Description("Quick-sell empty icon")
+    @Validation(notNull = true)
+    private ItemBuilder quickSellEmptyIcon;
 
     public ItemBuilder getProductIcon() {
         return productIcon.duplicate();
     }
 
-    public ItemBuilder getQuickSellIcon() {
-        return quickSellIcon.duplicate();
+    public ItemBuilder getQuickSellAvailableIcon() {
+        return quickSellAvailableIcon.duplicate();
+    }
+
+    public ItemBuilder getQuickSellEmptyIcon() {
+        return quickSellEmptyIcon.duplicate();
     }
 }

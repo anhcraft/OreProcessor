@@ -8,6 +8,7 @@ import dev.anhcraft.oreprocessor.api.data.PlayerData;
 import dev.anhcraft.oreprocessor.integration.shop.ShopProvider;
 import dev.anhcraft.palette.event.ClickEvent;
 import dev.anhcraft.palette.ui.GuiHandler;
+import dev.anhcraft.palette.ui.element.Slot;
 import dev.anhcraft.palette.util.ItemReplacer;
 import dev.anhcraft.palette.util.ItemUtil;
 import org.apache.commons.lang.mutable.MutableDouble;
@@ -41,63 +42,6 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
     public void onPreOpen(@NotNull Player player) {
         PlayerData playerData = OreProcessor.getApi().getPlayerData(player);
         this.oreData = playerData.requireOreData(oreId);
-
-        listen("quick-sell", new ClickEvent() {
-            @Override
-            public void onClick(@NotNull InventoryClickEvent clickEvent, @NotNull Player player, int slot) {
-                Optional<ShopProvider> shopProvider = plugin.integrationManager.getShopProvider(OreProcessor.getApi().getShopProvider());
-                if (!shopProvider.isPresent()) return;
-
-                double proportion;
-                switch (clickEvent.getClick()) {
-                    case LEFT:
-                        proportion = 1;
-                        break;
-                    case RIGHT:
-                        proportion = 0.5;
-                        break;
-                    case SHIFT_LEFT:
-                        proportion = 0.25;
-                        break;
-                    case SHIFT_RIGHT:
-                        proportion = 0.1;
-                        break;
-                    default:
-                        return;
-                }
-
-                MutableDouble profits = new MutableDouble(0);
-                MutableDouble count = new MutableDouble(0);
-                for (Material product : oreData.getProducts()) {
-                    if (!shopProvider.get().canSell(product)) continue;
-                    int amount = (int) (oreData.countProduct(product) * proportion);
-                    if (amount <= 0) continue;
-
-                    oreData.testAndTakeProduct(product, amount, actual -> {
-                        count.add(actual);
-                        double profit = shopProvider.get().getSellPrice(product, actual);
-                        boolean success = plugin.economy.depositPlayer(player, profit).transactionSuccess();
-                        if (success) {
-                            profits.add(profit);
-                        } else {
-                            plugin.getLogger().warning(String.format(
-                                    "Failed to deposit %.3f to %s's account for selling %d %s",
-                                    profit, player.getName(), actual, product.getKey()
-                            ));
-                        }
-                        return success;
-                    });
-                }
-
-                if (count.doubleValue() == 0) return;
-
-                player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
-                plugin.msg(player, plugin.messageConfig.quickSellSuccess
-                        .replace("{amount}", count.toString())
-                        .replace("{profits}", numberFormat.format(profits.doubleValue()))
-                );
-            }
-        });
 
         listen("ore", new ClickEvent() {
             @Override
@@ -221,11 +165,72 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
         if (player.hasPermission("oreprocessor.quick-sell")) {
             Optional<ShopProvider> shopProvider = plugin.integrationManager.getShopProvider(OreProcessor.getApi().getShopProvider());
             if (shopProvider.isPresent()) {
-                ItemBuilder itemBuilder = GuiRegistry.STORAGE.getQuickSellIcon();
+                ItemBuilder itemBuilder = stored == 0 ? GuiRegistry.STORAGE.getQuickSellEmptyIcon() : GuiRegistry.STORAGE.getQuickSellAvailableIcon();
                 itemBuilder.replaceDisplay(s -> s
                         .replace("{storage-current}", Integer.toString(stored))
                         .replace("{storage-capacity}", Integer.toString(cap)));
                 setBulk("quick-sell", itemBuilder.build());
+
+                if (stored == 0) {
+                    visitComponent("quick-sell", Slot::clearEvents);
+                } else {
+                    listen("quick-sell", new ClickEvent() {
+                        @Override
+                        public void onClick(@NotNull InventoryClickEvent clickEvent, @NotNull Player player, int slot) {
+                            Optional<ShopProvider> shopProvider = plugin.integrationManager.getShopProvider(OreProcessor.getApi().getShopProvider());
+                            if (!shopProvider.isPresent()) return;
+
+                            double proportion;
+                            switch (clickEvent.getClick()) {
+                                case LEFT:
+                                    proportion = 1;
+                                    break;
+                                case RIGHT:
+                                    proportion = 0.5;
+                                    break;
+                                case SHIFT_LEFT:
+                                    proportion = 0.25;
+                                    break;
+                                case SHIFT_RIGHT:
+                                    proportion = 0.1;
+                                    break;
+                                default:
+                                    return;
+                            }
+
+                            MutableDouble profits = new MutableDouble(0);
+                            MutableDouble count = new MutableDouble(0);
+                            for (Material product : oreData.getProducts()) {
+                                if (!shopProvider.get().canSell(product)) continue;
+                                int amount = (int) (oreData.countProduct(product) * proportion);
+                                if (amount <= 0) continue;
+
+                                oreData.testAndTakeProduct(product, amount, actual -> {
+                                    count.add(actual);
+                                    double profit = shopProvider.get().getSellPrice(product, actual);
+                                    boolean success = plugin.economy.depositPlayer(player, profit).transactionSuccess();
+                                    if (success) {
+                                        profits.add(profit);
+                                    } else {
+                                        plugin.getLogger().warning(String.format(
+                                                "Failed to deposit %.3f to %s's account for selling %d %s",
+                                                profit, player.getName(), actual, product.getKey()
+                                        ));
+                                    }
+                                    return success;
+                                });
+                            }
+
+                            if (count.doubleValue() == 0) return;
+
+                            player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
+                            plugin.msg(player, plugin.messageConfig.quickSellSuccess
+                                    .replace("{amount}", count.toString())
+                                    .replace("{profits}", numberFormat.format(profits.doubleValue()))
+                            );
+                        }
+                    });
+                }
             }
         }
     }

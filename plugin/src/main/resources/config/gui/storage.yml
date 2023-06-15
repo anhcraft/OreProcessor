@@ -50,7 +50,7 @@ product-icon:
   flags:
     - hide_enchants
 
-quick-sell-icon:
+quick-sell-empty-icon:
   material: emerald
   name: "&aQuick sell"
   lore:
@@ -60,3 +60,22 @@ quick-sell-icon:
     - "&fRight:      &eSell 1/2"
     - "&fLeft+Shift:  &eSell 1/4"
     - "&fRight+Shift: &eSell 1/10"
+    - ""
+    - "&c[Nothing to sell]"
+
+quick-sell-available-icon:
+  material: emerald
+  name: "&aQuick sell"
+  lore:
+    - "&7▪ In storage: {storage-current}/{storage-capacity}"
+    - ""
+    - "&fLeft:       &eSell all"
+    - "&fRight:      &eSell 1/2"
+    - "&fLeft+Shift:  &eSell 1/4"
+    - "&fRight+Shift: &eSell 1/10"
+    - ""
+    - "&e» Click to sell"
+  enchantments:
+    unbreaking: 1
+  flags:
+    - hide_enchants
