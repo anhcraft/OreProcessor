@@ -65,6 +65,8 @@ public class ProcessingPlant implements Listener {
                     for (String oreId : event.getData().listOreIds()) {
                         OreTransform oreTransform = OreProcessor.getApi().requireOre(oreId).getBestTransform(event.getPlayerId());
                         int processed = event.getData().requireOreData(oreId).process(mul, oreTransform::convert);
+                        if (processed == 0) continue;
+
                         StatisticHelper.increaseProductCount(oreId, processed, event.getData());
                         StatisticHelper.increaseProductCount(oreId, processed, OreProcessor.getApi().getServerData());
                         OreProcessor.getInstance().debug(2, String.format(
