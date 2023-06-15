@@ -94,6 +94,9 @@ public class WheelSelection<E> {
         if (rouletteWheel.isEmpty()) {
             return null;
         }
+        if (rouletteWheel.size() == 1) {
+            return rouletteWheel.firstEntry().getValue();
+        }
 
         double randomWeight = ThreadLocalRandom.current().nextDouble(totalWeight);
         Map.Entry<Double, E> selectedEntry = rouletteWheel.ceilingEntry(randomWeight);

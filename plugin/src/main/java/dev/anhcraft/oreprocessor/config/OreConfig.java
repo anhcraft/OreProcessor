@@ -77,8 +77,9 @@ public class OreConfig {
 
     private WheelSelection<Material> parseSelectionSet(String str) {
         WheelSelection<Material> map = new WheelSelection<>();
+        str = str.trim();
+        String[] choices = str.split(",");
 
-        String[] choices = str.trim().split(",");
         for (String choice : choices) {
             String[] args = choice.trim().split("\\s+");
 
