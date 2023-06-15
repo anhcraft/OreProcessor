@@ -1,4 +1,4 @@
-prefix: "&e[OreProcessor] &f"
+prefix: "&e[Ore] &f"
 first-time-tutorial:
   - "&eHi there, you've just mined the first ore!"
   - "&fThis server has a special ore-mining system."
