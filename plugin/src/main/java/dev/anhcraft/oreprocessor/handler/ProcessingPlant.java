@@ -102,13 +102,17 @@ public class ProcessingPlant implements Listener {
         boolean isFull = oreData != null && oreData.isFull();
         Bukkit.getPluginManager().callEvent(new OreMineEvent(player, event.getBlock(), ore, isFull));
 
-        if (isFull) {
-            if (plugin.mainConfig.behaviourSettings.dropOnFullStorage) return;
-            OreProcessor.getInstance().msg(player, OreProcessor.getInstance().messageConfig.storageFull);
-            event.setCancelled(true);
-        } else {
+        if (!isFull || plugin.mainConfig.behaviourSettings.enableMiningStatOnFullStorage) {
             StatisticHelper.increaseMiningCount(ore.getId(), playerData);
             StatisticHelper.increaseMiningCount(ore.getId(), OreProcessor.getApi().getServerData());
+        }
+
+        if (isFull) {
+            if (plugin.mainConfig.behaviourSettings.dropOnFullStorage)
+                return;
+
+            OreProcessor.getInstance().msg(player, OreProcessor.getInstance().messageConfig.storageFull);
+            event.setCancelled(true);
         }
     }
 

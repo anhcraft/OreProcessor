@@ -6,5 +6,7 @@ import dev.anhcraft.config.annotations.Configurable;
 public class BehaviourConfig {
     public boolean dropOnFullStorage;
 
+    public boolean enableMiningStatOnFullStorage;
+
     public boolean disableOfflineProcessing;
 }
