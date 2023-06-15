@@ -24,7 +24,7 @@ public class StatisticsImpl implements Statistics {
     }
 
     @Override
-    public long getMiningCount(String ore) {
+    public synchronized long getMiningCount(String ore) {
         if (config.miningCount == null) return 0;
         return config.miningCount.getOrDefault(ore, 0L);
     }
@@ -43,7 +43,7 @@ public class StatisticsImpl implements Statistics {
     }
 
     @Override
-    public long getFeedstockCount(String ore) {
+    public synchronized long getFeedstockCount(String ore) {
         if (config.feedstockCount == null) return 0;
         return config.feedstockCount.getOrDefault(ore, 0L);
     }
@@ -62,7 +62,7 @@ public class StatisticsImpl implements Statistics {
     }
 
     @Override
-    public long getProductCount(String ore) {
+    public synchronized long getProductCount(String ore) {
         if (config.productCount == null) return 0;
         return config.productCount.getOrDefault(ore, 0L);
     }
