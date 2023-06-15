@@ -54,12 +54,21 @@ public class OreConfig {
         for (Map.Entry<String, List<String>> e : rawTransform.entrySet()) {
             Map<Material, WheelSelection<Material>> map = new EnumMap<>(Material.class);
             for (String str : e.getValue()) {
-                String[] split = str.split(">");
-                if (split.length != 2) continue;
-                Material from = (Material) EnumUtil.findEnum(Material.class, split[0].trim().toUpperCase());
-                WheelSelection<Material> to = parseSelectionSet(split[1]);
-                if (from == null || to.isEmpty())
+                String[] split = str.split("\\s*>\\s*");
+                if (split.length != 2)
                     continue;
+
+                Material from = (Material) EnumUtil.findEnum(Material.class, split[0].trim().toUpperCase());
+                if (from == null) {
+                    OreProcessor.getInstance().getLogger().warning(String.format("Unknown material '%s' in phase '%s'", split[0], str));
+                    continue;
+                }
+
+                WheelSelection<Material> to = parseSelectionSet(split[1]);
+                if (to.isEmpty()) {
+                    OreProcessor.getInstance().getLogger().warning(String.format("No products available in phase '%s'", str));
+                    continue;
+                }
 
                 map.put(from, to);
             }
@@ -96,11 +105,11 @@ public class OreConfig {
                 if (material != null)
                     map.add(material, Double.parseDouble(args[0].replace("%", "")));
                 else
-                    OreProcessor.getInstance().getLogger().warning(String.format("Unknown material '%s' in phase '%s'", args[0], str));
+                    OreProcessor.getInstance().getLogger().warning(String.format("Unknown material '%s' in phase '%s'", args[1], str));
             }
 
             else {
-                OreProcessor.getInstance().getLogger().warning(String.format("Invalid choice format '%s' in phase '%s'", choice, str));
+                OreProcessor.getInstance().getLogger().warning(String.format("Invalid format '%s' in phase '%s'", choice, str));
             }
         }
 
