@@ -61,11 +61,17 @@ public class ProcessingPlant implements Listener {
                 int mul = (int) (hibernationTime / OreProcessor.getApi().getProcessingSpeed());
                 plugin.debug("Processing hibernated materials for %s, time = %ds, multi = x%d", event.getPlayerId(), hibernationTime, mul);
 
-                for (String oreId : event.getData().listOreIds()) {
-                    OreTransform oreTransform = OreProcessor.getApi().requireOre(oreId).getBestTransform(event.getPlayerId());
-                    int processed = event.getData().requireOreData(oreId).process(mul, oreTransform::convert);
-                    StatisticHelper.increaseProductCount(oreId, processed, event.getData());
-                    StatisticHelper.increaseProductCount(oreId, processed, OreProcessor.getApi().getServerData());
+                if (!plugin.mainConfig.behaviourSettings.disableOfflineProcessing) {
+                    for (String oreId : event.getData().listOreIds()) {
+                        OreTransform oreTransform = OreProcessor.getApi().requireOre(oreId).getBestTransform(event.getPlayerId());
+                        int processed = event.getData().requireOreData(oreId).process(mul, oreTransform::convert);
+                        StatisticHelper.increaseProductCount(oreId, processed, event.getData());
+                        StatisticHelper.increaseProductCount(oreId, processed, OreProcessor.getApi().getServerData());
+                        OreProcessor.getInstance().debug(2, String.format(
+                                "Processed x%d %s for %s using transform #%s",
+                                processed, oreId, event.getPlayerId(), oreTransform.getId()
+                        ));
+                    }
                 }
 
                 // then reset hibernation to prevent any unexpected accidents causing duplication
@@ -97,6 +103,7 @@ public class ProcessingPlant implements Listener {
         Bukkit.getPluginManager().callEvent(new OreMineEvent(player, event.getBlock(), ore, isFull));
 
         if (isFull) {
+            if (plugin.mainConfig.behaviourSettings.dropOnFullStorage) return;
             OreProcessor.getInstance().msg(player, OreProcessor.getInstance().messageConfig.storageFull);
             event.setCancelled(true);
         } else {
@@ -121,6 +128,9 @@ public class ProcessingPlant implements Listener {
 
         PlayerData playerData = OreProcessor.getApi().getPlayerData(player);
         OreData oreData = playerData.requireOreData(ore.getId());
+        if (oreData.isFull() && plugin.mainConfig.behaviourSettings.dropOnFullStorage)
+            return;
+
         boolean has = false;
 
         for (Iterator<Item> iterator = event.getItems().iterator(); iterator.hasNext(); ) {

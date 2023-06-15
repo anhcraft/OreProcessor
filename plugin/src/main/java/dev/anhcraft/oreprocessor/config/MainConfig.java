@@ -5,6 +5,7 @@ import dev.anhcraft.config.annotations.Description;
 import dev.anhcraft.config.annotations.Example;
 import dev.anhcraft.config.annotations.Validation;
 import dev.anhcraft.oreprocessor.api.integration.ShopProviderType;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashMap;
@@ -58,4 +59,7 @@ public class MainConfig {
     @Example("shop-provider: ShopGUIPlus")
     @Nullable
     public ShopProviderType shopProvider;
+
+    @NotNull
+    public BehaviourConfig behaviourSettings = new BehaviourConfig();
 }

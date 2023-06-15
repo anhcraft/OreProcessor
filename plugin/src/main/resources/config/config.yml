@@ -109,5 +109,8 @@ ores:
         - ancient_debris > 50% netherite_ingot, 50% netherite_scrap
 processing-speed: 5
 shop-provider: ShopGUIPlus
+behaviour-settings:
+  drop-on-full-storage: false
+  disable-offline-processing: false
 dev-mode: false
 debug-level: 0

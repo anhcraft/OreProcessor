@@ -40,7 +40,7 @@ public final class OreProcessor extends JavaPlugin {
     private ProcessingPlant processingPlant;
     public Economy economy;
     public MessageConfig messageConfig;
-    MainConfig mainConfig;
+    public MainConfig mainConfig;
     UpgradeConfig upgradeConfig;
 
     @NotNull
