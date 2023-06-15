@@ -6,6 +6,7 @@ import dev.anhcraft.oreprocessor.api.data.PlayerData;
 import dev.anhcraft.oreprocessor.api.event.AsyncPlayerDataLoadEvent;
 import dev.anhcraft.oreprocessor.storage.player.compat.GenericPlayerDataConfig;
 import dev.anhcraft.oreprocessor.storage.player.compat.PlayerDataConfigV0;
+import dev.anhcraft.oreprocessor.util.CompressUtils;
 import dev.anhcraft.oreprocessor.util.ConfigHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -19,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -54,9 +56,17 @@ public class PlayerDataManager implements Listener {
 
     @NotNull
     private PlayerDataConfigV1 loadData(UUID uuid) {
-        File file = new File(folder, uuid + ".yml");
+        File file = new File(folder, uuid + ".gz");
         if (file.exists()) {
-            YamlConfiguration conf = YamlConfiguration.loadConfiguration(file);
+            YamlConfiguration conf = null;
+            try {
+                conf = YamlConfiguration.loadConfiguration(new StringReader(CompressUtils.readAndDecompressString(file)));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            if (conf == null)
+                return new PlayerDataConfigV1();
 
             // attempt to check version first
             GenericPlayerDataConfig genericData = ConfigHelper.load(GenericPlayerDataConfig.class, conf);
@@ -99,11 +109,11 @@ public class PlayerDataManager implements Listener {
     private void saveDataIfDirty(UUID uuid, @NotNull PlayerDataConfigV1 playerData) {
         if (playerData.dirty.compareAndSet(true, false)) {
             plugin.debug("Saving %s's data...", uuid);
-            File file = new File(folder, uuid + ".yml");
+            File file = new File(folder, uuid + ".gz");
             YamlConfiguration conf = new YamlConfiguration();
             ConfigHelper.save(PlayerDataConfigV1.class, conf, playerData);
             try {
-                conf.save(file);
+                CompressUtils.compressAndWriteString(conf.saveToString(), file);
             } catch (IOException e) {
                 e.printStackTrace();
             }

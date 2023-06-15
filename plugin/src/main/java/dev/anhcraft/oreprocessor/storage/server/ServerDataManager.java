@@ -1,11 +1,13 @@
 package dev.anhcraft.oreprocessor.storage.server;
 
 import dev.anhcraft.oreprocessor.OreProcessor;
+import dev.anhcraft.oreprocessor.util.CompressUtils;
 import dev.anhcraft.oreprocessor.util.ConfigHelper;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 
 public class ServerDataManager {
     private final OreProcessor plugin;
@@ -16,7 +18,7 @@ public class ServerDataManager {
         this.plugin = plugin;
         File folder = new File(plugin.getDataFolder(), "data");
         folder.mkdir();
-        file = new File(folder, "server.yml");
+        file = new File(folder, "server.gz");
 
         loadData();
     }
@@ -27,11 +29,21 @@ public class ServerDataManager {
 
     private void loadData() {
         if (file.exists()) {
-            YamlConfiguration conf = YamlConfiguration.loadConfiguration(file);
+            YamlConfiguration conf = null;
+            try {
+                conf = YamlConfiguration.loadConfiguration(new StringReader(CompressUtils.readAndDecompressString(file)));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            if (conf == null)
+                serverData = new ServerDataConfig();
+
             serverData = ConfigHelper.load(ServerDataConfig.class, conf);
         } else {
             serverData = new ServerDataConfig();
         }
+
         plugin.debug("Server data loaded!");
     }
 
@@ -41,7 +53,7 @@ public class ServerDataManager {
             YamlConfiguration conf = new YamlConfiguration();
             ConfigHelper.save(ServerDataConfig.class, conf, serverData);
             try {
-                conf.save(file);
+                CompressUtils.compressAndWriteString(conf.saveToString(), file);
             } catch (IOException e) {
                 e.printStackTrace();
             }
