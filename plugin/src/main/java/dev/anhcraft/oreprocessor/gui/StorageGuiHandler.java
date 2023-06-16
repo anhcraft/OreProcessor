@@ -171,9 +171,9 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
                         .replace("{storage-capacity}", Integer.toString(cap)));
                 setBulk("quick-sell", itemBuilder.build());
 
-                if (stored == 0) {
-                    visitComponent("quick-sell", Slot::clearEvents);
-                } else {
+                visitComponent("quick-sell", Slot::clearEvents);
+
+                if (stored > 0) {
                     listen("quick-sell", new ClickEvent() {
                         @Override
                         public void onClick(@NotNull InventoryClickEvent clickEvent, @NotNull Player player, int slot) {
