@@ -133,7 +133,7 @@ public final class OreProcessorApiImpl implements OreProcessorApi {
     }
 
     @Override
-    public int getProcessingSpeed() {
+    public float getProcessingSpeed() {
         return plugin.mainConfig.processingSpeed;
     }
 

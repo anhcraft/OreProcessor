@@ -59,7 +59,7 @@ public interface OreProcessorApi {
      * Gets the global processing speed.
      * @return The global processing speed
      */
-    int getProcessingSpeed();
+    float getProcessingSpeed();
 
     /**
      * Gets the default capacity.

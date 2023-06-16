@@ -83,7 +83,7 @@ public class ProcessingPlant implements Listener {
     }
 
     public void reload() {
-        new MineralProcessingTask().runTaskTimerAsynchronously(plugin, 0, 20L * OreProcessor.getApi().getProcessingSpeed());
+        new MineralProcessingTask().runTaskTimerAsynchronously(plugin, 0, (long) (20L * OreProcessor.getApi().getProcessingSpeed()));
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)

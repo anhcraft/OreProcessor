@@ -29,7 +29,7 @@ public class MainConfig {
             "Reducing the value results in faster processing time but a downgrade in performance. It is",
             "recommended to adjust throughput values instead"
     })
-    public int processingSpeed = 5;
+    public float processingSpeed = 2.5f;
 
     @Description({
             "Ore configuration",
