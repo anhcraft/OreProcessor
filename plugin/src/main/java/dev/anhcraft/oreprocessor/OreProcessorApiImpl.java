@@ -133,8 +133,8 @@ public final class OreProcessorApiImpl implements OreProcessorApi {
     }
 
     @Override
-    public float getProcessingSpeed() {
-        return plugin.mainConfig.processingSpeed;
+    public float getProcessingInterval() {
+        return plugin.mainConfig.processingInterval;
     }
 
     @Override
@@ -149,7 +149,7 @@ public final class OreProcessorApiImpl implements OreProcessorApi {
 
     @Override
     public int getThroughputPerMinute(int throughput) {
-        return (int) (throughput * 60d / OreProcessor.getApi().getProcessingSpeed());
+        return (int) (throughput * 60d / OreProcessor.getApi().getProcessingInterval());
     }
 
     @Override

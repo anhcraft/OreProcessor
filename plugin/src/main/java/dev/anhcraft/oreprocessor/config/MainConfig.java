@@ -26,10 +26,10 @@ public class MainConfig {
     @Description({
             "The interval at which the plugin will process ores (in seconds)",
             "The maximum amount of ore processed per time is: <code>processingSpeed x throughput</code>",
-            "Reducing the value results in faster processing time but a downgrade in performance. It is",
+            "Reducing the value results in faster processing but a downgrade in performance. It is",
             "recommended to adjust throughput values instead"
     })
-    public float processingSpeed = 2.5f;
+    public float processingInterval = 2.5f;
 
     @Description({
             "Ore configuration",

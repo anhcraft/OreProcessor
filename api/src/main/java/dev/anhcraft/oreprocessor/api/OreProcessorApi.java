@@ -56,10 +56,10 @@ public interface OreProcessorApi {
     Collection<Ore> getOresAllowFeedstock(Material feedstock);
 
     /**
-     * Gets the global processing speed.
-     * @return The global processing speed
+     * Gets the processing interval.
+     * @return The processing interval
      */
-    float getProcessingSpeed();
+    float getProcessingInterval();
 
     /**
      * Gets the default capacity.

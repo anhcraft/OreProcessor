@@ -58,7 +58,7 @@ public class ProcessingPlant implements Listener {
         if (hibernationStart > 0) {
             long hibernationTime = (System.currentTimeMillis() - hibernationStart) / 1000;
             if (hibernationTime > 0) {
-                int mul = (int) (hibernationTime / OreProcessor.getApi().getProcessingSpeed());
+                int mul = (int) (hibernationTime / OreProcessor.getApi().getProcessingInterval());
                 plugin.debug("Processing hibernated materials for %s, time = %ds, multi = x%d", event.getPlayerId(), hibernationTime, mul);
 
                 if (!plugin.mainConfig.behaviourSettings.disableOfflineProcessing) {
@@ -83,7 +83,7 @@ public class ProcessingPlant implements Listener {
     }
 
     public void reload() {
-        new MineralProcessingTask().runTaskTimerAsynchronously(plugin, 0, (long) (20L * OreProcessor.getApi().getProcessingSpeed()));
+        new MineralProcessingTask().runTaskTimerAsynchronously(plugin, 0, (long) (20L * OreProcessor.getApi().getProcessingInterval()));
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)

@@ -110,7 +110,7 @@ ores:
         - ancient_debris > 30% netherite_ingot, 70% netherite_scrap
       mvp: # Permission: oreprocessor.transform.netherite.mvp (Check first)
         - ancient_debris > 50% netherite_ingot, 50% netherite_scrap
-processing-speed: 5
+processing-interval: 5
 shop-provider: ShopGUIPlus
 behaviour-settings:
   drop-on-full-storage: false
