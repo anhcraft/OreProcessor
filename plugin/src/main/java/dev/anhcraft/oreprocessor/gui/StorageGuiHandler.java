@@ -114,23 +114,8 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
 
                     // TAKE
                     if (ItemUtil.isEmpty(cursor)) {
-                        int many;
-                        switch (clickEvent.getClick()) {
-                            case LEFT:
-                                many = 1;
-                                break;
-                            case RIGHT:
-                                many = 64;
-                                break;
-                            case SHIFT_LEFT:
-                                many = 16;
-                                break;
-                            case SHIFT_RIGHT:
-                                many = 32;
-                                break;
-                            default:
-                                return;
-                        }
+                        Integer many = plugin.mainConfig.accessibilitySettings.takeAmount.get(clickEvent.getClick());
+                        if (many == null || many <= 0) return;
                         int actual = oreData.takeProduct(product, many);
                         if (actual == 0) {
                             player.playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1f, 1f);
@@ -180,23 +165,8 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
                             Optional<ShopProvider> shopProvider = plugin.integrationManager.getShopProvider(OreProcessor.getApi().getShopProvider());
                             if (!shopProvider.isPresent()) return;
 
-                            double proportion;
-                            switch (clickEvent.getClick()) {
-                                case LEFT:
-                                    proportion = 1;
-                                    break;
-                                case RIGHT:
-                                    proportion = 0.5;
-                                    break;
-                                case SHIFT_LEFT:
-                                    proportion = 0.25;
-                                    break;
-                                case SHIFT_RIGHT:
-                                    proportion = 0.1;
-                                    break;
-                                default:
-                                    return;
-                            }
+                            Double proportion = plugin.mainConfig.accessibilitySettings.quickSellRatio.get(clickEvent.getClick());
+                            if (proportion == null || proportion <= 0) return;
 
                             MutableDouble profits = new MutableDouble(0);
                             MutableDouble count = new MutableDouble(0);

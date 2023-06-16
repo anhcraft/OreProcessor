@@ -116,5 +116,17 @@ behaviour-settings:
   drop-on-full-storage: false
   enable-mining-stat-on-full-storage: false
   disable-offline-processing: false
+accessibility-settings:
+  quick-sell-ratio:
+    left: 1 # Remove or Set 0 to disable
+    right: 0.5
+    shift_left: 0.25
+    shift_right: 0.1
+  take-amount:
+    left: 1 # Remove or Set 0 to disable
+    right: 64
+    shift_left: 16
+    shift_right: 32
+    #double_click: 128 # Add new click type is possible
 dev-mode: false
 debug-level: 0

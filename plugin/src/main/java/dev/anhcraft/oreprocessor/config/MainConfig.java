@@ -62,4 +62,7 @@ public class MainConfig {
 
     @NotNull
     public BehaviourConfig behaviourSettings = new BehaviourConfig();
+
+    @NotNull
+    public AccessibilitySettings accessibilitySettings = new AccessibilitySettings();
 }
