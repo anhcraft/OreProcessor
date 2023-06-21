@@ -16,6 +16,7 @@ import dev.anhcraft.oreprocessor.config.UpgradeLevelConfig;
 import dev.anhcraft.oreprocessor.storage.server.ServerDataImpl;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -43,7 +44,7 @@ public final class OreProcessorApiImpl implements OreProcessorApi {
 
             LinkedHashMap<String, OreTransform> transformMap = new LinkedHashMap<>();
 
-            for (Map.Entry<String, Map<Material, WheelSelection<Material>>> e : oreConfig.transform.entrySet()) {
+            for (Map.Entry<String, Map<Material, WheelSelection<ItemStack>>> e : oreConfig.transform.entrySet()) {
                 transformMap.put(e.getKey(), new OreTransform(e.getKey(), Collections.unmodifiableMap(e.getValue())));
             }
 

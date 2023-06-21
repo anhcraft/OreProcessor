@@ -5,6 +5,8 @@ import dev.anhcraft.jvmkit.utils.EnumUtil;
 import dev.anhcraft.oreprocessor.OreProcessor;
 import dev.anhcraft.oreprocessor.api.util.WheelSelection;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -45,14 +47,14 @@ public class OreConfig {
     @Path("transform")
     private LinkedHashMap<String, List<String>> rawTransform;
 
-    public LinkedHashMap<String, Map<Material, WheelSelection<Material>>> transform = new LinkedHashMap<>();
+    public LinkedHashMap<String, Map<Material, WheelSelection<ItemStack>>> transform = new LinkedHashMap<>();
 
     @PostHandler
     private void postProcess() {
         blocks = blocks.stream().filter(Objects::nonNull).collect(Collectors.toSet());
 
         for (Map.Entry<String, List<String>> e : rawTransform.entrySet()) {
-            Map<Material, WheelSelection<Material>> map = new EnumMap<>(Material.class);
+            Map<Material, WheelSelection<ItemStack>> map = new EnumMap<>(Material.class);
             for (String str : e.getValue()) {
                 String[] split = str.split("\\s*>\\s*");
                 if (split.length != 2)
@@ -64,7 +66,7 @@ public class OreConfig {
                     continue;
                 }
 
-                WheelSelection<Material> to = parseSelectionSet(split[1]);
+                WheelSelection<ItemStack> to = parseSelectionSet(split[1]);
                 if (to.isEmpty()) {
                     OreProcessor.getInstance().getLogger().warning(String.format("No products available in phase '%s'", str));
                     continue;
@@ -84,8 +86,8 @@ public class OreConfig {
         }
     }
 
-    private WheelSelection<Material> parseSelectionSet(String str) {
-        WheelSelection<Material> map = new WheelSelection<>();
+    private WheelSelection<ItemStack> parseSelectionSet(String str) {
+        WheelSelection<ItemStack> map = new WheelSelection<>();
         str = str.trim();
         String[] choices = str.split(",");
 
@@ -93,19 +95,15 @@ public class OreConfig {
             String[] args = choice.trim().split("\\s+");
 
             if (args.length == 1) {
-                Material material = (Material) EnumUtil.findEnum(Material.class, args[0].toUpperCase());
-                if (material != null)
-                    map.add(material, 100d);
-                else
-                    OreProcessor.getInstance().getLogger().warning(String.format("Unknown material '%s' in phase '%s'", args[0], str));
+                ItemStack is = parseItemstack(args[0]);
+                if (is != null) map.add(is, 100d);
+                else OreProcessor.getInstance().getLogger().warning(String.format("Invalid item format '%s' in phase '%s'", args[0], str));
             }
 
             else if (args.length == 2) {
-                Material material = (Material) EnumUtil.findEnum(Material.class, args[1].toUpperCase());
-                if (material != null)
-                    map.add(material, Double.parseDouble(args[0].replace("%", "")));
-                else
-                    OreProcessor.getInstance().getLogger().warning(String.format("Unknown material '%s' in phase '%s'", args[1], str));
+                ItemStack is = parseItemstack(args[1]);
+                if (is != null) map.add(is, Double.parseDouble(args[0].replace("%", "")));
+                else OreProcessor.getInstance().getLogger().warning(String.format("Invalid item format '%s' in phase '%s'", args[1], str));
             }
 
             else {
@@ -114,5 +112,24 @@ public class OreConfig {
         }
 
         return map;
+    }
+
+    @Nullable
+    private ItemStack parseItemstack(String str) {
+        String[] args = str.split(":");
+        if (args.length == 1) {
+            Material material = (Material) EnumUtil.findEnum(Material.class, args[0].toUpperCase());
+            return material == null ? null : new ItemStack(material, 1);
+        } else if (args.length == 2) {
+            Material material = (Material) EnumUtil.findEnum(Material.class, args[0].toUpperCase());
+            String num = args[1];
+            if (!num.matches("\\d+")) {
+                OreProcessor.getInstance().getLogger().warning(String.format("Invalid number '%s' in phase '%s'", num, str));
+                return null;
+            }
+            return material == null ? null : new ItemStack(material, Integer.parseInt(num));
+        } else {
+            return null;
+        }
     }
 }

@@ -2,13 +2,14 @@ package dev.anhcraft.oreprocessor.storage.player;
 
 import dev.anhcraft.oreprocessor.OreProcessor;
 import dev.anhcraft.oreprocessor.api.data.OreData;
+import dev.anhcraft.palette.util.ItemUtil;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
-import java.util.function.UnaryOperator;
 
 public class OreDataImpl implements OreData {
     private final OreDataConfig config;
@@ -179,40 +180,44 @@ public class OreDataImpl implements OreData {
     }
 
     @Override
-    public int process(int throughputMultiplier, @NotNull UnaryOperator<Material> function) {
+    public int process(int throughputMultiplier, @NotNull Function<Material, ItemStack> function) {
         int totalProcessed = 0;
 
         synchronized (config) {
             if (config.feedstock == null) return 0;
 
             int totalStored = countAllProducts();
-            int cap = getCapacity();
+            int capacity = getCapacity();
 
-            for (Iterator<Map.Entry<Material, Integer>> it = config.feedstock.entrySet().iterator(); it.hasNext() && totalStored < cap; ) {
+            for (Iterator<Map.Entry<Material, Integer>> it = config.feedstock.entrySet().iterator(); it.hasNext() && totalStored < capacity; ) {
                 Map.Entry<Material, Integer> en = it.next();
                 Material source = en.getKey();
-                Material output = function.apply(source);
-                if (output == null || !output.isItem())
+                ItemStack output = function.apply(source);
+                if (ItemUtil.isEmpty(output) || !output.getType().isItem())
                     continue;
 
-                int queued = en.getValue();
-                int toStore = Math.min(queued, getThroughput() * throughputMultiplier);
-                toStore = Math.min(toStore, cap - totalStored);
-                if (toStore == 0) break;
+                int availableStorage = capacity - totalStored;
+                int actualQueued = Math.min(en.getValue(), getThroughput() * throughputMultiplier);
+                // ensure that the output multiplication will not make storage overfull
+                actualQueued = Math.min(actualQueued * output.getAmount(), availableStorage) / output.getAmount();
+
+                if (actualQueued == 0)
+                    continue;
+
+                int createdProduct = actualQueued * output.getAmount();
 
                 if (config.products == null)
                     config.products = new LinkedHashMap<>();
+                config.products.put(output.getType(), config.products.getOrDefault(output.getType(), 0) + createdProduct);
 
-                config.products.put(output, config.products.getOrDefault(output, 0) + toStore);
-                totalProcessed += toStore;
-                totalStored += toStore;
+                totalProcessed += actualQueued;
+                totalStored += createdProduct;
 
-                int newQueued = queued - toStore;
-
+                int newQueued = en.getValue() - actualQueued;
                 if (newQueued == 0)
-                    it.remove();
+                    it.remove(); // If nothing left, remove from feedstock
                 else
-                    en.setValue(newQueued);
+                    en.setValue(newQueued); // If still exists, let do it in the next processing time
 
                 markDirty();
             }

@@ -109,7 +109,7 @@ ores:
       vip: # Permission: oreprocessor.transform.netherite.vip (Check second)
         - ancient_debris > 30% netherite_ingot, 70% netherite_scrap
       mvp: # Permission: oreprocessor.transform.netherite.mvp (Check first)
-        - ancient_debris > 50% netherite_ingot, 50% netherite_scrap
+        - ancient_debris > 50% netherite_ingot, 50% netherite_scrap, 10% netherite_scrap:2 # set amount
 processing-interval: 5
 shop-provider: ShopGUIPlus
 behaviour-settings:

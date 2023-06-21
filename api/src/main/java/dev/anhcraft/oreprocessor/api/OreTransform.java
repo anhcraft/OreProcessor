@@ -2,6 +2,7 @@ package dev.anhcraft.oreprocessor.api;
 
 import dev.anhcraft.oreprocessor.api.util.WheelSelection;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,9 +14,9 @@ import java.util.Set;
  */
 public class OreTransform {
     private final String id;
-    private final Map<Material, WheelSelection<Material>> transformMap;
+    private final Map<Material, WheelSelection<ItemStack>> transformMap;
 
-    public OreTransform(String id, Map<Material, WheelSelection<Material>> transformMap) {
+    public OreTransform(String id, Map<Material, WheelSelection<ItemStack>> transformMap) {
         this.id = id;
         this.transformMap = transformMap; // unmodifiable
     }
@@ -35,12 +36,8 @@ public class OreTransform {
     }
 
     @Nullable
-    public WheelSelection<Material> getProduct(Material material) {
+    public WheelSelection<ItemStack> getProduct(Material material) {
         return transformMap.get(material);
-    }
-
-    public boolean hasProduct(Material material) {
-        return transformMap.values().stream().anyMatch(selection -> selection.contains(material));
     }
 
     /**
@@ -49,8 +46,8 @@ public class OreTransform {
      * @return the corresponding product or {@code null} if not exists
      */
     @Nullable
-    public Material convert(Material feedstock) {
-        WheelSelection<Material> w = transformMap.get(feedstock);
+    public ItemStack convert(Material feedstock) {
+        WheelSelection<ItemStack> w = transformMap.get(feedstock);
         return w != null ? w.roll() : null;
     }
 }

@@ -1,12 +1,12 @@
 package dev.anhcraft.oreprocessor.api.data;
 
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 import java.util.function.Function;
-import java.util.function.UnaryOperator;
 
 public interface OreData extends Modifiable {
     int getThroughput();
@@ -64,5 +64,5 @@ public interface OreData extends Modifiable {
     }
 
     @ApiStatus.Internal
-    int process(int throughputMultiplier, @NotNull UnaryOperator<Material> function);
+    int process(int throughputMultiplier, @NotNull Function<Material, ItemStack> function);
 }
