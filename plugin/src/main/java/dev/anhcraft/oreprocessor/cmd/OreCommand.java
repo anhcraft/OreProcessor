@@ -20,6 +20,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.io.File;
+import java.util.Objects;
 
 @CommandAlias("ore|oreprocessor")
 public class OreCommand extends BaseCommand {
@@ -68,7 +69,7 @@ public class OreCommand extends BaseCommand {
             sender.sendMessage(ChatColor.RED + "This player has not played before!");
             return;
         }
-        if (OreProcessor.getApi().getOre(ore) == null) {
+        if (!Objects.equals(ore, "*") && OreProcessor.getApi().getOre(ore) == null) {
             sender.sendMessage(ChatColor.RED + "This ore does not exist!");
             return;
         }
@@ -84,11 +85,21 @@ public class OreCommand extends BaseCommand {
                 sender.sendMessage(ChatColor.RED + throwable.getMessage());
                 return;
             }
-            playerData.requireOreData(ore).setThroughput(finalAmount);
-            sender.sendMessage(ChatColor.GREEN + String.format(
-                    "Set %s's %s throughput to %d (%d/m)",
-                    player.getName(), ore, finalAmount, OreProcessor.getApi().getThroughputPerMinute(finalAmount)
-            ));
+            if (Objects.equals(ore, "*")) {
+                for (String oreId : playerData.listOreIds()) {
+                    playerData.requireOreData(oreId).setThroughput(finalAmount);
+                }
+                sender.sendMessage(ChatColor.GREEN + String.format(
+                        "Set %s's all ore throughput to %d (%d/m)",
+                        player.getName(), finalAmount, OreProcessor.getApi().getThroughputPerMinute(finalAmount)
+                ));
+            } else {
+                playerData.requireOreData(ore).setThroughput(finalAmount);
+                sender.sendMessage(ChatColor.GREEN + String.format(
+                        "Set %s's %s throughput to %d (%d/m)",
+                        player.getName(), ore, finalAmount, OreProcessor.getApi().getThroughputPerMinute(finalAmount)
+                ));
+            }
         });
     }
 
@@ -104,7 +115,7 @@ public class OreCommand extends BaseCommand {
             sender.sendMessage(ChatColor.RED + "This player has not played before!");
             return;
         }
-        if (OreProcessor.getApi().getOre(ore) == null) {
+        if (!Objects.equals(ore, "*") && OreProcessor.getApi().getOre(ore) == null) {
             sender.sendMessage(ChatColor.RED + "This ore does not exist!");
             return;
         }
@@ -120,11 +131,21 @@ public class OreCommand extends BaseCommand {
                 sender.sendMessage(ChatColor.RED + throwable.getMessage());
                 return;
             }
-            playerData.requireOreData(ore).setCapacity(finalAmount);
-            sender.sendMessage(ChatColor.GREEN + String.format(
-                    "Set %s's %s capacity to %d",
-                    player.getName(), ore, finalAmount
-            ));
+            if (Objects.equals(ore, "*")) {
+                for (String oreId : playerData.listOreIds()) {
+                    playerData.requireOreData(oreId).setCapacity(finalAmount);
+                }
+                sender.sendMessage(ChatColor.GREEN + String.format(
+                        "Set %s's all ores capacity to %d",
+                        player.getName(), finalAmount
+                ));
+            } else {
+                playerData.requireOreData(ore).setCapacity(finalAmount);
+                sender.sendMessage(ChatColor.GREEN + String.format(
+                        "Set %s's %s capacity to %d",
+                        player.getName(), ore, finalAmount
+                ));
+            }
         });
     }
 
