@@ -38,12 +38,14 @@ public class OreCommand extends BaseCommand {
     }
 
     @Default
+    @Description("Open the menu")
     public void openMenu(Player player) {
         GuiRegistry.openMenuGui(player);
     }
 
     @Subcommand("docs")
     @CommandPermission("oreprocessor.docs")
+    @Description("Generate offline config documentation")
     public void generateDoc(CommandSender sender) {
         new ConfigDocGenerator()
                 .withSchemaOf(MainConfig.class)
@@ -61,6 +63,7 @@ public class OreCommand extends BaseCommand {
     @Subcommand("upgrade throughput set")
     @CommandPermission("oreprocessor.upgrade.throughput.set")
     @CommandCompletion("@players @ores")
+    @Description("Set throughput upgrade")
     public void setThroughputUpgrade(CommandSender sender, OfflinePlayer player, String ore, int amount) {
         if (amount < 0) {
             sender.sendMessage(ChatColor.RED + "The amount must be positive! (or zero to reset)");
@@ -107,6 +110,7 @@ public class OreCommand extends BaseCommand {
     @Subcommand("upgrade capacity set")
     @CommandPermission("oreprocessor.upgrade.capacity.set")
     @CommandCompletion("@players @ores")
+    @Description("Set capacity upgrade")
     public void setCapacityUpgrade(CommandSender sender, OfflinePlayer player, String ore, int amount) {
         if (amount < 0) {
             sender.sendMessage(ChatColor.RED + "The amount must be positive! (or zero to reset)");
@@ -152,12 +156,14 @@ public class OreCommand extends BaseCommand {
 
     @Subcommand("stats server all")
     @CommandPermission("oreprocessor.stats.server.all")
+    @Description("Display cumulative server stats")
     public void statsServerAll(CommandSender sender, String oreQuery) {
         displayStats(sender, oreQuery, "&cServer", TimeSeries.parseAll(OreProcessor.getApi().getServerData(), oreQuery));
     }
 
     @Subcommand("stats player all")
     @CommandPermission("oreprocessor.stats.player.all")
+    @Description("Display cumulative player stats")
     public void statsPlayerAll(CommandSender sender, OfflinePlayer player, String oreQuery) {
         if (!player.hasPlayedBefore()) {
             sender.sendMessage(ChatColor.RED + "This player has not played before!");
@@ -177,6 +183,7 @@ public class OreCommand extends BaseCommand {
 
     @Subcommand("reload")
     @CommandPermission("oreprocessor.reload")
+    @Description("Reload the plugin")
     public void reload(CommandSender sender) {
         plugin.reload();
         sender.sendMessage(ChatColor.GREEN + "OreProcessor reloaded!");
