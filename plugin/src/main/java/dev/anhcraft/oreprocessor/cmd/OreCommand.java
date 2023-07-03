@@ -6,6 +6,7 @@ import co.aikar.commands.annotation.*;
 import dev.anhcraft.config.bukkit.utils.ItemBuilder;
 import dev.anhcraft.configdoc.ConfigDocGenerator;
 import dev.anhcraft.oreprocessor.OreProcessor;
+import dev.anhcraft.oreprocessor.api.data.stats.TimeSeries;
 import dev.anhcraft.oreprocessor.config.MainConfig;
 import dev.anhcraft.oreprocessor.config.MessageConfig;
 import dev.anhcraft.oreprocessor.config.OreConfig;
@@ -149,10 +150,45 @@ public class OreCommand extends BaseCommand {
         });
     }
 
+    @Subcommand("stats server all")
+    @CommandPermission("oreprocessor.stats.server.all")
+    public void statsServerAll(CommandSender sender, String oreQuery) {
+        displayStats(sender, oreQuery, "&cServer", TimeSeries.parseAll(OreProcessor.getApi().getServerData(), oreQuery));
+    }
+
+    @Subcommand("stats player all")
+    @CommandPermission("oreprocessor.stats.player.all")
+    public void statsPlayerAll(CommandSender sender, OfflinePlayer player, String oreQuery) {
+        if (!player.hasPlayedBefore()) {
+            sender.sendMessage(ChatColor.RED + "This player has not played before!");
+            return;
+        }
+        if (!player.isOnline())
+            sender.sendMessage(ChatColor.YELLOW + "Fetching player data as he is currently offline...");
+
+        OreProcessor.getApi().requirePlayerData(player.getUniqueId()).whenComplete((playerData, throwable) -> {
+            if (throwable != null) {
+                sender.sendMessage(ChatColor.RED + throwable.getMessage());
+                return;
+            }
+            displayStats(sender, oreQuery, player.getName(), TimeSeries.parseAll(playerData, oreQuery));
+        });
+    }
+
     @Subcommand("reload")
     @CommandPermission("oreprocessor.reload")
     public void reload(CommandSender sender) {
         plugin.reload();
         sender.sendMessage(ChatColor.GREEN + "OreProcessor reloaded!");
+    }
+
+    private void displayStats(CommandSender sender, String oreQuery, String target, TimeSeries timeSeries) {
+        for (String s : plugin.messageConfig.statisticAllDetails) {
+            plugin.rawMsg(sender, s.replace("{ore-query}", oreQuery)
+                    .replace("{target}", target)
+                    .replace("{total-mined}", Long.toString(timeSeries.getMiningCount()))
+                    .replace("{total-feedstock}", Long.toString(timeSeries.getFeedstockCount()))
+                    .replace("{total-products}", Long.toString(timeSeries.getProductCount())));
+        }
     }
 }

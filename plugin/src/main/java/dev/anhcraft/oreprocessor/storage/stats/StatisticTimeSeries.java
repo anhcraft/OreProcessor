@@ -2,6 +2,7 @@ package dev.anhcraft.oreprocessor.storage.stats;
 
 import dev.anhcraft.config.annotations.Configurable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +21,7 @@ public class StatisticTimeSeries {
     }
 
     @NotNull
-    public StatisticConfig getHourlyStat(long timestamp) {
+    public StatisticConfig getOrCreateHourlyStat(long timestamp) {
         if (hourlyStats == null)
             hourlyStats = new HashMap<>(); // don't mark dirty (unneeded)
 
@@ -30,5 +31,12 @@ public class StatisticTimeSeries {
             hourlyStats.put(k, hourlyStat = new StatisticConfig()); // don't mark dirty (unneeded)
 
         return hourlyStat;
+    }
+
+    @Nullable
+    public StatisticConfig getHourlyStat(long timestamp) {
+        if (hourlyStats == null) return null;
+        long k = timestamp / 3600000L;
+        return hourlyStats.get(k);
     }
 }

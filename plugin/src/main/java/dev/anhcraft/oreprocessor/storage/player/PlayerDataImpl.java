@@ -4,11 +4,15 @@ import dev.anhcraft.oreprocessor.OreProcessor;
 import dev.anhcraft.oreprocessor.api.data.OreData;
 import dev.anhcraft.oreprocessor.api.data.PlayerData;
 import dev.anhcraft.oreprocessor.api.data.stats.Statistics;
+import dev.anhcraft.oreprocessor.storage.stats.StatisticConfig;
 import dev.anhcraft.oreprocessor.storage.stats.StatisticsImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 public class PlayerDataImpl implements PlayerData {
     private final PlayerDataConfigV1 config;
@@ -81,7 +85,13 @@ public class PlayerDataImpl implements PlayerData {
     }
 
     @Override
-    public @NotNull Statistics getHourlyStats(long timestamp) {
-        return new StatisticsImpl(config.dirty, config.getStats().getHourlyStat(timestamp));
+    public @Nullable Statistics getHourlyStats(long timestamp) {
+        StatisticConfig x = config.getStats().getHourlyStat(timestamp);
+        return x == null ? null : new StatisticsImpl(config.dirty, x);
+    }
+
+    @Override
+    public @NotNull Statistics getOrCreateHourlyStats(long timestamp) {
+        return new StatisticsImpl(config.dirty, config.getStats().getOrCreateHourlyStat(timestamp));
     }
 }

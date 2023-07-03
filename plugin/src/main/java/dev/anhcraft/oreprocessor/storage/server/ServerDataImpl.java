@@ -2,8 +2,10 @@ package dev.anhcraft.oreprocessor.storage.server;
 
 import dev.anhcraft.oreprocessor.api.data.ServerData;
 import dev.anhcraft.oreprocessor.api.data.stats.Statistics;
+import dev.anhcraft.oreprocessor.storage.stats.StatisticConfig;
 import dev.anhcraft.oreprocessor.storage.stats.StatisticsImpl;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ServerDataImpl implements ServerData {
     private final ServerDataConfig config;
@@ -28,7 +30,13 @@ public class ServerDataImpl implements ServerData {
     }
 
     @Override
-    public @NotNull Statistics getHourlyStats(long timestamp) {
-        return new StatisticsImpl(config.dirty, config.getStats().getHourlyStat(timestamp));
+    public @Nullable Statistics getHourlyStats(long timestamp) {
+        StatisticConfig x = config.getStats().getHourlyStat(timestamp);
+        return x == null ? null : new StatisticsImpl(config.dirty, x);
+    }
+
+    @Override
+    public @NotNull Statistics getOrCreateHourlyStats(long timestamp) {
+        return new StatisticsImpl(config.dirty, config.getStats().getOrCreateHourlyStat(timestamp));
     }
 }

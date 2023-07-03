@@ -11,3 +11,8 @@ upgrade-capacity-success: "&aSuccessfully upgraded {ore} capacity to {amount} it
 upgrade-capacity-failed: "&cFailed to upgrade capacity!"
 storage-full: "&cReaching storage limit. Please take your resources: /ore"
 quick-sell-success: "&aSold &fx{amount} items&a for &e${profits}."
+statistic-all-details:
+  - "&f{target}&7's cumulative stats for &f{ore-query}"
+  - "&7▪ Total mined: &e{total-mined}&7 blocks"
+  - "&7▪ Total feedstock: &e{total-feedstock}&7 items"
+  - "&7▪ Total products: &e{total-products}&7 items"

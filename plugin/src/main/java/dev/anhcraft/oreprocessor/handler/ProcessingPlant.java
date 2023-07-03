@@ -155,7 +155,7 @@ public class ProcessingPlant implements Listener {
 
         if (has && !playerData.isTutorialHidden()) {
             for (String msg : OreProcessor.getInstance().messageConfig.firstTimeTutorial) {
-                OreProcessor.getInstance().msg(player, msg);
+                OreProcessor.getInstance().rawMsg(player, msg);
             }
         }
     }

@@ -70,6 +70,14 @@ public final class OreProcessor extends JavaPlugin {
         sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messageConfig.prefix + str));
     }
 
+    public void rawMsg(CommandSender sender, String str) {
+        if (str == null) {
+            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c<Empty message>"));
+            return;
+        }
+        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', str));
+    }
+
     @Override
     public void onEnable() {
         if (!setupEconomy()) {
