@@ -2,6 +2,7 @@ name: OreProcessor
 version: '${project.version}'
 main: dev.anhcraft.oreprocessor.OreProcessor
 api-version: 1.14
+folia-supported: true
 depend:
   - Vault
 softdepend:
