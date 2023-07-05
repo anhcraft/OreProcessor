@@ -154,16 +154,16 @@ public class OreCommand extends BaseCommand {
         });
     }
 
-    @Subcommand("stats server all")
-    @CommandPermission("oreprocessor.stats.server.all")
-    @Description("Display cumulative server stats")
+    @Subcommand("stats server")
+    @CommandPermission("oreprocessor.stats.server")
+    @Description("Display server stats")
     public void statsServerAll(CommandSender sender, String oreQuery) {
         displayStats(sender, oreQuery, "&cServer", TimeSeries.parseAll(OreProcessor.getApi().getServerData(), oreQuery));
     }
 
-    @Subcommand("stats player all")
-    @CommandPermission("oreprocessor.stats.player.all")
-    @Description("Display cumulative player stats")
+    @Subcommand("stats player")
+    @CommandPermission("oreprocessor.stats.player")
+    @Description("Display player stats")
     public void statsPlayerAll(CommandSender sender, OfflinePlayer player, String oreQuery) {
         if (!player.hasPlayedBefore()) {
             sender.sendMessage(ChatColor.RED + "This player has not played before!");
@@ -190,7 +190,7 @@ public class OreCommand extends BaseCommand {
     }
 
     private void displayStats(CommandSender sender, String oreQuery, String target, TimeSeries timeSeries) {
-        for (String s : plugin.messageConfig.statisticAllDetails) {
+        for (String s : plugin.messageConfig.statisticCumulativeDetails) {
             plugin.rawMsg(sender, s.replace("{ore-query}", oreQuery)
                     .replace("{target}", target)
                     .replace("{total-mined}", Long.toString(timeSeries.getMiningCount()))

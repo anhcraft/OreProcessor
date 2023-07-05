@@ -22,5 +22,5 @@ public class MessageConfig {
     @Validation(notNull = true)
     public String quickSellSuccess;
     @Validation(notNull = true)
-    public String[] statisticAllDetails;
+    public String[] statisticCumulativeDetails;
 }
