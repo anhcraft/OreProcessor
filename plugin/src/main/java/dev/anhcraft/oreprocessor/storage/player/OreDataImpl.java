@@ -196,6 +196,20 @@ public class OreDataImpl implements OreData {
     }
 
     @Override
+    public boolean isFull() {
+        synchronized (config) {
+            return countAllFeedstock() + countAllProducts() >= getCapacity();
+        }
+    }
+
+    @Override
+    public int getFreeSpace() {
+        synchronized (config) {
+            return Math.max(0, getCapacity() - (countAllFeedstock() + countAllProducts()));
+        }
+    }
+
+    @Override
     public int process(int throughputMultiplier, @NotNull Function<Material, ItemStack> function) {
         int totalProcessed = 0;
 

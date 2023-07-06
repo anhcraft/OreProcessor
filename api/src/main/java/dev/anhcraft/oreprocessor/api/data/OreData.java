@@ -63,9 +63,9 @@ public interface OreData extends Modifiable {
 
     int countAllProducts();
 
-    default boolean isFull() {
-        return countAllFeedstock() + countAllProducts() >= getCapacity();
-    }
+    boolean isFull();
+
+    int getFreeSpace();
 
     @ApiStatus.Internal
     int process(int throughputMultiplier, @NotNull Function<Material, ItemStack> function);
