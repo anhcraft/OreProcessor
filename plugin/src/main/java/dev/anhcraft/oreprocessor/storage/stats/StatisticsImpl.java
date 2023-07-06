@@ -26,6 +26,7 @@ public class StatisticsImpl implements Statistics {
     }
 
     private long getCount(Map<String, Long> map, String oreQuery) {
+        if (map == null) return 0;
         oreQuery = oreQuery.trim();
         if (oreQuery.equals("*")) {
             long total = 0;

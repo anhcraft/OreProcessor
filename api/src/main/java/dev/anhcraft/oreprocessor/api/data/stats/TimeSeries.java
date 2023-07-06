@@ -1,7 +1,6 @@
 package dev.anhcraft.oreprocessor.api.data.stats;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class TimeSeries {
     private long miningCount;
@@ -27,7 +26,7 @@ public class TimeSeries {
     }
 
     @NotNull
-    public static TimeSeries parseAll(@NotNull Monitored monitored, @Nullable String ore) {
+    public static TimeSeries parseAll(@NotNull Monitored monitored, @NotNull String ore) {
         return new TimeSeries(
             monitored.getCumulativeStats().getMiningCount(ore),
             monitored.getCumulativeStats().getFeedstockCount(ore),
@@ -36,7 +35,7 @@ public class TimeSeries {
     }
 
     @NotNull
-    public static TimeSeries parseRange(@NotNull Monitored monitored, @Nullable String ore, long fromDate, long endDate) {
+    public static TimeSeries parseRange(@NotNull Monitored monitored, @NotNull String ore, long fromDate, long endDate) {
         if (fromDate <= 0) fromDate = System.currentTimeMillis();
         if (endDate <= 0) endDate = System.currentTimeMillis();
         long miningCount = 0;
