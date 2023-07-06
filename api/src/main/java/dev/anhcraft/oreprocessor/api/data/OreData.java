@@ -13,9 +13,13 @@ public interface OreData extends Modifiable {
 
     void setThroughput(int amount);
 
+    void addThroughput(int amount);
+
     int getCapacity();
 
     void setCapacity(int amount);
+
+    void addCapacity(int amount);
 
     @NotNull
     Set<Material> getFeedstock();

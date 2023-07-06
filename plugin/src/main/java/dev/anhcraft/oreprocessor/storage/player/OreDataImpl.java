@@ -30,8 +30,16 @@ public class OreDataImpl implements OreData {
     @Override
     public void setThroughput(int amount) {
         synchronized (config) {
-            if (config.throughput == amount) return;
+            if (amount < 0 || config.throughput == amount) return;
             config.throughput = amount;
+            markDirty();
+        }
+    }
+
+    @Override
+    public void addThroughput(int amount) {
+        synchronized (config) {
+            config.throughput = Math.max(0, config.throughput + amount);
             markDirty();
         }
     }
@@ -46,8 +54,16 @@ public class OreDataImpl implements OreData {
     @Override
     public void setCapacity(int amount) {
         synchronized (config) {
-            if (config.capacity == amount) return;
+            if (amount < 0 || config.capacity == amount) return;
             config.capacity = amount;
+            markDirty();
+        }
+    }
+
+    @Override
+    public void addCapacity(int amount) {
+        synchronized (config) {
+            config.capacity = Math.max(0, config.capacity + amount);
             markDirty();
         }
     }
