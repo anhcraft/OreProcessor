@@ -19,6 +19,9 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDropItemEvent;
+import org.bukkit.plugin.RegisteredListener;
 
 import java.io.File;
 import java.util.Objects;
@@ -274,6 +277,29 @@ public class OreCommand extends BaseCommand {
                     .replace("{total-mined}", Long.toString(timeSeries.getMiningCount()))
                     .replace("{total-feedstock}", Long.toString(timeSeries.getFeedstockCount()))
                     .replace("{total-products}", Long.toString(timeSeries.getProductCount())));
+        }
+    }
+
+    @Subcommand("debugevents")
+    @CommandPermission("oreprocessor.debugevents")
+    @Description("Debug events")
+    public void debugevents(CommandSender sender) {
+        for (RegisteredListener listener : BlockBreakEvent.getHandlerList().getRegisteredListeners()) {
+            sender.sendMessage(ChatColor.GREEN + String.format(
+                    "BlockBreakEvent: %s from %s priority=%s",
+                    listener.getListener().getClass().getName(),
+                    listener.getPlugin().getName(),
+                    listener.getPriority().name()
+            ));
+        }
+
+        for (RegisteredListener listener : BlockDropItemEvent.getHandlerList().getRegisteredListeners()) {
+            sender.sendMessage(ChatColor.GOLD + String.format(
+                    "BlockDropItemEvent: %s from %s priority=%s",
+                    listener.getListener().getClass().getName(),
+                    listener.getPlugin().getName(),
+                    listener.getPriority().name()
+            ));
         }
     }
 }
