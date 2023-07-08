@@ -8,8 +8,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public interface PlayerData extends Modifiable, Monitored, Versioned {
-    int getDataVersion();
-
     boolean isTutorialHidden();
 
     @ApiStatus.Internal
