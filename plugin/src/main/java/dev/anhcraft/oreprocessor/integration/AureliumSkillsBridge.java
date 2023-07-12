@@ -5,6 +5,7 @@ import dev.anhcraft.oreprocessor.OreProcessor;
 import dev.anhcraft.oreprocessor.api.Ore;
 import dev.anhcraft.oreprocessor.api.data.OreData;
 import dev.anhcraft.oreprocessor.api.data.PlayerData;
+import dev.anhcraft.oreprocessor.storage.stats.StatisticHelper;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -29,14 +30,24 @@ public class AureliumSkillsBridge implements Integration, Listener {
         if (ores.isEmpty()) return;
 
         PlayerData playerData = plugin.playerDataManager.getData(player);
+        boolean isFull = false;
 
         for (Ore ore : ores) {
             OreData oreData = playerData.requireOreData(ore.getId());
-            if (oreData.isFull()) continue;
+            if (oreData.isFull()) {
+                isFull = true;
+                continue;
+            }
 
+            isFull = false;
+            StatisticHelper.increaseFeedstockCount(ore.getId(), amount, playerData);
+            StatisticHelper.increaseFeedstockCount(ore.getId(), amount, OreProcessor.getApi().getServerData());
             oreData.addFeedstock(feedstock, amount);
             event.setCancelled(true);
             break; // add once only
         }
+
+        if (isFull && !plugin.mainConfig.behaviourSettings.dropOnFullStorage)
+            event.setCancelled(true);
     }
 }
