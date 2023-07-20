@@ -40,6 +40,11 @@ public class OreTransform {
         return transformMap.get(material);
     }
 
+    public boolean hasProduct(Material material) {
+        WheelSelection<ItemStack> w = getProduct(material);
+        return w != null && w.getKeys().stream().anyMatch(itemStack -> itemStack.getType().equals(material));
+    }
+
     /**
      * Converts the given feedstock to its corresponding product.
      * @param feedstock the feedstock
