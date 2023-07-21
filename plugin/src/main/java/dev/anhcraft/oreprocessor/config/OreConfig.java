@@ -36,14 +36,14 @@ public class OreConfig {
             "A list of allowed blocks",
             "This option exists to prevent conflicts with other custom drop plugins"
     })
-    @Validation(notNull = true, notEmpty = true)
+    @Validation(notNull = true, notEmpty = true, silent = true)
     public Set<Material> blocks = Collections.emptySet();
 
     @Description({
             "A list of allowed products to be added to the storage",
             "By default, only ones defined in the transform circuit are allowed"
     })
-    @Validation(notNull = true, notEmpty = true)
+    @Validation(notNull = true, notEmpty = true, silent = true)
     public Set<Material> allowedProducts = Collections.emptySet();
 
     @Description({
@@ -54,6 +54,7 @@ public class OreConfig {
     @Path("transform")
     private LinkedHashMap<String, List<String>> rawTransform;
 
+    @Exclude
     public LinkedHashMap<String, Map<Material, WheelSelection<ItemStack>>> transform = new LinkedHashMap<>();
 
     @PostHandler

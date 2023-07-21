@@ -12,4 +12,6 @@ public class AccessibilitySettings {
     public Map<ClickType, Double> quickSellRatio = new HashMap<>();
 
     public Map<ClickType, Integer> takeAmount = new HashMap<>();
+
+    public Map<ClickType, Integer> craftAmount = new HashMap<>();
 }

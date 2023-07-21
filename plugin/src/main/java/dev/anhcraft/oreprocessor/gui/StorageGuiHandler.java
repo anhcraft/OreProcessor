@@ -57,6 +57,13 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
             }
         });
 
+        listen("craft", new ClickEvent() {
+            @Override
+            public void onClick(@NotNull InventoryClickEvent clickEvent, @NotNull Player player, int slot) {
+                GuiRegistry.openCraftGui(player, oreId);
+            }
+        });
+
         refresh(player);
     }
 

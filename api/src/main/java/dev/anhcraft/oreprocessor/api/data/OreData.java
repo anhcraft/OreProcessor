@@ -59,6 +59,14 @@ public interface OreData extends Modifiable {
      */
     boolean testAndTakeProduct(@NotNull Material material, int expectedAmount, @NotNull Function<Integer, Boolean> function);
 
+    /**
+     * Tests and sets products if success.
+     * @param material the product material
+     * @param function the function to test with actual amount supplied
+     * @return true if the operation is done
+     */
+    boolean testAndSetProduct(@NotNull Material material, @NotNull Function<Integer, Integer> function);
+
     int countProduct(@NotNull Material material);
 
     int countAllProducts();

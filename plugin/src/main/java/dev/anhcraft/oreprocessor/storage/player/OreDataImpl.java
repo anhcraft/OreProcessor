@@ -177,6 +177,27 @@ public class OreDataImpl implements OreData {
     }
 
     @Override
+    public boolean testAndSetProduct(@NotNull Material material, @NotNull Function<Integer, Integer> function) {
+        synchronized (config) {
+            int newVal;
+
+            if (config.products != null && (newVal = function.apply(countProduct(material))) >= 0) {
+
+                if (newVal == 0) {
+                    config.products.remove(material);
+                    markDirty();
+                } else if (!Objects.equals(config.products.put(material, newVal), newVal)) {
+                    markDirty();
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+    }
+
+    @Override
     public int countProduct(@NotNull Material material) {
         synchronized (config) {
             return config.products == null ? 0 : config.products.getOrDefault(material, 0);

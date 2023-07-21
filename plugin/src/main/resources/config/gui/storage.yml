@@ -3,7 +3,7 @@ layout:
   - "---------"
   - "-XS-PPPP-"
   - "---------"
-  - "++++|++++"
+  - "++++|+++C"
 components:
   "-":
     name: "&e"
@@ -29,6 +29,15 @@ components:
     type: quick-sell
     name: "&e"
     material: gray_stained_glass_pane
+  "C":
+    type: craft
+    material: crafting_table
+    name: "&eQuick craft"
+    lore:
+      - "&7Quickly craft available ingredients in"
+      - "&7your storage into full blocks"
+      - ""
+      - "&e» Click to open crafting menu"
   "|":
     type: back
     material: barrier

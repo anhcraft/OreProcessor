@@ -136,6 +136,7 @@ public final class OreProcessor extends JavaPlugin {
         GuiRegistry.MENU = ConfigHelper.load(MenuGui.class, requestConfig("gui/menu.yml"));
         GuiRegistry.UPGRADE = ConfigHelper.load(UpgradeGui.class, requestConfig("gui/upgrade.yml"));
         GuiRegistry.STORAGE = ConfigHelper.load(StorageGui.class, requestConfig("gui/storage.yml"));
+        GuiRegistry.CRAFTING = ConfigHelper.load(CraftingGui.class, requestConfig("gui/crafting.yml"));
 
         processingPlant.reload();
         serverDataManager.reload();

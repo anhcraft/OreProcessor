@@ -132,5 +132,8 @@ accessibility-settings:
     shift_left: 16
     shift_right: 32
     #double_click: 128 # Add new click type is possible
+  craft-amount:
+    left: 1 # Remove or Set 0 to disable
+    right: 64
 dev-mode: false
 debug-level: 0

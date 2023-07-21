@@ -1,0 +1,62 @@
+title: "&0Ore Processor | Crafting"
+layout:
+  - "---------"
+  - "-X--PPPP-"
+  - "---------"
+  - "++++|++++"
+components:
+  "-":
+    name: "&e"
+    material: gray_stained_glass_pane
+  "+":
+    name: "&e"
+    material: black_stained_glass_pane
+  "X":
+    type: ore
+    material: gray_stained_glass_pane
+    name: "&b{ore} &f({storage-ratio}%)"
+    lore:
+      - "&7▪ Processing: {processing}"
+      - "&7▪ In storage: {storage-current}/{storage-capacity}"
+      - "&7▪ Throughput: {throughput}/m"
+      - ""
+      - "&e» Click to upgrade"
+  "P":
+    type: product
+    name: "&7(No Item)"
+    material: glass_pane
+  "|":
+    type: back
+    material: barrier
+    name: "&cBack"
+    lore:
+      - "&e» Go back to ore menu"
+
+craftable-product-icon:
+  lore:
+    - "&7▪ Amount: {current}"
+    - ""
+    - "&fLeft:       &eCraft x1"
+    - "&fRight:      &eCraft x64"
+  enchantments:
+    unbreaking: 1
+  flags:
+    - hide_enchants
+
+uncraftable-product-icon:
+  lore:
+    - "&7▪ Amount: {current}"
+    - ""
+    - "&fCan not craft with this item"
+
+recipes:
+  - 9 coal > 1 coal_block
+  - 9 iron_ingot > 1 iron_block
+  - 9 gold_ingot > 1 gold_block
+  - 9 diamond > 1 diamond_block
+  - 9 emerald > 1 emerald_block
+  - 9 lapis_lazuli > 1 lapis_block
+  - 9 redstone > 1 redstone_block
+  - 4 quartz > 1 quartz_block
+  - 9 copper_ingot > 1 copper_block
+  - 9 netherite_ingot > 1 netherite_block
