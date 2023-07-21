@@ -76,6 +76,7 @@ public final class OreProcessorApiImpl implements OreProcessorApi {
                     oreConfig.name,
                     oreConfig.icon,
                     Collections.unmodifiableSet(oreConfig.blocks),
+                    Collections.unmodifiableSet(oreConfig.allowedProducts),
                     Collections.unmodifiableMap(transformMap),
                     Collections.unmodifiableSet(referenceFeedstock)
             );

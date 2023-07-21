@@ -105,7 +105,7 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
 
                         // Only allow materials which are in potential product set & is not present in another slot
                         if (ItemUtil.isPresent(cursor) && !oreData.isFull() && !products.contains(material)
-                                && ore.getBestTransform(player).hasProduct(material)) {
+                                && (ore.getAllowedProducts().contains(material) || ore.getBestTransform(player).hasProduct(material))) {
                             int stored = oreData.addProduct(material, cursor.getAmount(), false);
                             int remain = cursor.getAmount() - stored;
                             if (remain == 0) {
