@@ -41,8 +41,9 @@ public class OreTransform {
     }
 
     public boolean hasProduct(Material material) {
-        WheelSelection<ItemStack> w = getProduct(material);
-        return w != null && w.getKeys().stream().anyMatch(itemStack -> itemStack.getType().equals(material));
+        return transformMap.values().stream()
+                .flatMap(wheelSelection -> wheelSelection.getKeys().stream())
+                .anyMatch(itemStack -> itemStack.getType() == material);
     }
 
     /**

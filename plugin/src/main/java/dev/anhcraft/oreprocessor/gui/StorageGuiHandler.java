@@ -96,7 +96,31 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
 
             if (i >= products.size()) {
                 resetItem(slot);
-                getSlot(slot).setEvents();
+
+                getSlot(slot).setEvents(new ClickEvent() {
+                    @Override
+                    public void onClick(@NotNull InventoryClickEvent inventoryClickEvent, @NotNull Player player, int i) {
+                        ItemStack cursor = player.getItemOnCursor();
+                        Material material = cursor.getType();
+
+                        // Only allow materials which are in potential product set & is not present in another slot
+                        if (ItemUtil.isPresent(cursor) && !oreData.isFull() && !products.contains(material)
+                                && ore.getBestTransform(player).hasProduct(material)) {
+                            int stored = oreData.addProduct(material, cursor.getAmount(), false);
+                            int remain = cursor.getAmount() - stored;
+                            if (remain == 0) {
+                                player.setItemOnCursor(null);
+                            } else {
+                                ItemStack clone = cursor.clone();
+                                clone.setAmount(remain);
+                                player.setItemOnCursor(clone);
+                            }
+                            player.playSound(player.getLocation(), Sound.ENTITY_ITEM_FRAME_ADD_ITEM, 1f, 1f);
+                        } else {
+                            player.playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1f, 1f);
+                        }
+                    }
+                });
                 continue;
             }
 
@@ -125,7 +149,7 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
                         player.playSound(player.getLocation(), Sound.ENTITY_ITEM_FRAME_REMOVE_ITEM, 1f, 1f);
                     }
 
-                    // ADD
+                    // MERGE
                     else if (cursor.getType() == product && !oreData.isFull()) {
                         int stored = oreData.addProduct(product, cursor.getAmount(), false);
                         int remain = cursor.getAmount() - stored;
