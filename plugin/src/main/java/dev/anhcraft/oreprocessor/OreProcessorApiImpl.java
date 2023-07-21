@@ -90,12 +90,32 @@ public final class OreProcessorApiImpl implements OreProcessorApi {
         feedstock2ores = ImmutableMultimap.copyOf(feedstock2ores);
 
         throughputUpgrades = new TreeMap<>();
+        int lastUpgradeAmount = -1;
         for (UpgradeLevelConfig upgradeLevelConfig : plugin.upgradeConfig.throughputUpgrade.values()) {
+            if (lastUpgradeAmount != -1 && lastUpgradeAmount >= upgradeLevelConfig.amount) {
+                plugin.getLogger().warning(String.format(
+                        "Detected invalid throughput upgrade: %d is not higher than previous upgrade %d",
+                        upgradeLevelConfig.amount, lastUpgradeAmount
+                ));
+                continue;
+            } else {
+                lastUpgradeAmount = upgradeLevelConfig.amount;
+            }
             throughputUpgrades.put(upgradeLevelConfig.amount, new UpgradeLevel(upgradeLevelConfig.amount, upgradeLevelConfig.cost));
         }
 
         capacityUpgrade = new TreeMap<>();
+        lastUpgradeAmount = -1;
         for (UpgradeLevelConfig upgradeLevelConfig : plugin.upgradeConfig.capacityUpgrade.values()) {
+            if (lastUpgradeAmount != -1 && lastUpgradeAmount >= upgradeLevelConfig.amount) {
+                plugin.getLogger().warning(String.format(
+                        "Detected invalid capacity upgrade: %d is not higher than previous upgrade %d",
+                        upgradeLevelConfig.amount, lastUpgradeAmount
+                ));
+                continue;
+            } else {
+                lastUpgradeAmount = upgradeLevelConfig.amount;
+            }
             capacityUpgrade.put(upgradeLevelConfig.amount, new UpgradeLevel(upgradeLevelConfig.amount, upgradeLevelConfig.cost));
         }
 
