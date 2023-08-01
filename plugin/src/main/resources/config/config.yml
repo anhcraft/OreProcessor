@@ -116,6 +116,9 @@ ores:
         - ancient_debris > 50% netherite_ingot, 50% netherite_scrap, 10% netherite_scrap:2 # set amount
 processing-interval: 5
 shop-provider: ShopGUIPlus
+whitelist-worlds: # Leaves empty to allow for all worlds
+  - world
+  - world_nether
 behaviour-settings:
   drop-on-full-storage: false
   enable-mining-stat-on-full-storage: false

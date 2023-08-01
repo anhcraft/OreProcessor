@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashMap;
+import java.util.Set;
 
 @Configurable(keyNamingStyle = Configurable.NamingStyle.TRAIN_CASE)
 public class MainConfig {
@@ -59,6 +60,12 @@ public class MainConfig {
     @Example("shop-provider: ShopGUIPlus")
     @Nullable
     public ShopProviderType shopProvider;
+
+    @Description({
+            "Set whitelisted worlds"
+    })
+    @Nullable
+    public Set<String> whitelistWorlds;
 
     @NotNull
     public BehaviourConfig behaviourSettings = new BehaviourConfig();

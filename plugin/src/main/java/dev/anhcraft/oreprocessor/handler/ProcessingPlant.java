@@ -92,6 +92,11 @@ public class ProcessingPlant implements Listener {
         if (player.getGameMode() != GameMode.SURVIVAL && player.getGameMode() != GameMode.ADVENTURE)
             return;
 
+        if (plugin.mainConfig.whitelistWorlds != null &&
+                !plugin.mainConfig.whitelistWorlds.isEmpty() &&
+                !plugin.mainConfig.whitelistWorlds.contains(player.getWorld().getName()))
+            return;
+
         ItemStack item = player.getInventory().getItemInMainHand();
         if (ItemUtil.isEmpty(item) || item.containsEnchantment(Enchantment.SILK_TOUCH))
             return;
