@@ -45,6 +45,13 @@ public class ServerDataManager {
         }
 
         plugin.debug("Server data loaded!");
+
+        if (plugin.mainConfig.purgeStats.maxServerRecords > 0) {
+            OreProcessor.getInstance().debug(String.format(
+                    "Removed %d oldest statistics records from server data",
+                    serverData.getStats().purgeHourlyStats(plugin.mainConfig.purgeStats.maxServerRecords)
+            ));
+        }
     }
 
     private void saveDataIfDirty() {

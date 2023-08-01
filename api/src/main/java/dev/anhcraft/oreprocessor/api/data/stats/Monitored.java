@@ -12,4 +12,6 @@ public interface Monitored {
 
     @NotNull
     Statistics getOrCreateHourlyStats(long timestamp);
+
+    int purgeHourlyStats(int maxRecords);
 }

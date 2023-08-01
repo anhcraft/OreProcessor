@@ -1,9 +1,6 @@
 package dev.anhcraft.oreprocessor.config;
 
-import dev.anhcraft.config.annotations.Configurable;
-import dev.anhcraft.config.annotations.Description;
-import dev.anhcraft.config.annotations.Example;
-import dev.anhcraft.config.annotations.Validation;
+import dev.anhcraft.config.annotations.*;
 import dev.anhcraft.oreprocessor.api.integration.ShopProviderType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -72,4 +69,7 @@ public class MainConfig {
 
     @NotNull
     public AccessibilitySettings accessibilitySettings = new AccessibilitySettings();
+
+    @NotNull
+    public PurgeStatsSettings purgeStats = new PurgeStatsSettings();
 }

@@ -39,4 +39,9 @@ public class ServerDataImpl implements ServerData {
     public @NotNull Statistics getOrCreateHourlyStats(long timestamp) {
         return new StatisticsImpl(config.dirty, config.getStats().getOrCreateHourlyStat(timestamp));
     }
+
+    @Override
+    public int purgeHourlyStats(int maxRecords) {
+        return config.getStats().purgeHourlyStats(maxRecords);
+    }
 }

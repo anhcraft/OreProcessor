@@ -80,6 +80,13 @@ public class ProcessingPlant implements Listener {
                 event.getData().setHibernationStart(0);
             }
         }
+
+        if (plugin.mainConfig.purgeStats.maxPlayerRecords > 0) {
+            OreProcessor.getInstance().debug(String.format(
+                    "Removed %d oldest statistics records from player %s",
+                    event.getData().purgeHourlyStats(plugin.mainConfig.purgeStats.maxPlayerRecords), event.getPlayerId()
+            ));
+        }
     }
 
     public void reload() {
