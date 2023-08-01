@@ -96,6 +96,7 @@ public final class OreProcessor extends JavaPlugin {
         integrationManager = new IntegrationManager(this);
 
         reload();
+        serverDataManager.loadData();
 
         getServer().getPluginManager().registerEvents(new GuiEventListener(), this);
 

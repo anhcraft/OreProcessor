@@ -19,15 +19,13 @@ public class ServerDataManager {
         File folder = new File(plugin.getDataFolder(), "data");
         folder.mkdir();
         file = new File(folder, "server.gz");
-
-        loadData();
     }
 
     public ServerDataConfig getData() {
         return serverData;
     }
 
-    private void loadData() {
+    public void loadData() {
         if (file.exists()) {
             YamlConfiguration conf = null;
             try {
