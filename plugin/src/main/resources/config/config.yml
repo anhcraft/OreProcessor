@@ -123,6 +123,7 @@ behaviour-settings:
   drop-on-full-storage: false
   enable-mining-stat-on-full-storage: false
   disable-offline-processing: false
+  process-silk-touch-items: false
 accessibility-settings:
   quick-sell-ratio:
     left: 1 # Remove or Set 0 to disable

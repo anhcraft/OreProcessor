@@ -9,4 +9,6 @@ public class BehaviourConfig {
     public boolean enableMiningStatOnFullStorage;
 
     public boolean disableOfflineProcessing;
+
+    public boolean processSilkTouchItems;
 }

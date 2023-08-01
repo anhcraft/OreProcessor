@@ -98,7 +98,7 @@ public class ProcessingPlant implements Listener {
             return;
 
         ItemStack item = player.getInventory().getItemInMainHand();
-        if (ItemUtil.isEmpty(item) || item.containsEnchantment(Enchantment.SILK_TOUCH))
+        if (ItemUtil.isEmpty(item) || (!plugin.mainConfig.behaviourSettings.processSilkTouchItems && item.containsEnchantment(Enchantment.SILK_TOUCH)))
             return;
 
         Ore ore = OreProcessor.getApi().getBlockOre(event.getBlock().getType());
