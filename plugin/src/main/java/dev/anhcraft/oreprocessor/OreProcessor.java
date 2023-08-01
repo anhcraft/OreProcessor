@@ -6,6 +6,8 @@ import co.aikar.commands.PaperCommandManager;
 import com.google.common.base.Preconditions;
 import dev.anhcraft.jvmkit.utils.FileUtil;
 import dev.anhcraft.jvmkit.utils.IOUtil;
+import dev.anhcraft.jvmkit.utils.ReflectionUtil;
+import dev.anhcraft.oreprocessor.api.ApiProvider;
 import dev.anhcraft.oreprocessor.api.OreProcessorApi;
 import dev.anhcraft.oreprocessor.cmd.OreCommand;
 import dev.anhcraft.oreprocessor.config.MainConfig;
@@ -102,6 +104,8 @@ public final class OreProcessor extends JavaPlugin {
         pcm.registerCommand(new OreCommand(this));
         CommandCompletions<BukkitCommandCompletionContext> cmpl = pcm.getCommandCompletions();
         cmpl.registerAsyncCompletion("ores", context -> API.getOres());
+
+        ReflectionUtil.setStaticField(ApiProvider.class, "api", API);
     }
 
     @Override
