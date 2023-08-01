@@ -106,7 +106,7 @@ public final class OreProcessor extends JavaPlugin {
         CommandCompletions<BukkitCommandCompletionContext> cmpl = pcm.getCommandCompletions();
         cmpl.registerAsyncCompletion("ores", context -> API.getOres());
 
-        ReflectionUtil.setStaticField(ApiProvider.class, "api", API);
+        ReflectionUtil.setDeclaredStaticField(ApiProvider.class, "api", API);
     }
 
     @Override
