@@ -8,7 +8,6 @@ import dev.anhcraft.oreprocessor.api.data.PlayerData;
 import dev.anhcraft.oreprocessor.api.event.AsyncPlayerDataLoadEvent;
 import dev.anhcraft.oreprocessor.api.event.OreMineEvent;
 import dev.anhcraft.oreprocessor.storage.stats.StatisticHelper;
-import dev.anhcraft.palette.util.ItemUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -104,9 +103,8 @@ public class ProcessingPlant implements Listener {
                 !plugin.mainConfig.whitelistWorlds.contains(player.getWorld().getName()))
             return;
 
-        ItemStack item = player.getInventory().getItemInMainHand();
-        if (ItemUtil.isEmpty(item) || (!plugin.mainConfig.behaviourSettings.processSilkTouchItems && item.containsEnchantment(Enchantment.SILK_TOUCH)))
-            return;
+        if (!plugin.mainConfig.behaviourSettings.processSilkTouchItems &&
+                player.getInventory().getItemInMainHand().containsEnchantment(Enchantment.SILK_TOUCH)) return;
 
         Ore ore = OreProcessor.getApi().getBlockOre(event.getBlock().getType());
         if (ore == null) return;
@@ -136,9 +134,13 @@ public class ProcessingPlant implements Listener {
         if (player.getGameMode() != GameMode.SURVIVAL && player.getGameMode() != GameMode.ADVENTURE)
             return;
 
-        ItemStack item = player.getInventory().getItemInMainHand();
-        if (ItemUtil.isEmpty(item) || item.containsEnchantment(Enchantment.SILK_TOUCH))
+        if (plugin.mainConfig.whitelistWorlds != null &&
+                !plugin.mainConfig.whitelistWorlds.isEmpty() &&
+                !plugin.mainConfig.whitelistWorlds.contains(player.getWorld().getName()))
             return;
+
+        if (!plugin.mainConfig.behaviourSettings.processSilkTouchItems &&
+                player.getInventory().getItemInMainHand().containsEnchantment(Enchantment.SILK_TOUCH)) return;
 
         BlockState brokenBlock = event.getBlockState();
         Ore ore = OreProcessor.getApi().getBlockOre(brokenBlock.getType());
@@ -152,9 +154,9 @@ public class ProcessingPlant implements Listener {
         boolean has = false;
 
         for (Iterator<Item> iterator = event.getItems().iterator(); iterator.hasNext(); ) {
-            Item eventItem = iterator.next();
-            Material feedstock = eventItem.getItemStack().getType();
-            int amount = eventItem.getItemStack().getAmount();
+            ItemStack eventItem = iterator.next().getItemStack();
+            Material feedstock = eventItem.getType();
+            int amount = eventItem.getAmount();
 
             if (ore.isAcceptableFeedstock(feedstock)) {
                 StatisticHelper.increaseFeedstockCount(ore.getId(), amount, playerData);
