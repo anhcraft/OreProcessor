@@ -60,7 +60,7 @@ product-icon:
     - hide_enchants
 
 quick-sell-empty-icon:
-  material: emerald
+  material: paper
   name: "&aQuick sell"
   lore:
     - "&7▪ In storage: {storage-current}/{storage-capacity}"
@@ -73,7 +73,7 @@ quick-sell-empty-icon:
     - "&c[Nothing to sell]"
 
 quick-sell-available-icon:
-  material: emerald
+  material: paper
   name: "&aQuick sell"
   lore:
     - "&7▪ In storage: {storage-current}/{storage-capacity}"
