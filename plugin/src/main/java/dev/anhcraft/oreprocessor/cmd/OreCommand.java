@@ -7,14 +7,8 @@ import dev.anhcraft.config.bukkit.utils.ItemBuilder;
 import dev.anhcraft.configdoc.ConfigDocGenerator;
 import dev.anhcraft.oreprocessor.OreProcessor;
 import dev.anhcraft.oreprocessor.api.data.stats.TimeSeries;
-import dev.anhcraft.oreprocessor.config.MainConfig;
-import dev.anhcraft.oreprocessor.config.MessageConfig;
-import dev.anhcraft.oreprocessor.config.OreConfig;
-import dev.anhcraft.oreprocessor.config.UpgradeLevelConfig;
-import dev.anhcraft.oreprocessor.gui.GuiRegistry;
-import dev.anhcraft.oreprocessor.gui.MenuGui;
-import dev.anhcraft.oreprocessor.gui.StorageGui;
-import dev.anhcraft.oreprocessor.gui.UpgradeGui;
+import dev.anhcraft.oreprocessor.config.*;
+import dev.anhcraft.oreprocessor.gui.*;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -53,11 +47,16 @@ public class OreCommand extends BaseCommand {
         new ConfigDocGenerator()
                 .withSchemaOf(MainConfig.class)
                 .withSchemaOf(OreConfig.class)
+                .withSchemaOf(PurgeStatsSettings.class)
+                .withSchemaOf(AccessibilitySettings.class)
+                .withSchemaOf(BehaviourConfig.class)
+                .withSchemaOf(UpgradeConfig.class)
                 .withSchemaOf(UpgradeLevelConfig.class)
                 .withSchemaOf(MessageConfig.class)
                 .withSchemaOf(MenuGui.class)
                 .withSchemaOf(StorageGui.class)
                 .withSchemaOf(UpgradeGui.class)
+                .withSchemaOf(CraftingGui.class)
                 .withSchemaOf(ItemBuilder.class)
                 .generate(new File(plugin.getDataFolder(), "docs"));
         sender.sendMessage(ChatColor.GREEN + "Configuration documentation generated in plugins/OreProcessor/docs");
