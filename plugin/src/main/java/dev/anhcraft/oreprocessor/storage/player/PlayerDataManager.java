@@ -123,7 +123,7 @@ public class PlayerDataManager implements Listener {
     public void streamData(BiConsumer<UUID, PlayerData> consumer) {
         synchronized (LOCK) {
             for (Map.Entry<UUID, TrackedPlayerData> e : playerDataMap.entrySet()) {
-                consumer.accept(e.getKey(), new PlayerDataImpl(e.getValue().getPlayerData()));
+                consumer.accept(e.getKey(), e.getValue().getPlayerData());
             }
         }
     }
@@ -131,7 +131,7 @@ public class PlayerDataManager implements Listener {
     @NotNull
     public Optional<PlayerData> getData(@NotNull UUID uuid) {
         synchronized (LOCK) {
-            return Optional.ofNullable(playerDataMap.get(uuid)).map(TrackedPlayerData::getPlayerData).map(PlayerDataImpl::new);
+            return Optional.ofNullable(playerDataMap.get(uuid)).map(TrackedPlayerData::getPlayerData);
         }
     }
 
@@ -140,7 +140,7 @@ public class PlayerDataManager implements Listener {
         Preconditions.checkArgument(player.isOnline(), "Player must be online");
 
         synchronized (LOCK) {
-            return new PlayerDataImpl(Objects.requireNonNull(playerDataMap.get(player.getUniqueId())).getPlayerData());
+            return Objects.requireNonNull(playerDataMap.get(player.getUniqueId())).getPlayerData();
         }
     }
 
@@ -148,12 +148,12 @@ public class PlayerDataManager implements Listener {
     public CompletableFuture<PlayerData> requireData(@NotNull UUID uuid) {
         synchronized (LOCK) {
             if (playerDataMap.containsKey(uuid)) {
-                return CompletableFuture.completedFuture(new PlayerDataImpl(playerDataMap.get(uuid).getPlayerData()));
+                return CompletableFuture.completedFuture(playerDataMap.get(uuid).getPlayerData());
             } else {
                 return CompletableFuture.supplyAsync(() -> {
-                    PlayerDataConfigV1 playerData = loadData(uuid);
+                    PlayerDataImpl playerData = new PlayerDataImpl(loadData(uuid));
                     synchronized (LOCK) { // code is now async
-                        Bukkit.getPluginManager().callEvent(new AsyncPlayerDataLoadEvent(uuid, new PlayerDataImpl(playerData)));
+                        Bukkit.getPluginManager().callEvent(new AsyncPlayerDataLoadEvent(uuid, playerData));
                         TrackedPlayerData trackedPlayerData = new TrackedPlayerData(playerData, System.currentTimeMillis());
                         if (Bukkit.getPlayer(uuid) == null) {
                             trackedPlayerData.setShortTerm();
@@ -164,7 +164,7 @@ public class PlayerDataManager implements Listener {
                         }
                         playerDataMap.put(uuid, trackedPlayerData);
                     }
-                    return new PlayerDataImpl(playerData);
+                    return playerData;
                 });
             }
         }
@@ -178,9 +178,9 @@ public class PlayerDataManager implements Listener {
                 plugin.debug("%s's data changed: ? term → long term", uuid);
                 playerDataMap.get(uuid).setLongTerm();
             } else {
-                PlayerDataConfigV1 playerData = loadData(uuid);
+                PlayerDataImpl playerData = new PlayerDataImpl(loadData(uuid));
                 CompletableFuture.runAsync(() -> {
-                    Bukkit.getPluginManager().callEvent(new AsyncPlayerDataLoadEvent(uuid, new PlayerDataImpl(playerData)));
+                    Bukkit.getPluginManager().callEvent(new AsyncPlayerDataLoadEvent(uuid, playerData));
                 });
                 TrackedPlayerData trackedPlayerData = new TrackedPlayerData(playerData, System.currentTimeMillis());
                 trackedPlayerData.setLongTerm();
@@ -205,15 +205,15 @@ public class PlayerDataManager implements Listener {
         synchronized (LOCK) {
             for (Iterator<Map.Entry<UUID, TrackedPlayerData>> it = playerDataMap.entrySet().iterator(); it.hasNext(); ) {
                 Map.Entry<UUID, TrackedPlayerData> entry = it.next();
-                PlayerDataConfigV1 playerData = entry.getValue().getPlayerData();
+                PlayerDataImpl playerData = entry.getValue().getPlayerData();
                 boolean toRemove = entry.getValue().isShortTerm() && System.currentTimeMillis() - entry.getValue().getLoadTime() > EXPIRATION_TIME;
 
                 if (toRemove) {
-                    playerData.hibernationStart = System.currentTimeMillis();
-                    playerData.markDirty();
+                    playerData.internal().hibernationStart = System.currentTimeMillis();
+                    playerData.internal().markDirty();
                 }
 
-                saveDataIfDirty(entry.getKey(), playerData);
+                saveDataIfDirty(entry.getKey(), playerData.internal());
 
                 if (toRemove) {
                     it.remove();
@@ -227,10 +227,10 @@ public class PlayerDataManager implements Listener {
         synchronized (LOCK) {
             for (Iterator<Map.Entry<UUID, TrackedPlayerData>> it = playerDataMap.entrySet().iterator(); it.hasNext(); ) {
                 Map.Entry<UUID, TrackedPlayerData> entry = it.next();
-                PlayerDataConfigV1 playerData = entry.getValue().getPlayerData();
-                playerData.hibernationStart = System.currentTimeMillis();
-                playerData.markDirty();
-                saveDataIfDirty(entry.getKey(), playerData);
+                PlayerDataImpl playerData = entry.getValue().getPlayerData();
+                playerData.internal().hibernationStart = System.currentTimeMillis();
+                playerData.internal().markDirty();
+                saveDataIfDirty(entry.getKey(), playerData.internal());
                 it.remove();
             }
         }

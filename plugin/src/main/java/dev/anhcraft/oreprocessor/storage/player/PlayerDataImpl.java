@@ -6,6 +6,7 @@ import dev.anhcraft.oreprocessor.api.data.PlayerData;
 import dev.anhcraft.oreprocessor.api.data.stats.Statistics;
 import dev.anhcraft.oreprocessor.storage.stats.StatisticConfig;
 import dev.anhcraft.oreprocessor.storage.stats.StatisticsImpl;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -98,5 +99,10 @@ public class PlayerDataImpl implements PlayerData {
     @Override
     public int purgeHourlyStats(int maxRecords) {
         return config.getStats().purgeHourlyStats(maxRecords);
+    }
+
+    @ApiStatus.Internal
+    PlayerDataConfigV1 internal() {
+        return config;
     }
 }

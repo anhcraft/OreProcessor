@@ -3,16 +3,16 @@ package dev.anhcraft.oreprocessor.storage.player;
 import org.jetbrains.annotations.NotNull;
 
 public class TrackedPlayerData {
-    private final PlayerDataConfigV1 playerData;
+    private final PlayerDataImpl playerData;
     private long loadTime;
 
-    public TrackedPlayerData(@NotNull PlayerDataConfigV1 playerData, long loadTime) {
+    public TrackedPlayerData(@NotNull PlayerDataImpl playerData, long loadTime) {
         this.playerData = playerData;
         this.loadTime = loadTime;
     }
 
     @NotNull
-    public PlayerDataConfigV1 getPlayerData() {
+    public PlayerDataImpl getPlayerData() {
         return playerData;
     }
 
