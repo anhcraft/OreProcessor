@@ -12,7 +12,7 @@ import java.io.StringReader;
 public class ServerDataManager {
     private final OreProcessor plugin;
     private final File file;
-    private ServerDataConfig serverData;
+    private ServerDataImpl serverData;
 
     public ServerDataManager(OreProcessor plugin) {
         this.plugin = plugin;
@@ -21,7 +21,7 @@ public class ServerDataManager {
         file = new File(folder, "server.gz");
     }
 
-    public ServerDataConfig getData() {
+    public ServerDataImpl getData() {
         return serverData;
     }
 
@@ -35,11 +35,11 @@ public class ServerDataManager {
             }
 
             if (conf == null)
-                serverData = new ServerDataConfig();
+                serverData = new ServerDataImpl(new ServerDataConfig());
 
-            serverData = ConfigHelper.load(ServerDataConfig.class, conf);
+            serverData = new ServerDataImpl(ConfigHelper.load(ServerDataConfig.class, conf));
         } else {
-            serverData = new ServerDataConfig();
+            serverData = new ServerDataImpl(new ServerDataConfig());
         }
 
         plugin.debug("Server data loaded!");
@@ -47,16 +47,16 @@ public class ServerDataManager {
         if (plugin.mainConfig.purgeStats.maxServerRecords > 0) {
             OreProcessor.getInstance().debug(String.format(
                     "Removed %d oldest statistics records from server data",
-                    serverData.getStats().purgeHourlyStats(plugin.mainConfig.purgeStats.maxServerRecords)
+                    serverData.internal().getStats().purgeHourlyStats(plugin.mainConfig.purgeStats.maxServerRecords)
             ));
         }
     }
 
     private void saveDataIfDirty() {
-        if (serverData.dirty.compareAndSet(true, false)) {
+        if (serverData.internal().dirty.compareAndSet(true, false)) {
             plugin.debug("Saving server data...");
             YamlConfiguration conf = new YamlConfiguration();
-            ConfigHelper.save(ServerDataConfig.class, conf, serverData);
+            ConfigHelper.save(ServerDataConfig.class, conf, serverData.internal());
             try {
                 CompressUtils.compressAndWriteString(conf.saveToString(), file);
             } catch (IOException e) {
@@ -70,7 +70,7 @@ public class ServerDataManager {
     }
 
     public void terminate() {
-        serverData.dirty.set(true);
+        serverData.internal().dirty.set(true);
         saveDataIfDirty();
     }
 }

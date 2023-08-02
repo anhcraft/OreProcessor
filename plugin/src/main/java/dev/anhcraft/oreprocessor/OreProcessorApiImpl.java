@@ -13,7 +13,6 @@ import dev.anhcraft.oreprocessor.api.upgrade.UpgradeLevel;
 import dev.anhcraft.oreprocessor.api.util.WheelSelection;
 import dev.anhcraft.oreprocessor.config.OreConfig;
 import dev.anhcraft.oreprocessor.config.UpgradeLevelConfig;
-import dev.anhcraft.oreprocessor.storage.server.ServerDataImpl;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -191,7 +190,7 @@ public final class OreProcessorApiImpl implements OreProcessorApi {
 
     @Override
     public @NotNull ServerData getServerData() {
-        return new ServerDataImpl(plugin.serverDataManager.getData());
+        return plugin.serverDataManager.getData();
     }
 
     @Override

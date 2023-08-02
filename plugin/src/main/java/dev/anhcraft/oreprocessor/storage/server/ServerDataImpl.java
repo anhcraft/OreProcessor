@@ -44,4 +44,8 @@ public class ServerDataImpl implements ServerData {
     public int purgeHourlyStats(int maxRecords) {
         return config.getStats().purgeHourlyStats(maxRecords);
     }
+
+    ServerDataConfig internal() {
+        return config;
+    }
 }
