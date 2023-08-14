@@ -29,6 +29,8 @@ public class MenuGuiHandler extends GuiHandler implements AutoRefresh {
 
     @Override
     public void refresh(Player player) {
+        resetBulk("ore");
+
         List<Integer> slots = new ArrayList<>(locateComponent("ore"));
         Collections.sort(slots);
         List<String> ores = new ArrayList<>(OreProcessor.getApi().getOres());
