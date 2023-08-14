@@ -9,15 +9,18 @@ import dev.anhcraft.oreprocessor.OreProcessor;
 import dev.anhcraft.oreprocessor.api.data.stats.TimeSeries;
 import dev.anhcraft.oreprocessor.config.*;
 import dev.anhcraft.oreprocessor.gui.*;
+import dev.anhcraft.oreprocessor.integration.EventDebugger;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.plugin.RegisteredListener;
 
 import java.io.File;
+import java.util.Map;
 import java.util.Objects;
 
 @CommandAlias("ore|oreprocessor")
@@ -300,5 +303,21 @@ public class OreCommand extends BaseCommand {
                     listener.getPriority().name()
             ));
         }
+
+        plugin.integrationManager.streamIntegration()
+                .filter(integration -> integration instanceof EventDebugger)
+                .forEach(integration -> {
+            for (Map.Entry<String, HandlerList> entry : ((EventDebugger) integration).getEventHandlers().entrySet()) {
+                for (RegisteredListener listener : entry.getValue().getRegisteredListeners()) {
+                    sender.sendMessage(ChatColor.GOLD + String.format(
+                            "%s: %s from %s priority=%s",
+                            entry.getKey(),
+                            listener.getListener().getClass().getName(),
+                            listener.getPlugin().getName(),
+                            listener.getPriority().name()
+                    ));
+                }
+            }
+        });
     }
 }

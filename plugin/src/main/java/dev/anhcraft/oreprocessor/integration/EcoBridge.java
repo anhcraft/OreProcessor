@@ -9,13 +9,16 @@ import dev.anhcraft.oreprocessor.storage.stats.StatisticHelper;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.Map;
 
-public class EcoBridge implements Integration, Listener {
+public class EcoBridge implements Integration, Listener, EventDebugger {
     private final OreProcessor plugin;
 
     public EcoBridge(OreProcessor plugin) {
@@ -56,5 +59,10 @@ public class EcoBridge implements Integration, Listener {
             if (isFull && !plugin.mainConfig.behaviourSettings.dropOnFullStorage)
                 it.remove();
         }
+    }
+
+    @Override
+    public Map<String, HandlerList> getEventHandlers() {
+        return Collections.singletonMap("DropQueuePushEvent", DropQueuePushEvent.getHandlerList());
     }
 }

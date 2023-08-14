@@ -9,11 +9,15 @@ import dev.anhcraft.oreprocessor.storage.stats.StatisticHelper;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Map;
 
-public class AureliumSkillsBridge implements Integration, Listener {
+public class AureliumSkillsBridge implements Integration, Listener, EventDebugger {
     private final OreProcessor plugin;
 
     public AureliumSkillsBridge(OreProcessor plugin) {
@@ -44,10 +48,16 @@ public class AureliumSkillsBridge implements Integration, Listener {
             StatisticHelper.increaseFeedstockCount(ore.getId(), amount, OreProcessor.getApi().getServerData());
             oreData.addFeedstock(feedstock, amount);
             event.setCancelled(true);
+            event.setItemStack(new ItemStack(Material.AIR));
             break; // add once only
         }
 
         if (isFull && !plugin.mainConfig.behaviourSettings.dropOnFullStorage)
             event.setCancelled(true);
+    }
+
+    @Override
+    public Map<String, HandlerList> getEventHandlers() {
+        return Collections.singletonMap("PlayerLootDropEvent", PlayerLootDropEvent.getHandlerList());
     }
 }

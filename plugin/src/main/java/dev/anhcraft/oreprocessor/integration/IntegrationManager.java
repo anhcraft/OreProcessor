@@ -13,6 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 public class IntegrationManager {
     private final Map<String, Integration> integrationMap = new HashMap<>();
@@ -57,6 +58,10 @@ public class IntegrationManager {
 
     public Integration getIntegration(String plugin) {
         return integrationMap.get(plugin);
+    }
+
+    public Stream<Integration> streamIntegration() {
+        return integrationMap.values().stream();
     }
 
     public Optional<ShopProvider> getShopProvider(@Nullable ShopProviderType shopProviderType) {
