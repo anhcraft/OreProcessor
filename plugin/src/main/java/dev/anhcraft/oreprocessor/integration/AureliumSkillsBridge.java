@@ -6,6 +6,7 @@ import dev.anhcraft.oreprocessor.api.Ore;
 import dev.anhcraft.oreprocessor.api.data.OreData;
 import dev.anhcraft.oreprocessor.api.data.PlayerData;
 import dev.anhcraft.oreprocessor.storage.stats.StatisticHelper;
+import dev.anhcraft.palette.util.ItemUtil;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -25,11 +26,13 @@ public class AureliumSkillsBridge implements Integration, Listener, EventDebugge
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     private void onDropLoot(PlayerLootDropEvent event) {
         Player player = event.getPlayer();
-        Material feedstock = event.getItemStack().getType();
-        int amount = event.getItemStack().getAmount();
+        ItemStack item = event.getItemStack();
+        if (ItemUtil.isEmpty(item)) return;
+        Material feedstock = item.getType();
+        int amount = item.getAmount();
         Collection<Ore> ores = OreProcessor.getApi().getOresAllowFeedstock(feedstock);
         if (ores.isEmpty()) return;
 

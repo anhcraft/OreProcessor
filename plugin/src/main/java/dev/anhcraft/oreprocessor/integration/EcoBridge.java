@@ -26,7 +26,7 @@ public class EcoBridge implements Integration, Listener, EventDebugger {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     private void onDropLoot(DropQueuePushEvent event) {
         Player player = event.getPlayer();
         if (event.isTelekinetic()) return;
