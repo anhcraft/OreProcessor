@@ -29,14 +29,19 @@ public class MenuGuiHandler extends GuiHandler implements AutoRefresh {
 
     @Override
     public void refresh(Player player) {
-        resetBulk("ore");
-
         List<Integer> slots = new ArrayList<>(locateComponent("ore"));
         Collections.sort(slots);
         List<String> ores = new ArrayList<>(OreProcessor.getApi().getOres());
 
-        for (int i = 0; i < Math.min(slots.size(), ores.size()); i++) {
+        for (int i = 0; i < slots.size(); i++) {
             int slot = slots.get(i);
+
+            if (i >= ores.size()) {
+                resetItem(slot);
+                getSlot(slot).clearEvents();
+                continue;
+            }
+
             String oreId = ores.get(i);
             Ore ore = OreProcessor.getApi().requireOre(oreId);
             OreData oreData = playerData.requireOreData(oreId);
