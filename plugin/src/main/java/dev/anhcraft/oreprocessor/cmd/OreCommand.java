@@ -43,6 +43,26 @@ public class OreCommand extends BaseCommand {
         GuiRegistry.openMenuGui(player);
     }
 
+    @Subcommand("inspect")
+    @CommandPermission("oreprocessor.inspect")
+    @Description("Inspect player data")
+    public void inspect(Player inspector, OfflinePlayer reference) {
+        if (!reference.hasPlayedBefore()) {
+            inspector.sendMessage(ChatColor.RED + "This player has not played before!");
+            return;
+        }
+        if (!reference.isOnline())
+            inspector.sendMessage(ChatColor.YELLOW + "Fetching player data as he is currently offline...");
+
+        OreProcessor.getApi().requirePlayerData(reference.getUniqueId()).whenComplete((playerData, throwable) -> {
+            if (throwable != null) {
+                inspector.sendMessage(ChatColor.RED + throwable.getMessage());
+                return;
+            }
+            GuiRegistry.openInspectGui(inspector, playerData, reference.getName());
+        });
+    }
+
     @Subcommand("docs")
     @CommandPermission("oreprocessor.docs")
     @Description("Generate offline config documentation")

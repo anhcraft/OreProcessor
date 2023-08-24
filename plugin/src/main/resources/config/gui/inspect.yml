@@ -1,0 +1,20 @@
+title: "&0Ore | Inspect: {reference}"
+layout:
+  - "---------"
+  - "--XXXXX--"
+  - "--XXXXX--"
+  - "--XXXXX--"
+  - "---------"
+components:
+  "-":
+    name: "&e"
+    material: gray_stained_glass_pane
+  "X":
+    type: ore
+    name: "&e"
+    material: black_stained_glass_pane
+ore-name: "&b{ore} &f({storage-ratio}%)"
+ore-lore:
+  - "&7▪ Processing: {processing}"
+  - "&7▪ In storage: {storage-current}/{storage-capacity}"
+  - "&7▪ Throughput: {throughput}/m"
