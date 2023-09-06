@@ -22,6 +22,7 @@ import dev.anhcraft.oreprocessor.util.ConfigHelper;
 import dev.anhcraft.palette.listener.GuiEventListener;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -30,6 +31,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public final class OreProcessor extends JavaPlugin {
     public static final int LATEST_PLAYER_DATA_VERSION = 1;
@@ -105,6 +108,7 @@ public final class OreProcessor extends JavaPlugin {
         pcm.registerCommand(new OreCommand(this));
         CommandCompletions<BukkitCommandCompletionContext> cmpl = pcm.getCommandCompletions();
         cmpl.registerAsyncCompletion("ores", context -> API.getOres());
+        cmpl.registerAsyncCompletion("materials", context -> Arrays.stream(Material.values()).map(Material::name).collect(Collectors.toList()));
 
         ReflectionUtil.setDeclaredStaticField(ApiProvider.class, "api", API);
     }
