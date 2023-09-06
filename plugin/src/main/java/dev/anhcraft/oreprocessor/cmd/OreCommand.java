@@ -343,8 +343,8 @@ public class OreCommand extends BaseCommand {
         });
     }
 
-    @Subcommand("ore add")
-    @CommandPermission("oreprocessor.ore.add")
+    @Subcommand("add")
+    @CommandPermission("oreprocessor.add")
     @Description("Add item to an ore storage")
     @CommandCompletion("@players @ores @materials")
     public void addOre(CommandSender sender, OfflinePlayer player, String ore, Material material, int amount, @Default("false") boolean force) {
@@ -379,8 +379,8 @@ public class OreCommand extends BaseCommand {
         });
     }
 
-    @Subcommand("ore subtract")
-    @CommandPermission("oreprocessor.ore.subtract")
+    @Subcommand("subtract")
+    @CommandPermission("oreprocessor.subtract")
     @Description("Subtract item from an ore storage")
     @CommandCompletion("@players @ores @materials")
     public void subtractOre(CommandSender sender, OfflinePlayer player, String ore, Material material, int amount) {
