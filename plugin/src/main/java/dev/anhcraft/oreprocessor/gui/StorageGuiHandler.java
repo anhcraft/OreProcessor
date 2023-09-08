@@ -20,10 +20,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
     private final static NumberFormat numberFormat = NumberFormat.getInstance();
@@ -104,30 +101,7 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
             if (i >= products.size()) {
                 resetItem(slot);
 
-                getSlot(slot).setEvents(new ClickEvent() {
-                    @Override
-                    public void onClick(@NotNull InventoryClickEvent inventoryClickEvent, @NotNull Player player, int i) {
-                        ItemStack cursor = player.getItemOnCursor();
-                        Material material = cursor.getType();
-
-                        // Only allow materials which are in potential product set & is not present in another slot
-                        if (ItemUtil.isPresent(cursor) && !oreData.isFull() && !products.contains(material)
-                                && (ore.getAllowedProducts().contains(material) || ore.getBestTransform(player).hasProduct(material))) {
-                            int stored = oreData.addProduct(material, cursor.getAmount(), false);
-                            int remain = cursor.getAmount() - stored;
-                            if (remain == 0) {
-                                player.setItemOnCursor(null);
-                            } else {
-                                ItemStack clone = cursor.clone();
-                                clone.setAmount(remain);
-                                player.setItemOnCursor(clone);
-                            }
-                            player.playSound(player.getLocation(), Sound.ENTITY_ITEM_FRAME_ADD_ITEM, 1f, 1f);
-                        } else {
-                            player.playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1f, 1f);
-                        }
-                    }
-                });
+                getSlot(slot).setEvents((ClickEvent) (e, p, i1) -> handleAddProduct(p, p.getItemOnCursor(), products));
                 continue;
             }
 
@@ -154,24 +128,11 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
                         }
                         ItemUtil.addToInventory(player, new ItemStack(product, actual));
                         player.playSound(player.getLocation(), Sound.ENTITY_ITEM_FRAME_REMOVE_ITEM, 1f, 1f);
+                        return;
                     }
 
-                    // MERGE
-                    else if (cursor.getType() == product && !oreData.isFull()) {
-                        int stored = oreData.addProduct(product, cursor.getAmount(), false);
-                        int remain = cursor.getAmount() - stored;
-                        if (remain == 0) {
-                            player.setItemOnCursor(null);
-                        } else {
-                            ItemStack clone = cursor.clone();
-                            clone.setAmount(remain);
-                            player.setItemOnCursor(clone);
-                        }
-                        player.playSound(player.getLocation(), Sound.ENTITY_ITEM_FRAME_ADD_ITEM, 1f, 1f);
-                    } else {
-                        player.playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1f, 1f);
-                    }
-
+                    // ADD
+                    handleAddProduct(player, cursor, products);
                 }
             });
         }
@@ -233,6 +194,32 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
                     });
                 }
             }
+        }
+    }
+
+    private void handleAddProduct(Player player, ItemStack cursor, Collection<Material> products) {
+        if (ItemUtil.isEmpty(cursor)) return;
+        Material material = cursor.getType();
+
+        if (oreData.isFull()) {
+            plugin.msg(player, plugin.messageConfig.storageFull);
+            player.playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1f, 1f);
+        } else if (!cursor.hasItemMeta() && (products.contains(material) ||
+                ore.getAllowedProducts().contains(material) ||
+                ore.getBestTransform(player).hasProduct(material))) {
+            int stored = oreData.addProduct(material, cursor.getAmount(), false);
+            int remain = cursor.getAmount() - stored;
+            if (remain == 0) {
+                player.setItemOnCursor(null);
+            } else {
+                ItemStack clone = cursor.clone();
+                clone.setAmount(remain);
+                player.setItemOnCursor(clone);
+            }
+            player.playSound(player.getLocation(), Sound.ENTITY_ITEM_FRAME_ADD_ITEM, 1f, 1f);
+        } else {
+            plugin.msg(player, plugin.messageConfig.storeInvalidItem);
+            player.playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1f, 1f);
         }
     }
 }
