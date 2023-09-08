@@ -449,7 +449,10 @@ public class OreCommand extends BaseCommand {
                 continue;
 
             OreData oreData = playerData.requireOreData(oreId);
-            remain -= oreData.addProduct(item.getType(), remain, false);
+            int added = oreData.addProduct(item.getType(), remain, false);
+            if (added == 0)
+                continue;
+            remain -= added;
             dirtyOres.add(ore.getName());
             if (remain <= 0) break;
         }
@@ -492,6 +495,9 @@ public class OreCommand extends BaseCommand {
 
                 OreData oreData = playerData.requireOreData(oreId);
                 int added = oreData.addProduct(item.getType(), remain, false);
+                if (added == 0)
+                    continue;
+
                 totalAdded += added;
                 remain -= added;
                 dirtyOres.add(ore.getName());
