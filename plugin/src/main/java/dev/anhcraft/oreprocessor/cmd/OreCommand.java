@@ -6,10 +6,14 @@ import co.aikar.commands.annotation.*;
 import dev.anhcraft.config.bukkit.utils.ItemBuilder;
 import dev.anhcraft.configdoc.ConfigDocGenerator;
 import dev.anhcraft.oreprocessor.OreProcessor;
+import dev.anhcraft.oreprocessor.api.Ore;
+import dev.anhcraft.oreprocessor.api.data.OreData;
+import dev.anhcraft.oreprocessor.api.data.PlayerData;
 import dev.anhcraft.oreprocessor.api.data.stats.TimeSeries;
 import dev.anhcraft.oreprocessor.config.*;
 import dev.anhcraft.oreprocessor.gui.*;
 import dev.anhcraft.oreprocessor.integration.EventDebugger;
+import dev.anhcraft.palette.util.ItemUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -18,11 +22,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.RegisteredListener;
 
 import java.io.File;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @CommandAlias("ore|oreprocessor")
 public class OreCommand extends BaseCommand {
@@ -413,5 +418,97 @@ public class OreCommand extends BaseCommand {
                 ));
             }
         });
+    }
+
+    @Subcommand("store hand")
+    @Description("Add the item in your main hand into ore storage")
+    @CommandPermission("oreprocessor.store.hand")
+    public void storeHand(Player player) {
+        ItemStack item = player.getInventory().getItemInMainHand();
+
+        if (ItemUtil.isEmpty(item)) {
+            plugin.msg(player, plugin.messageConfig.emptyHand);
+            return;
+        }
+
+        if (item.hasItemMeta()) { // prevent non-vanilla items
+            plugin.msg(player, plugin.messageConfig.storeInvalidItem);
+            return;
+        }
+
+        PlayerData playerData = OreProcessor.getApi().getPlayerData(player);
+        List<String> dirtyOres = new ArrayList<>(1);
+
+        int remain = item.getAmount();
+
+        for (String oreId : OreProcessor.getApi().getOres()) {
+            Ore ore = OreProcessor.getApi().getOre(oreId);
+            if (ore == null) continue;
+
+            if (!ore.getAllowedProducts().contains(item.getType()) && !ore.getBestTransform(player).hasProduct(item.getType()))
+                continue;
+
+            OreData oreData = playerData.requireOreData(oreId);
+            remain -= oreData.addProduct(item.getType(), remain, false);
+            dirtyOres.add(ore.getName());
+            if (remain <= 0) break;
+        }
+
+        if (dirtyOres.isEmpty()) {
+            plugin.msg(player, plugin.messageConfig.cannotStoreItem);
+            return;
+        }
+
+        plugin.msg(player, plugin.messageConfig.storedItems
+                .replace("{amount}", Integer.toString(item.getAmount() - remain))
+                .replace("{ores}", String.join(", ", dirtyOres)));
+
+        item.setAmount(remain);
+        player.getInventory().setItemInMainHand(item);
+    }
+
+    @Subcommand("store all")
+    @Description("Move items in your inventory into ore storage")
+    @CommandPermission("oreprocessor.store.all")
+    public void storeAll(Player player) {
+        PlayerInventory inv = player.getInventory();
+        PlayerData playerData = OreProcessor.getApi().getPlayerData(player);
+        Set<String> dirtyOres = new HashSet<>(1);
+        int totalAdded = 0;
+
+        for (int i = 0; i < 36; i++) {
+            ItemStack item = inv.getItem(i);
+            if (ItemUtil.isEmpty(item) || item.hasItemMeta())
+                continue;
+
+            int remain = item.getAmount();
+
+            for (String oreId : OreProcessor.getApi().getOres()) {
+                Ore ore = OreProcessor.getApi().getOre(oreId);
+                if (ore == null) continue;
+
+                if (!ore.getAllowedProducts().contains(item.getType()) && !ore.getBestTransform(player).hasProduct(item.getType()))
+                    continue;
+
+                OreData oreData = playerData.requireOreData(oreId);
+                int added = oreData.addProduct(item.getType(), remain, false);
+                totalAdded += added;
+                remain -= added;
+                dirtyOres.add(ore.getName());
+                if (remain <= 0) break;
+            }
+
+            item.setAmount(remain);
+            inv.setItem(i, item);
+        }
+
+        if (dirtyOres.isEmpty()) {
+            plugin.msg(player, plugin.messageConfig.cannotStoreItem);
+            return;
+        }
+
+        plugin.msg(player, plugin.messageConfig.storedItems
+                .replace("{amount}", Integer.toString(totalAdded))
+                .replace("{ores}", String.join(", ", dirtyOres)));
     }
 }

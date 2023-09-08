@@ -23,4 +23,8 @@ public class MessageConfig {
     public String quickSellSuccess;
     @Validation(notNull = true)
     public String[] statisticCumulativeDetails;
+    public String emptyHand = "&cYour hand is empty";
+    public String storeInvalidItem = "&cThis item is inappropriate";
+    public String cannotStoreItem = "&cFailed due to inappropriate item or no space left";
+    public String storedItems = "&aStored &f{amount}&a items into &f{ores}&a storage!";
 }

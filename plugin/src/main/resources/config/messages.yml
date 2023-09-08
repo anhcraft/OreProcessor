@@ -16,3 +16,7 @@ statistic-cumulative-details:
   - "&7▪ Total mined: &e{total-mined}&7 blocks"
   - "&7▪ Total feedstock: &e{total-feedstock}&7 items"
   - "&7▪ Total products: &e{total-products}&7 items"
+empty-hand: "&cYour hand is empty"
+store-invalid-item: "&cThis item is inappropriate"
+cannot-store-item: "&cFailed due to inappropriate item or no space left"
+stored-items: "&aStored &f{amount}&a items into &f{ores}&a storage!"
