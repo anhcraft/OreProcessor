@@ -445,10 +445,12 @@ public class OreCommand extends BaseCommand {
             Ore ore = OreProcessor.getApi().getOre(oreId);
             if (ore == null) continue;
 
-            if (!ore.getAllowedProducts().contains(item.getType()) && !ore.getBestTransform(player).hasProduct(item.getType()))
+            OreData oreData = playerData.requireOreData(oreId);
+            if (!ore.getAllowedProducts().contains(item.getType()) &&
+                    !oreData.getProducts().contains(item.getType()) &&
+                    !ore.getBestTransform(player).hasProduct(item.getType()))
                 continue;
 
-            OreData oreData = playerData.requireOreData(oreId);
             int added = oreData.addProduct(item.getType(), remain, false);
             if (added == 0)
                 continue;
@@ -489,11 +491,13 @@ public class OreCommand extends BaseCommand {
             for (String oreId : OreProcessor.getApi().getOres()) {
                 Ore ore = OreProcessor.getApi().getOre(oreId);
                 if (ore == null) continue;
+                OreData oreData = playerData.requireOreData(oreId);
 
-                if (!ore.getAllowedProducts().contains(item.getType()) && !ore.getBestTransform(player).hasProduct(item.getType()))
+                if (!ore.getAllowedProducts().contains(item.getType()) &&
+                        !oreData.getProducts().contains(item.getType()) &&
+                        !ore.getBestTransform(player).hasProduct(item.getType()))
                     continue;
 
-                OreData oreData = playerData.requireOreData(oreId);
                 int added = oreData.addProduct(item.getType(), remain, false);
                 if (added == 0)
                     continue;
