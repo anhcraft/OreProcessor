@@ -6,8 +6,10 @@ import dev.anhcraft.oreprocessor.api.Ore;
 import dev.anhcraft.oreprocessor.api.data.OreData;
 import dev.anhcraft.oreprocessor.api.data.PlayerData;
 import dev.anhcraft.oreprocessor.api.upgrade.UpgradeLevel;
+import dev.anhcraft.oreprocessor.util.ScopedLog;
 import dev.anhcraft.palette.event.ClickEvent;
 import dev.anhcraft.palette.ui.GuiHandler;
+import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -125,7 +127,17 @@ public class UpgradeGuiHandler extends GuiHandler {
     }
 
     private void upgradeThroughput(Player player, UpgradeLevel nextThroughput) {
-        if (plugin.economy.withdrawPlayer(player, nextThroughput.getCost()).transactionSuccess()) {
+        EconomyResponse trans = plugin.economy.withdrawPlayer(player, nextThroughput.getCost());
+        ScopedLog log = plugin.pluginLogger.scope("upgrade")
+                .add("player", player)
+                .add("ore", ore)
+                .add("type", "throughput")
+                .add("amount", nextThroughput.getAmount())
+                .add("cost", nextThroughput.getCost())
+                .add("transaction", trans)
+                .add("success", trans.transactionSuccess());
+        if (trans.transactionSuccess()) {
+            log.add("lastAmount", oreData.getThroughput());
             oreData.setThroughput(nextThroughput.getAmount());
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
             plugin.msg(player, plugin.messageConfig.upgradeThroughputSuccess.replace("{ore}", ore.getName())
@@ -134,11 +146,22 @@ public class UpgradeGuiHandler extends GuiHandler {
             player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f);
             plugin.msg(player, plugin.messageConfig.upgradeThroughputFailed);
         }
+        log.flush();
         refresh(player);
     }
 
     private void upgradeCapacity(Player player, UpgradeLevel nextCapacity) {
-        if (plugin.economy.withdrawPlayer(player, nextCapacity.getCost()).transactionSuccess()) {
+        EconomyResponse trans = plugin.economy.withdrawPlayer(player, nextCapacity.getCost());
+        ScopedLog log = plugin.pluginLogger.scope("upgrade")
+                .add("player", player)
+                .add("ore", ore)
+                .add("type", "capacity")
+                .add("amount", nextCapacity.getAmount())
+                .add("cost", nextCapacity.getCost())
+                .add("transaction", trans)
+                .add("success", trans.transactionSuccess());
+        if (trans.transactionSuccess()) {
+            log.add("lastAmount", oreData.getCapacity());
             oreData.setCapacity(nextCapacity.getAmount());
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
             plugin.msg(player, plugin.messageConfig.upgradeCapacitySuccess.replace("{ore}", ore.getName())
@@ -147,6 +170,7 @@ public class UpgradeGuiHandler extends GuiHandler {
             player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f);
             plugin.msg(player, plugin.messageConfig.upgradeCapacityFailed);
         }
+        log.flush();
         refresh(player);
     }
 }

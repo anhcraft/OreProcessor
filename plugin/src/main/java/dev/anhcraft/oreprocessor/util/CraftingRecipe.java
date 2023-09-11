@@ -21,4 +21,9 @@ public class CraftingRecipe {
     public ItemStack getOutput() {
         return output;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%d %s > %d %s", input.getAmount(), input.getType(), output.getAmount(), output.getType());
+    }
 }

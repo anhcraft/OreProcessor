@@ -119,22 +119,58 @@ public class CraftingGuiHandler extends GuiHandler implements AutoRefresh {
                         Integer many = plugin.mainConfig.accessibilitySettings.craftAmount.get(clickEvent.getClick());
                         if (many == null || many <= 0) return;
 
-                        oreData.testAndSetProduct(product, availableIngredients -> {
-                            if (availableIngredients == 0) {
+                        oreData.testAndSetProduct(product, actualIngredients -> {
+                            if (actualIngredients == 0) {
                                 player.playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1f, 1f);
+                                plugin.pluginLogger.scope("crafting")
+                                        .add("player", player)
+                                        .add("ore", ore)
+                                        .add("product", product)
+                                        .add("recipe", recipe)
+                                        .add("bulkSize", many)
+                                        .add("ingredients", 0)
+                                        .add("success", false)
+                                        .flush();
                                 return -1;
                             }
                             int expectedInput = recipe.getInput().getAmount() * many;
-                            int actualInput = Math.min(expectedInput, availableIngredients);
-                            int actualProduct = (int) Math.floor((double) actualInput / recipe.getInput().getAmount());
-                            if (actualProduct == 0) {
+                            int actualInput = Math.min(expectedInput, actualIngredients);
+                            int craftTimes = (int) Math.floor((double) actualInput / recipe.getInput().getAmount());
+                            if (craftTimes == 0) {
                                 player.playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1f, 1f);
+                                plugin.pluginLogger.scope("crafting")
+                                        .add("player", player)
+                                        .add("ore", ore)
+                                        .add("product", product)
+                                        .add("recipe", recipe)
+                                        .add("bulkSize", many)
+                                        .add("ingredients", actualIngredients)
+                                        .add("input", actualInput)
+                                        .add("craftTimes", craftTimes)
+                                        .add("success", false)
+                                        .flush();
                                 return -1;
                             }
-                            oreData.addProduct(recipe.getOutput().getType(), actualProduct * recipe.getOutput().getAmount(), true);
+                            int actualProduct = craftTimes * recipe.getOutput().getAmount();
+                            oreData.addProduct(recipe.getOutput().getType(), actualProduct, true);
                             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
                             int remainingInput = actualInput % recipe.getInput().getAmount();
-                            return availableIngredients - actualInput + remainingInput;
+                            int remainingIngredients = actualIngredients - actualInput + remainingInput;
+                            plugin.pluginLogger.scope("crafting")
+                                    .add("player", player)
+                                    .add("ore", ore)
+                                    .add("product", product)
+                                    .add("recipe", recipe)
+                                    .add("bulkSize", many)
+                                    .add("ingredients", actualIngredients)
+                                    .add("input", actualInput)
+                                    .add("craftTimes", craftTimes)
+                                    .add("output", actualProduct)
+                                    .add("remainInput", remainingInput)
+                                    .add("remainIngredients", remainingIngredients)
+                                    .add("success", true)
+                                    .flush();
+                            return remainingIngredients;
                         });
                     } else {
                         player.playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1f, 1f);

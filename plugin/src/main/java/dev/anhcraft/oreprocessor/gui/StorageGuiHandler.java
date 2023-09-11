@@ -11,6 +11,7 @@ import dev.anhcraft.palette.ui.GuiHandler;
 import dev.anhcraft.palette.ui.element.Slot;
 import dev.anhcraft.palette.util.ItemReplacer;
 import dev.anhcraft.palette.util.ItemUtil;
+import net.milkbowl.vault.economy.EconomyResponse;
 import org.apache.commons.lang.mutable.MutableDouble;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -128,6 +129,14 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
                         }
                         ItemUtil.addToInventory(player, new ItemStack(product, actual));
                         player.playSound(player.getLocation(), Sound.ENTITY_ITEM_FRAME_REMOVE_ITEM, 1f, 1f);
+                        plugin.pluginLogger.scope("storage")
+                                .add("player", player)
+                                .add("ore", ore)
+                                .add("product", product)
+                                .add("action", "take")
+                                .add("bulkSize", many)
+                                .add("amount", actual)
+                                .flush();
                         return;
                     }
 
@@ -170,8 +179,18 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
                                 oreData.testAndTakeProduct(product, amount, actual -> {
                                     count.add(actual);
                                     double profit = shopProvider.get().getSellPrice(product, actual);
-                                    boolean success = plugin.economy.depositPlayer(player, profit).transactionSuccess();
-                                    if (success) {
+                                    EconomyResponse trans = plugin.economy.depositPlayer(player, profit);
+                                    plugin.pluginLogger.scope("quick-sell")
+                                            .add("player", player)
+                                            .add("ore", ore)
+                                            .add("product", product)
+                                            .add("expectedAmount", amount)
+                                            .add("takenAmount", actual)
+                                            .add("profits", profit)
+                                            .add("transaction", trans)
+                                            .add("success", trans.transactionSuccess())
+                                            .flush();
+                                    if (trans.transactionSuccess()) {
                                         profits.add(profit);
                                     } else {
                                         plugin.getLogger().warning(String.format(
@@ -179,7 +198,7 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
                                                 profit, player.getName(), actual, product.getKey()
                                         ));
                                     }
-                                    return success;
+                                    return trans.transactionSuccess();
                                 });
                             }
 
@@ -217,6 +236,15 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
                 player.setItemOnCursor(clone);
             }
             player.playSound(player.getLocation(), Sound.ENTITY_ITEM_FRAME_ADD_ITEM, 1f, 1f);
+            plugin.pluginLogger.scope("storage")
+                    .add("player", player)
+                    .add("ore", ore)
+                    .add("product", material)
+                    .add("action", "add")
+                    .add("expectedAmount", cursor.getAmount())
+                    .add("storedAmount", stored)
+                    .add("remainAmount", remain)
+                    .flush();
         } else {
             plugin.msg(player, plugin.messageConfig.storeInvalidItem);
             player.playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1f, 1f);

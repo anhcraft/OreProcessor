@@ -5,6 +5,7 @@ import dev.anhcraft.oreprocessor.api.integration.ShopProviderType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.text.SimpleDateFormat;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
@@ -72,4 +73,15 @@ public class MainConfig {
 
     @NotNull
     public PurgeStatsSettings purgeStats = new PurgeStatsSettings();
+
+    @Validation(notNull = true, silent = true)
+    private String dateFormat = "dd/MM/yyyy HH:mm:ss";
+
+    @Exclude
+    public SimpleDateFormat dateTimeFormat;
+
+    @PostHandler
+    private void handle() {
+        dateTimeFormat = new SimpleDateFormat(dateFormat);
+    }
 }

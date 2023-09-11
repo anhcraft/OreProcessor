@@ -61,6 +61,18 @@
                                     <pattern>co.aikar.locales</pattern>
                                     <shadedPattern>dev.anhcraft.oreprocessor.lib.locales</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>com.vlkan.rfos</pattern>
+                                    <shadedPattern>dev.anhcraft.oreprocessor.lib.rfos</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.alibaba.fastjson</pattern>
+                                    <shadedPattern>dev.anhcraft.oreprocessor.lib.json</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>com.alibaba.fastjson2</pattern>
+                                    <shadedPattern>dev.anhcraft.oreprocessor.lib.json2</shadedPattern>
+                                </relocation>
                             </relocations>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                         </configuration>
@@ -111,6 +123,18 @@
             <groupId>co.aikar</groupId>
             <artifactId>acf-paper</artifactId>
             <version>0.5.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.vlkan.rfos</groupId>
+            <artifactId>rotating-fos</artifactId>
+            <version>0.9.5</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>2.0.40</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

@@ -142,5 +142,6 @@ accessibility-settings:
 purge-stats:
   max-player-records: 1000 # Set 0 to disable
   max-server-records: 20000 # Set 0 to disable
+date-format: "dd/MM/yyyy HH:mm:ss"
 dev-mode: false
 debug-level: 0

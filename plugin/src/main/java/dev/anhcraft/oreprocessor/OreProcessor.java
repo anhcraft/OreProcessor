@@ -19,6 +19,7 @@ import dev.anhcraft.oreprocessor.integration.IntegrationManager;
 import dev.anhcraft.oreprocessor.storage.player.PlayerDataManager;
 import dev.anhcraft.oreprocessor.storage.server.ServerDataManager;
 import dev.anhcraft.oreprocessor.util.ConfigHelper;
+import dev.anhcraft.oreprocessor.util.PluginLogger;
 import dev.anhcraft.palette.listener.GuiEventListener;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.ChatColor;
@@ -43,6 +44,7 @@ public final class OreProcessor extends JavaPlugin {
     public PlayerDataManager playerDataManager;
     public ServerDataManager serverDataManager;
     private ProcessingPlant processingPlant;
+    public PluginLogger pluginLogger;
     public Economy economy;
     public MessageConfig messageConfig;
     public MainConfig mainConfig;
@@ -97,6 +99,7 @@ public final class OreProcessor extends JavaPlugin {
         playerDataManager = new PlayerDataManager(this);
         processingPlant = new ProcessingPlant(this);
         integrationManager = new IntegrationManager(this);
+        pluginLogger = new PluginLogger(new File(getDataFolder(), "logs"));
 
         reload();
         serverDataManager.loadData();
@@ -119,6 +122,7 @@ public final class OreProcessor extends JavaPlugin {
 
         playerDataManager.terminate();
         serverDataManager.terminate();
+        pluginLogger.flush();
     }
 
     private boolean setupEconomy() {
@@ -154,6 +158,7 @@ public final class OreProcessor extends JavaPlugin {
         API.reload();
 
         new GuiRefreshTask().runTaskTimer(this, 0L, 10L);
+        getServer().getScheduler().runTaskTimerAsynchronously(this, pluginLogger::flush, 60L, 100L);
     }
 
     public YamlConfiguration requestConfig(String path) {
