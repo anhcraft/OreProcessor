@@ -132,12 +132,10 @@ public class UpgradeGuiHandler extends GuiHandler {
                 .add("player", player)
                 .add("ore", ore)
                 .add("type", "throughput")
-                .add("amount", nextThroughput.getAmount())
-                .add("cost", nextThroughput.getCost())
-                .add("transaction", trans)
-                .add("success", trans.transactionSuccess());
+                .add("currentAmount", oreData.getThroughput())
+                .add("newAmount", nextThroughput.getAmount())
+                .add("cost", nextThroughput.getCost());
         if (trans.transactionSuccess()) {
-            log.add("lastAmount", oreData.getThroughput());
             oreData.setThroughput(nextThroughput.getAmount());
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
             plugin.msg(player, plugin.messageConfig.upgradeThroughputSuccess.replace("{ore}", ore.getName())
@@ -146,7 +144,7 @@ public class UpgradeGuiHandler extends GuiHandler {
             player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f);
             plugin.msg(player, plugin.messageConfig.upgradeThroughputFailed);
         }
-        log.flush();
+        log.add("transaction", trans).add("success", trans.transactionSuccess()).flush();
         refresh(player);
     }
 
@@ -156,12 +154,10 @@ public class UpgradeGuiHandler extends GuiHandler {
                 .add("player", player)
                 .add("ore", ore)
                 .add("type", "capacity")
-                .add("amount", nextCapacity.getAmount())
-                .add("cost", nextCapacity.getCost())
-                .add("transaction", trans)
-                .add("success", trans.transactionSuccess());
+                .add("currentAmount", oreData.getCapacity())
+                .add("newAmount", nextCapacity.getAmount())
+                .add("cost", nextCapacity.getCost());
         if (trans.transactionSuccess()) {
-            log.add("lastAmount", oreData.getCapacity());
             oreData.setCapacity(nextCapacity.getAmount());
             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
             plugin.msg(player, plugin.messageConfig.upgradeCapacitySuccess.replace("{ore}", ore.getName())
@@ -170,7 +166,7 @@ public class UpgradeGuiHandler extends GuiHandler {
             player.playSound(player.getLocation(), Sound.ENTITY_ITEM_BREAK, 1.0f, 1.0f);
             plugin.msg(player, plugin.messageConfig.upgradeCapacityFailed);
         }
-        log.flush();
+        log.add("transaction", trans).add("success", trans.transactionSuccess()).flush();
         refresh(player);
     }
 }

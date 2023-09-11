@@ -6,6 +6,7 @@ import dev.anhcraft.oreprocessor.api.Ore;
 import dev.anhcraft.oreprocessor.api.data.OreData;
 import dev.anhcraft.oreprocessor.api.data.PlayerData;
 import dev.anhcraft.oreprocessor.integration.shop.ShopProvider;
+import dev.anhcraft.oreprocessor.util.ScopedLog;
 import dev.anhcraft.palette.event.ClickEvent;
 import dev.anhcraft.palette.ui.GuiHandler;
 import dev.anhcraft.palette.ui.element.Slot;
@@ -122,6 +123,7 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
                     if (ItemUtil.isEmpty(cursor)) {
                         Integer many = plugin.mainConfig.accessibilitySettings.takeAmount.get(clickEvent.getClick());
                         if (many == null || many <= 0) return;
+                        int oldTotalAmount = oreData.countProduct(product);
                         int actual = oreData.takeProduct(product, many);
                         if (actual == 0) {
                             player.playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1f, 1f);
@@ -135,7 +137,9 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
                                 .add("product", product)
                                 .add("action", "take")
                                 .add("bulkSize", many)
-                                .add("amount", actual)
+                                .add("delta", actual)
+                                .add("oldTotalAmount", oldTotalAmount)
+                                .add("newTotalAmount", oldTotalAmount - actual)
                                 .flush();
                         return;
                     }
@@ -178,26 +182,30 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
 
                                 oreData.testAndTakeProduct(product, amount, actual -> {
                                     count.add(actual);
+                                    int currentAmount = oreData.countProduct(product);
                                     double profit = shopProvider.get().getSellPrice(product, actual);
                                     EconomyResponse trans = plugin.economy.depositPlayer(player, profit);
-                                    plugin.pluginLogger.scope("quick-sell")
+                                    ScopedLog log = plugin.pluginLogger.scope("quick-sell")
                                             .add("player", player)
                                             .add("ore", ore)
                                             .add("product", product)
                                             .add("expectedAmount", amount)
                                             .add("takenAmount", actual)
                                             .add("profits", profit)
-                                            .add("transaction", trans)
-                                            .add("success", trans.transactionSuccess())
-                                            .flush();
+                                            .add("oldTotalAmount", currentAmount);
                                     if (trans.transactionSuccess()) {
                                         profits.add(profit);
+                                        log.add("newTotalAmount", currentAmount - actual);
                                     } else {
                                         plugin.getLogger().warning(String.format(
                                                 "Failed to deposit %.3f to %s's account for selling %d %s",
                                                 profit, player.getName(), actual, product.getKey()
                                         ));
+                                        log.add("newTotalAmount", currentAmount);
                                     }
+                                    log.add("transaction", trans)
+                                            .add("success", trans.transactionSuccess())
+                                            .flush();
                                     return trans.transactionSuccess();
                                 });
                             }
@@ -226,6 +234,7 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
         } else if (!cursor.hasItemMeta() && (products.contains(material) ||
                 ore.getAllowedProducts().contains(material) ||
                 ore.getBestTransform(player).hasProduct(material))) {
+            int oldTotalAmount = oreData.countProduct(material);
             int stored = oreData.addProduct(material, cursor.getAmount(), false);
             int remain = cursor.getAmount() - stored;
             if (remain == 0) {
@@ -241,9 +250,11 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
                     .add("ore", ore)
                     .add("product", material)
                     .add("action", "add")
-                    .add("expectedAmount", cursor.getAmount())
-                    .add("storedAmount", stored)
-                    .add("remainAmount", remain)
+                    .add("expectedDelta", cursor.getAmount())
+                    .add("actualDelta", stored)
+                    .add("remainDelta", remain)
+                    .add("oldTotalAmount", oldTotalAmount)
+                    .add("newTotalAmount", oldTotalAmount + stored)
                     .flush();
         } else {
             plugin.msg(player, plugin.messageConfig.storeInvalidItem);

@@ -6,6 +6,7 @@ import dev.anhcraft.oreprocessor.api.Ore;
 import dev.anhcraft.oreprocessor.api.data.OreData;
 import dev.anhcraft.oreprocessor.api.data.PlayerData;
 import dev.anhcraft.oreprocessor.util.CraftingRecipe;
+import dev.anhcraft.oreprocessor.util.ScopedLog;
 import dev.anhcraft.palette.event.ClickEvent;
 import dev.anhcraft.palette.ui.GuiHandler;
 import dev.anhcraft.palette.util.ItemReplacer;
@@ -119,34 +120,30 @@ public class CraftingGuiHandler extends GuiHandler implements AutoRefresh {
                         Integer many = plugin.mainConfig.accessibilitySettings.craftAmount.get(clickEvent.getClick());
                         if (many == null || many <= 0) return;
 
-                        oreData.testAndSetProduct(product, actualIngredients -> {
-                            if (actualIngredients == 0) {
+                        oreData.testAndSetProduct(product, currentAmount -> {
+                            ScopedLog scopedLog = plugin.pluginLogger.scope("crafting")
+                                    .add("player", player)
+                                    .add("ore", ore)
+                                    .add("product", product)
+                                    .add("recipe", recipe)
+                                    .add("bulkSize", many);
+                            if (currentAmount == 0) {
                                 player.playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1f, 1f);
-                                plugin.pluginLogger.scope("crafting")
-                                        .add("player", player)
-                                        .add("ore", ore)
-                                        .add("product", product)
-                                        .add("recipe", recipe)
-                                        .add("bulkSize", many)
-                                        .add("ingredients", 0)
+                                scopedLog.add("oldTotalAmount", currentAmount)
+                                        .add("newTotalAmount", currentAmount)
                                         .add("success", false)
                                         .flush();
                                 return -1;
                             }
                             int expectedInput = recipe.getInput().getAmount() * many;
-                            int actualInput = Math.min(expectedInput, actualIngredients);
+                            int actualInput = Math.min(expectedInput, currentAmount);
                             int craftTimes = (int) Math.floor((double) actualInput / recipe.getInput().getAmount());
                             if (craftTimes == 0) {
                                 player.playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1f, 1f);
-                                plugin.pluginLogger.scope("crafting")
-                                        .add("player", player)
-                                        .add("ore", ore)
-                                        .add("product", product)
-                                        .add("recipe", recipe)
-                                        .add("bulkSize", many)
-                                        .add("ingredients", actualIngredients)
-                                        .add("input", actualInput)
+                                scopedLog.add("input", actualInput)
                                         .add("craftTimes", craftTimes)
+                                        .add("oldTotalAmount", currentAmount)
+                                        .add("newTotalAmount", currentAmount)
                                         .add("success", false)
                                         .flush();
                                 return -1;
@@ -155,22 +152,16 @@ public class CraftingGuiHandler extends GuiHandler implements AutoRefresh {
                             oreData.addProduct(recipe.getOutput().getType(), actualProduct, true);
                             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
                             int remainingInput = actualInput % recipe.getInput().getAmount();
-                            int remainingIngredients = actualIngredients - actualInput + remainingInput;
-                            plugin.pluginLogger.scope("crafting")
-                                    .add("player", player)
-                                    .add("ore", ore)
-                                    .add("product", product)
-                                    .add("recipe", recipe)
-                                    .add("bulkSize", many)
-                                    .add("ingredients", actualIngredients)
-                                    .add("input", actualInput)
+                            int newAmount = currentAmount - actualInput + remainingInput;
+                            scopedLog.add("input", actualInput)
                                     .add("craftTimes", craftTimes)
                                     .add("output", actualProduct)
                                     .add("remainInput", remainingInput)
-                                    .add("remainIngredients", remainingIngredients)
+                                    .add("oldTotalAmount", currentAmount)
+                                    .add("newTotalAmount", newAmount)
                                     .add("success", true)
                                     .flush();
-                            return remainingIngredients;
+                            return newAmount;
                         });
                     } else {
                         player.playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1f, 1f);
