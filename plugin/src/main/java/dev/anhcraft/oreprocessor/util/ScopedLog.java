@@ -1,6 +1,7 @@
 package dev.anhcraft.oreprocessor.util;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import dev.anhcraft.oreprocessor.OreProcessor;
 import dev.anhcraft.oreprocessor.api.Ore;
 import net.milkbowl.vault.economy.EconomyResponse;
@@ -11,7 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ScopedLog {
-    private static final Gson GSON = new Gson();
+    private static final Gson GSON = new GsonBuilder().disableHtmlEscaping().create();
     private final PluginLogger logger;
     private final Map<String, String> data;
 
