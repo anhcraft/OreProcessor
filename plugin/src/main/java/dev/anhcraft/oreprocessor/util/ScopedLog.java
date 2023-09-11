@@ -1,6 +1,6 @@
 package dev.anhcraft.oreprocessor.util;
 
-import com.alibaba.fastjson2.JSON;
+import com.google.gson.Gson;
 import dev.anhcraft.oreprocessor.OreProcessor;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.bukkit.OfflinePlayer;
@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ScopedLog {
+    private static final Gson GSON = new Gson();
     private final PluginLogger logger;
     private final Map<String, String> data;
 
@@ -37,6 +38,6 @@ public class ScopedLog {
     }
 
     public void flush() {
-        logger.writeRaw(JSON.toJSONString(data));
+        logger.writeRaw(GSON.toJson(data));
     }
 }
