@@ -83,6 +83,7 @@ public class OreDataImpl implements OreData {
                 config.feedstock = new LinkedHashMap<>();
             else
                 newVal += config.feedstock.getOrDefault(material, 0);
+            newVal = Math.max(newVal, 0);
 
             if (!Objects.equals(config.feedstock.put(material, newVal), newVal)) {
                 markDirty();
@@ -121,6 +122,7 @@ public class OreDataImpl implements OreData {
         synchronized (config) {
             int toStore = force ? expectedAmount : Math.min(expectedAmount, getCapacity() - countAllProducts());
             int newVal = countProduct(material) + toStore;
+            newVal = Math.max(newVal, 0);
 
             if (config.products == null)
                 config.products = new LinkedHashMap<>();
@@ -138,7 +140,7 @@ public class OreDataImpl implements OreData {
         synchronized (config) {
             int stored = countProduct(material);
             int toTake = Math.min(expectedAmount, stored);
-            int newVal = stored - toTake;
+            int newVal = Math.max(stored - toTake, 0);
 
             if (config.products == null) {
                 toTake = 0;
@@ -160,7 +162,7 @@ public class OreDataImpl implements OreData {
             int toTake = Math.min(expectedAmount, stored);
 
             if (config.products != null && toTake > 0 && function.apply(toTake)) {
-                int newVal = stored - toTake;
+                int newVal = Math.max(stored - toTake, 0);
 
                 if (newVal == 0) {
                     config.products.remove(material);
