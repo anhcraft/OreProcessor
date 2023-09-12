@@ -14,7 +14,7 @@ import java.util.Map;
 public class ScopedLog {
     private static final Gson GSON = new GsonBuilder().disableHtmlEscaping().create();
     private final PluginLogger logger;
-    private final Map<String, String> data;
+    private final Map<String, Object> data;
 
     public ScopedLog(PluginLogger logger, String scope) {
         this.logger = logger;
@@ -24,21 +24,17 @@ public class ScopedLog {
     }
 
     public ScopedLog add(String key, Object value) {
-        data.put(key, str(value));
+        data.put(key, normalize(value));
         return this;
     }
 
-    private String str(Object value) {
+    private Object normalize(Object value) {
         if (value == null) {
             return "(null)";
-        } else if (value instanceof Double) {
-            return String.format("%.05f", value);
-        } else if (value instanceof Float) {
-            return String.format("%.05f", value);
         } else if (value instanceof Number || value instanceof Boolean) {
-            return value.toString();
+            return value;
         } else if (value instanceof String) {
-            return (String) value;
+            return value;
         } else if (value instanceof OfflinePlayer) {
             return ((OfflinePlayer) value).getUniqueId().toString();
         } else if (value instanceof EconomyResponse) {
