@@ -3,6 +3,7 @@ package dev.anhcraft.oreprocessor.cmd;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import dev.anhcraft.oreprocessor.OreProcessor;
+import dev.anhcraft.oreprocessor.api.data.OreData;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -39,7 +40,20 @@ public class ModifyCommand extends BaseCommand {
                 sender.sendMessage(ChatColor.RED + throwable.getMessage());
                 return;
             }
-            int remain = playerData.requireOreData(ore).addProduct(material, amount, force);
+            OreData oreData = playerData.requireOreData(ore);
+            int oldTotalAmount = oreData.countProduct(material);
+            int remain = oreData.addProduct(material, amount, force);
+            plugin.pluginLogger.scope("cmd/add")
+                    .add("sender", sender)
+                    .add("target", player)
+                    .add("ore", ore)
+                    .add("material", material)
+                    .add("amount", amount)
+                    .add("force", force)
+                    .add("remain", remain)
+                    .add("oldTotalAmount", oldTotalAmount)
+                    .add("newTotalAmount", oldTotalAmount + amount - remain)
+                    .flush();
             if (force) {
                 sender.sendMessage(ChatColor.GREEN + String.format(
                         "Forced adding %d %s to %s's %s storage",
@@ -75,7 +89,18 @@ public class ModifyCommand extends BaseCommand {
                 sender.sendMessage(ChatColor.RED + throwable.getMessage());
                 return;
             }
-            int actual = playerData.requireOreData(ore).takeProduct(material, amount);
+            OreData oreData = playerData.requireOreData(ore);
+            int oldTotalAmount = oreData.countProduct(material);
+            int actual = oreData.takeProduct(material, amount);
+            plugin.pluginLogger.scope("cmd/subtract")
+                    .add("sender", sender)
+                    .add("target", player)
+                    .add("ore", ore)
+                    .add("material", material)
+                    .add("amount", amount)
+                    .add("oldTotalAmount", oldTotalAmount)
+                    .add("newTotalAmount", oldTotalAmount - actual)
+                    .flush();
             if (actual == amount) {
                 sender.sendMessage(ChatColor.GREEN + String.format(
                         "Took %d %s from %s's %s storage",

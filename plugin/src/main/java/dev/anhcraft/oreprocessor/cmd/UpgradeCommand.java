@@ -3,6 +3,7 @@ package dev.anhcraft.oreprocessor.cmd;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import dev.anhcraft.oreprocessor.OreProcessor;
+import dev.anhcraft.oreprocessor.api.data.OreData;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
@@ -51,7 +52,17 @@ public class UpgradeCommand extends BaseCommand {
             }
             if (Objects.equals(ore, "*")) {
                 for (String oreId : playerData.listOreIds()) {
-                    playerData.requireOreData(oreId).setThroughput(finalAmount);
+                    OreData oreData = playerData.requireOreData(oreId);
+                    int current = oreData.getThroughput();
+                    oreData.setThroughput(finalAmount);
+                    plugin.pluginLogger.scope("cmd/upgrade/set")
+                            .add("sender", sender)
+                            .add("target", player)
+                            .add("ore", ore)
+                            .add("upgradeType", "throughput")
+                            .add("currentAmount", current)
+                            .add("newAmount", finalAmount)
+                            .flush();
                 }
                 sender.sendMessage(ChatColor.GREEN + String.format(
                         "Set %s's all ore throughput to %d (%d/m)",
@@ -84,7 +95,17 @@ public class UpgradeCommand extends BaseCommand {
             }
             if (Objects.equals(ore, "*")) {
                 for (String oreId : playerData.listOreIds()) {
-                    playerData.requireOreData(oreId).setCapacity(finalAmount);
+                    OreData oreData = playerData.requireOreData(oreId);
+                    int current = oreData.getCapacity();
+                    oreData.setCapacity(finalAmount);
+                    plugin.pluginLogger.scope("cmd/upgrade/set")
+                            .add("sender", sender)
+                            .add("target", player)
+                            .add("ore", ore)
+                            .add("upgradeType", "capacity")
+                            .add("currentAmount", current)
+                            .add("newAmount", finalAmount)
+                            .flush();
                 }
                 sender.sendMessage(ChatColor.GREEN + String.format(
                         "Set %s's all ores capacity to %d",
@@ -113,7 +134,17 @@ public class UpgradeCommand extends BaseCommand {
             }
             if (Objects.equals(ore, "*")) {
                 for (String oreId : playerData.listOreIds()) {
-                    playerData.requireOreData(oreId).addThroughput(amount);
+                    OreData oreData = playerData.requireOreData(oreId);
+                    int current = oreData.getThroughput();
+                    oreData.addThroughput(amount);
+                    plugin.pluginLogger.scope("cmd/upgrade/add")
+                            .add("sender", sender)
+                            .add("target", player)
+                            .add("ore", ore)
+                            .add("upgradeType", "throughput")
+                            .add("currentAmount", current)
+                            .add("newAmount", current+amount)
+                            .flush();
                 }
                 sender.sendMessage(ChatColor.GREEN + String.format(
                         "Add %s's all ore throughput by %d (%d/m)",
@@ -142,7 +173,17 @@ public class UpgradeCommand extends BaseCommand {
             }
             if (Objects.equals(ore, "*")) {
                 for (String oreId : playerData.listOreIds()) {
-                    playerData.requireOreData(oreId).addCapacity(amount);
+                    OreData oreData = playerData.requireOreData(oreId);
+                    int current = oreData.getCapacity();
+                    oreData.addCapacity(amount);
+                    plugin.pluginLogger.scope("cmd/upgrade/add")
+                            .add("sender", sender)
+                            .add("target", player)
+                            .add("ore", ore)
+                            .add("upgradeType", "capacity")
+                            .add("currentAmount", current)
+                            .add("newAmount", current+amount)
+                            .flush();
                 }
                 sender.sendMessage(ChatColor.GREEN + String.format(
                         "Add %s's all ore capacity by %d",

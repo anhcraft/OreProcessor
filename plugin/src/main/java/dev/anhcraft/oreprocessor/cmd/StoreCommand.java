@@ -61,9 +61,20 @@ public class StoreCommand extends BaseCommand {
             int added = oreData.addProduct(item.getType(), remain, false);
             if (added == 0)
                 continue;
+
             remain -= added;
             dirtyOres.add(ore.getName());
-            if (remain <= 0) break;
+            plugin.pluginLogger.scope("cmd/store/hand")
+                    .add("player", player)
+                    .add("item", item.getType())
+                    .add("ore", ore)
+                    .add("expectedDelta", remain)
+                    .add("actualDelta", added)
+                    .add("remain", remain)
+                    .flush();
+
+            if (remain <= 0)
+                break;
         }
 
         if (dirtyOres.isEmpty()) {
@@ -112,7 +123,18 @@ public class StoreCommand extends BaseCommand {
                 totalAdded += added;
                 remain -= added;
                 dirtyOres.add(ore.getName());
-                if (remain <= 0) break;
+                plugin.pluginLogger.scope("cmd/store/all")
+                        .add("player", player)
+                        .add("item", item.getType())
+                        .add("ore", ore)
+                        .add("expectedDelta", remain)
+                        .add("actualDelta", added)
+                        .add("remain", remain)
+                        .add("totalAdded", added)
+                        .flush();
+
+                if (remain <= 0)
+                    break;
             }
 
             item.setAmount(remain);
