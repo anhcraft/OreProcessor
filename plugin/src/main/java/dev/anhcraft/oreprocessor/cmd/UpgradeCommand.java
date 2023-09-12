@@ -17,11 +17,7 @@ public class UpgradeCommand extends BaseCommand {
         this.plugin = plugin;
     }
 
-    @Subcommand("upgrade throughput set")
-    @CommandPermission("oreprocessor.upgrade.throughput.set")
-    @CommandCompletion("@players @ores")
-    @Description("Set throughput upgrade")
-    public void setThroughputUpgrade(CommandSender sender, OfflinePlayer player, String ore, int amount) {
+    private void preCheck(CommandSender sender, OfflinePlayer player, String ore, int amount) {
         if (amount < 0) {
             sender.sendMessage(ChatColor.RED + "The amount must be positive! (or zero to reset)");
             return;
@@ -36,7 +32,14 @@ public class UpgradeCommand extends BaseCommand {
         }
         if (!player.isOnline())
             sender.sendMessage(ChatColor.YELLOW + "Fetching player data as he is currently offline...");
+    }
 
+    @Subcommand("upgrade throughput set")
+    @CommandPermission("oreprocessor.upgrade.throughput.set")
+    @CommandCompletion("@players @ores")
+    @Description("Set throughput upgrade")
+    public void setThroughputUpgrade(CommandSender sender, OfflinePlayer player, String ore, int amount) {
+        preCheck(sender, player, ore, amount);
         if (amount == 0)
             amount = OreProcessor.getApi().getDefaultThroughput();
 
@@ -69,21 +72,7 @@ public class UpgradeCommand extends BaseCommand {
     @CommandCompletion("@players @ores")
     @Description("Set capacity upgrade")
     public void setCapacityUpgrade(CommandSender sender, OfflinePlayer player, String ore, int amount) {
-        if (amount < 0) {
-            sender.sendMessage(ChatColor.RED + "The amount must be positive! (or zero to reset)");
-            return;
-        }
-        if (!player.hasPlayedBefore()) {
-            sender.sendMessage(ChatColor.RED + "This player has not played before!");
-            return;
-        }
-        if (!Objects.equals(ore, "*") && OreProcessor.getApi().getOre(ore) == null) {
-            sender.sendMessage(ChatColor.RED + "This ore does not exist!");
-            return;
-        }
-        if (!player.isOnline())
-            sender.sendMessage(ChatColor.YELLOW + "Fetching player data as he is currently offline...");
-
+        preCheck(sender, player, ore, amount);
         if (amount == 0)
             amount = OreProcessor.getApi().getDefaultCapacity();
 
@@ -116,17 +105,7 @@ public class UpgradeCommand extends BaseCommand {
     @CommandCompletion("@players @ores")
     @Description("Add throughput upgrade")
     public void addThroughputUpgrade(CommandSender sender, OfflinePlayer player, String ore, int amount) {
-        if (!player.hasPlayedBefore()) {
-            sender.sendMessage(ChatColor.RED + "This player has not played before!");
-            return;
-        }
-        if (!Objects.equals(ore, "*") && OreProcessor.getApi().getOre(ore) == null) {
-            sender.sendMessage(ChatColor.RED + "This ore does not exist!");
-            return;
-        }
-        if (!player.isOnline())
-            sender.sendMessage(ChatColor.YELLOW + "Fetching player data as he is currently offline...");
-
+        preCheck(sender, player, ore, amount);
         OreProcessor.getApi().requirePlayerData(player.getUniqueId()).whenComplete((playerData, throwable) -> {
             if (throwable != null) {
                 sender.sendMessage(ChatColor.RED + throwable.getMessage());
@@ -155,17 +134,7 @@ public class UpgradeCommand extends BaseCommand {
     @CommandCompletion("@players @ores")
     @Description("Add capacity upgrade")
     public void addCapacityUpgrade(CommandSender sender, OfflinePlayer player, String ore, int amount) {
-        if (!player.hasPlayedBefore()) {
-            sender.sendMessage(ChatColor.RED + "This player has not played before!");
-            return;
-        }
-        if (!Objects.equals(ore, "*") && OreProcessor.getApi().getOre(ore) == null) {
-            sender.sendMessage(ChatColor.RED + "This ore does not exist!");
-            return;
-        }
-        if (!player.isOnline())
-            sender.sendMessage(ChatColor.YELLOW + "Fetching player data as he is currently offline...");
-
+        preCheck(sender, player, ore, amount);
         OreProcessor.getApi().requirePlayerData(player.getUniqueId()).whenComplete((playerData, throwable) -> {
             if (throwable != null) {
                 sender.sendMessage(ChatColor.RED + throwable.getMessage());
