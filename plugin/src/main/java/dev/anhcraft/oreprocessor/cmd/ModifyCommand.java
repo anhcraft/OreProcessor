@@ -42,17 +42,17 @@ public class ModifyCommand extends BaseCommand {
             }
             OreData oreData = playerData.requireOreData(ore);
             int oldTotalAmount = oreData.countProduct(material);
-            int remain = oreData.addProduct(material, amount, force);
+            int actualDelta = oreData.addProduct(material, amount, force);
             plugin.pluginLogger.scope("cmd/add")
                     .add("sender", sender)
                     .add("target", player)
                     .add("ore", ore)
                     .add("material", material)
-                    .add("amount", amount)
                     .add("force", force)
-                    .add("remain", remain)
+                    .add("expectedDelta", amount)
+                    .add("actualDelta", actualDelta)
                     .add("oldTotalAmount", oldTotalAmount)
-                    .add("newTotalAmount", oldTotalAmount + amount - remain)
+                    .add("newTotalAmount", oldTotalAmount + actualDelta)
                     .flush();
             if (force) {
                 sender.sendMessage(ChatColor.GREEN + String.format(
@@ -62,7 +62,7 @@ public class ModifyCommand extends BaseCommand {
             } else {
                 sender.sendMessage(ChatColor.GREEN + String.format(
                         "Added %d %s to %s's %s storage (actual: %d)",
-                        amount, material, player.getName(), ore, remain
+                        amount, material, player.getName(), ore, actualDelta
                 ));
             }
         });
@@ -97,7 +97,8 @@ public class ModifyCommand extends BaseCommand {
                     .add("target", player)
                     .add("ore", ore)
                     .add("material", material)
-                    .add("amount", amount)
+                    .add("expectedDelta", amount)
+                    .add("actualDelta", actual)
                     .add("oldTotalAmount", oldTotalAmount)
                     .add("newTotalAmount", oldTotalAmount - actual)
                     .flush();
