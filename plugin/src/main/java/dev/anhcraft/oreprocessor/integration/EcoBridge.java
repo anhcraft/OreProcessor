@@ -33,6 +33,7 @@ public class EcoBridge implements Integration, Listener, EventDebugger {
 
         for (Iterator<? extends ItemStack> it = event.getItems().iterator(); it.hasNext(); ) {
             ItemStack item = it.next();
+            if (item.hasItemMeta()) continue;
             Material feedstock = item.getType();
             int amount = item.getAmount();
             Collection<Ore> ores = OreProcessor.getApi().getOresAllowFeedstock(feedstock);

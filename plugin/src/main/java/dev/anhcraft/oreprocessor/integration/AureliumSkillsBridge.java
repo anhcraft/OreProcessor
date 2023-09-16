@@ -30,7 +30,7 @@ public class AureliumSkillsBridge implements Integration, Listener, EventDebugge
     private void onDropLoot(PlayerLootDropEvent event) {
         Player player = event.getPlayer();
         ItemStack item = event.getItemStack();
-        if (ItemUtil.isEmpty(item)) return;
+        if (ItemUtil.isEmpty(item) || item.hasItemMeta()) return;
         Material feedstock = item.getType();
         int amount = item.getAmount();
         Collection<Ore> ores = OreProcessor.getApi().getOresAllowFeedstock(feedstock);

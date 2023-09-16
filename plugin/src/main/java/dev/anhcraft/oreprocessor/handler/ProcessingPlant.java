@@ -155,6 +155,7 @@ public class ProcessingPlant implements Listener {
 
         for (Iterator<Item> iterator = event.getItems().iterator(); iterator.hasNext(); ) {
             ItemStack eventItem = iterator.next().getItemStack();
+            if (eventItem.hasItemMeta()) continue;
             Material feedstock = eventItem.getType();
             int amount = eventItem.getAmount();
 
