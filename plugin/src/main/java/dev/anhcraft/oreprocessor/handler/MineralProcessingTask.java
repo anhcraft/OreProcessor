@@ -5,7 +5,10 @@ import dev.anhcraft.oreprocessor.api.Ore;
 import dev.anhcraft.oreprocessor.api.OreTransform;
 import dev.anhcraft.oreprocessor.api.data.OreData;
 import dev.anhcraft.oreprocessor.storage.stats.StatisticHelper;
+import org.bukkit.Material;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.Map;
 
 public class MineralProcessingTask extends BukkitRunnable {
     @Override
@@ -19,8 +22,9 @@ public class MineralProcessingTask extends BukkitRunnable {
                 OreData oreData = playerData.getOreData(oreId);
                 if (oreData == null) continue;
 
-                int processed = oreData.process(1, oreTransform::convert);
-                if (processed == 0) continue;
+                Map<Material, Integer> summary = oreData.process(1, oreTransform::convert);
+                if (summary.isEmpty()) continue;
+                int processed = summary.values().stream().reduce(0, Integer::sum);
 
                 StatisticHelper.increaseProductCount(oreId, processed, playerData);
                 StatisticHelper.increaseProductCount(oreId, processed, OreProcessor.getApi().getServerData());

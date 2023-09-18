@@ -23,6 +23,7 @@ import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Iterator;
+import java.util.Map;
 
 public class ProcessingPlant implements Listener {
     private final OreProcessor plugin;
@@ -63,8 +64,9 @@ public class ProcessingPlant implements Listener {
                 if (!plugin.mainConfig.behaviourSettings.disableOfflineProcessing) {
                     for (String oreId : event.getData().listOreIds()) {
                         OreTransform oreTransform = OreProcessor.getApi().requireOre(oreId).getBestTransform(event.getPlayerId());
-                        int processed = event.getData().requireOreData(oreId).process(mul, oreTransform::convert);
-                        if (processed == 0) continue;
+                        Map<Material, Integer> summary = event.getData().requireOreData(oreId).process(mul, oreTransform::convert);
+                        if (summary.isEmpty()) continue;
+                        int processed = summary.values().stream().reduce(0, Integer::sum);
 
                         StatisticHelper.increaseProductCount(oreId, processed, event.getData());
                         StatisticHelper.increaseProductCount(oreId, processed, OreProcessor.getApi().getServerData());
@@ -72,6 +74,17 @@ public class ProcessingPlant implements Listener {
                                 "Processed x%d %s for %s using transform #%s",
                                 processed, oreId, event.getPlayerId(), oreTransform.getId()
                         ));
+                        for (Map.Entry<Material, Integer> e : summary.entrySet()) {
+                            plugin.pluginLogger.scope("offline-processing")
+                                    .add("player", event.getPlayerId())
+                                    .add("hibernation", hibernationTime)
+                                    .add("multiplier", mul)
+                                    .add("ore", oreId)
+                                    .add("transform", oreTransform.getId())
+                                    .add("product", e.getKey())
+                                    .add("amount", e.getValue())
+                                    .flush();
+                        }
                     }
                 }
 

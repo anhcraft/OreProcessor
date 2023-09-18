@@ -233,21 +233,22 @@ public class OreDataImpl implements OreData {
     }
 
     @Override
-    public int process(int throughputMultiplier, @NotNull Function<Material, ItemStack> function) {
-        int totalProcessed = 0;
+    public Map<Material, Integer> process(int throughputMultiplier, @NotNull Function<Material, ItemStack> function) {
+        Map<Material, Integer> summary = new HashMap<>();
 
         synchronized (config) {
-            if (config.feedstock == null) return 0;
+            if (config.feedstock == null)
+                return Collections.emptyMap();
 
             int totalStored = countAllProducts();
             int capacity = getCapacity();
 
             for (Iterator<Map.Entry<Material, Integer>> it = config.feedstock.entrySet().iterator(); it.hasNext() && totalStored < capacity; ) {
                 Map.Entry<Material, Integer> en = it.next();
-                Material source = en.getKey();
-                ItemStack output = function.apply(source);
+                ItemStack output = function.apply(en.getKey());
                 if (ItemUtil.isEmpty(output) || !output.getType().isItem())
                     continue;
+                Material product = output.getType();
 
                 int availableStorage = capacity - totalStored;
                 int actualQueued = Math.min(en.getValue(), getThroughput() * throughputMultiplier);
@@ -261,9 +262,8 @@ public class OreDataImpl implements OreData {
 
                 if (config.products == null)
                     config.products = new LinkedHashMap<>();
-                config.products.put(output.getType(), config.products.getOrDefault(output.getType(), 0) + createdProduct);
-
-                totalProcessed += actualQueued;
+                config.products.put(product, config.products.getOrDefault(product, 0) + createdProduct);
+                summary.put(product, summary.getOrDefault(product, 0) + createdProduct);
                 totalStored += createdProduct;
 
                 int newQueued = en.getValue() - actualQueued;
@@ -275,7 +275,7 @@ public class OreDataImpl implements OreData {
                 markDirty();
             }
 
-            return totalProcessed;
+            return summary;
         }
     }
 

@@ -5,6 +5,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -77,5 +78,5 @@ public interface OreData extends Modifiable {
     int getFreeSpace();
 
     @ApiStatus.Internal
-    int process(int throughputMultiplier, @NotNull Function<Material, ItemStack> function);
+    Map<Material, Integer> process(int throughputMultiplier, @NotNull Function<Material, ItemStack> function);
 }
