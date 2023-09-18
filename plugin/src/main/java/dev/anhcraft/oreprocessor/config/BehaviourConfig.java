@@ -11,4 +11,5 @@ public class BehaviourConfig {
     public boolean disableOfflineProcessing;
 
     public boolean processSilkTouchItems;
+    public int itemPickupRadius = 5;
 }

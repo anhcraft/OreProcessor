@@ -171,5 +171,12 @@
             <version>6.65.2</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>ae</groupId>
+            <artifactId>ae</artifactId>
+            <version>9.4.1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/AdvancedEnchantments-9.4.1.jar</systemPath>
+        </dependency>
     </dependencies>
 </project>

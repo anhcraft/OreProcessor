@@ -28,6 +28,7 @@ public class IntegrationManager {
         tryHook("EconomyShopGUI-Premium", EconomyShopGUIBridge.class);
         tryHook("PlaceholderAPI", PlaceholderApiBridge.class);
         tryHook("eco", EcoBridge.class);
+        tryHook("AdvancedEnchantments", AdvancedEnchantmentBridge.class);
     }
 
     private void tryHook(String plugin, Class<? extends Integration> clazz) {
