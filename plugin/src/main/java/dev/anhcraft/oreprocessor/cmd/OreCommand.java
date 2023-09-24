@@ -3,11 +3,8 @@ package dev.anhcraft.oreprocessor.cmd;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.CommandHelp;
 import co.aikar.commands.annotation.*;
-import dev.anhcraft.config.bukkit.utils.ItemBuilder;
-import dev.anhcraft.configdoc.ConfigDocGenerator;
 import dev.anhcraft.oreprocessor.OreProcessor;
-import dev.anhcraft.oreprocessor.config.*;
-import dev.anhcraft.oreprocessor.gui.*;
+import dev.anhcraft.oreprocessor.gui.GuiRegistry;
 import dev.anhcraft.oreprocessor.integration.EventDebugger;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -18,7 +15,6 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.plugin.RegisteredListener;
 
-import java.io.File;
 import java.util.Map;
 
 @CommandAlias("ore|oreprocessor")
@@ -60,28 +56,6 @@ public class OreCommand extends BaseCommand {
             }
             GuiRegistry.openInspectGui(inspector, playerData, reference.getName());
         });
-    }
-
-    @Subcommand("docs")
-    @CommandPermission("oreprocessor.docs")
-    @Description("Generate offline config documentation")
-    public void generateDoc(CommandSender sender) {
-        new ConfigDocGenerator()
-                .withSchemaOf(MainConfig.class)
-                .withSchemaOf(OreConfig.class)
-                .withSchemaOf(PurgeStatsSettings.class)
-                .withSchemaOf(AccessibilitySettings.class)
-                .withSchemaOf(BehaviourConfig.class)
-                .withSchemaOf(UpgradeConfig.class)
-                .withSchemaOf(UpgradeLevelConfig.class)
-                .withSchemaOf(MessageConfig.class)
-                .withSchemaOf(MenuGui.class)
-                .withSchemaOf(StorageGui.class)
-                .withSchemaOf(UpgradeGui.class)
-                .withSchemaOf(CraftingGui.class)
-                .withSchemaOf(ItemBuilder.class)
-                .generate(new File(plugin.getDataFolder(), "docs"));
-        sender.sendMessage(ChatColor.GREEN + "Configuration documentation generated in plugins/OreProcessor/docs");
     }
 
     @Subcommand("reload")
