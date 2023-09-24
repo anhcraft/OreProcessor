@@ -4,6 +4,7 @@ import co.aikar.commands.BukkitCommandCompletionContext;
 import co.aikar.commands.CommandCompletions;
 import co.aikar.commands.PaperCommandManager;
 import com.google.common.base.Preconditions;
+import dev.anhcraft.config.bukkit.utils.ColorUtil;
 import dev.anhcraft.jvmkit.utils.FileUtil;
 import dev.anhcraft.jvmkit.utils.IOUtil;
 import dev.anhcraft.jvmkit.utils.ReflectionUtil;
@@ -71,18 +72,18 @@ public final class OreProcessor extends JavaPlugin {
 
     public void msg(CommandSender sender, String str) {
         if (str == null) {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messageConfig.prefix + "&c<Empty message>"));
+            sender.sendMessage(ColorUtil.colorize(messageConfig.prefix + "&c<Empty message>"));
             return;
         }
-        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', messageConfig.prefix + str));
+        sender.sendMessage(ColorUtil.colorize(messageConfig.prefix + str));
     }
 
     public void rawMsg(CommandSender sender, String str) {
         if (str == null) {
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&c<Empty message>"));
+            sender.sendMessage(ColorUtil.colorize("&c<Empty message>"));
             return;
         }
-        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', str));
+        sender.sendMessage(ColorUtil.colorize(str));
     }
 
     @Override
