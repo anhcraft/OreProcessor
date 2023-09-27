@@ -15,6 +15,7 @@ import dev.anhcraft.oreprocessor.config.MainConfig;
 import dev.anhcraft.oreprocessor.config.MessageConfig;
 import dev.anhcraft.oreprocessor.config.UpgradeConfig;
 import dev.anhcraft.oreprocessor.gui.*;
+import dev.anhcraft.oreprocessor.handler.PickupTracker;
 import dev.anhcraft.oreprocessor.handler.ProcessingPlant;
 import dev.anhcraft.oreprocessor.integration.IntegrationManager;
 import dev.anhcraft.oreprocessor.storage.player.PlayerDataManager;
@@ -46,6 +47,7 @@ public final class OreProcessor extends JavaPlugin {
     public ServerDataManager serverDataManager;
     private ProcessingPlant processingPlant;
     public PluginLogger pluginLogger;
+    public PickupTracker pickupTracker;
     public Economy economy;
     public MessageConfig messageConfig;
     public MainConfig mainConfig;
@@ -102,10 +104,11 @@ public final class OreProcessor extends JavaPlugin {
         integrationManager = new IntegrationManager(this);
         pluginLogger = new PluginLogger(new File(getDataFolder(), "logs"));
 
+        getServer().getPluginManager().registerEvents(new GuiEventListener(), this);
+        getServer().getPluginManager().registerEvents(pickupTracker = new PickupTracker(this), this);
+
         reload();
         serverDataManager.loadData();
-
-        getServer().getPluginManager().registerEvents(new GuiEventListener(), this);
 
         PaperCommandManager pcm = new PaperCommandManager(this);
         pcm.enableUnstableAPI("help");
@@ -164,6 +167,10 @@ public final class OreProcessor extends JavaPlugin {
 
         new GuiRefreshTask().runTaskTimer(this, 0L, 10L);
         getServer().getScheduler().runTaskTimerAsynchronously(this, pluginLogger::flush, 60L, 100L);
+
+        if (mainConfig.pickupTracker.enabled) {
+            getServer().getScheduler().runTaskTimerAsynchronously(this, pickupTracker::process, 60L,  (long)(20*mainConfig.pickupTracker.interval));
+        }
     }
 
     public YamlConfiguration requestConfig(String path) {

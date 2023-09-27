@@ -74,6 +74,9 @@ public class MainConfig {
     @NotNull
     public PurgeStatsSettings purgeStats = new PurgeStatsSettings();
 
+    @NotNull
+    public PickupTrackerSettings pickupTracker = new PickupTrackerSettings();
+
     @Validation(notNull = true, silent = true)
     private String dateFormat = "dd/MM/yyyy HH:mm:ss";
 

@@ -7,6 +7,7 @@ import dev.anhcraft.oreprocessor.api.data.OreData;
 import dev.anhcraft.oreprocessor.api.data.PlayerData;
 import dev.anhcraft.oreprocessor.api.event.AsyncPlayerDataLoadEvent;
 import dev.anhcraft.oreprocessor.api.event.OreMineEvent;
+import dev.anhcraft.oreprocessor.api.event.OrePickupEvent;
 import dev.anhcraft.oreprocessor.storage.stats.StatisticHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -172,7 +173,13 @@ public class ProcessingPlant implements Listener {
             Material feedstock = eventItem.getType();
             int amount = eventItem.getAmount();
 
-            if (ore.isAcceptableFeedstock(feedstock)) {
+            OrePickupEvent pickupEvent = new OrePickupEvent(player, event.getBlock(), brokenBlock, ore, feedstock, amount);
+            pickupEvent.setCancelled(!ore.isAcceptableFeedstock(feedstock));
+            Bukkit.getPluginManager().callEvent(pickupEvent);
+
+            if (!pickupEvent.isCancelled()) {
+                feedstock = pickupEvent.getFeedstock();
+                amount = pickupEvent.getAmount();
                 StatisticHelper.increaseFeedstockCount(ore.getId(), amount, playerData);
                 StatisticHelper.increaseFeedstockCount(ore.getId(), amount, OreProcessor.getApi().getServerData());
                 oreData.addFeedstock(feedstock, amount);
