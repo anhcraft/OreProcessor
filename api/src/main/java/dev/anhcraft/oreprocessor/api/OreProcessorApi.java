@@ -4,8 +4,10 @@ import dev.anhcraft.oreprocessor.api.data.PlayerData;
 import dev.anhcraft.oreprocessor.api.data.ServerData;
 import dev.anhcraft.oreprocessor.api.integration.ShopProviderType;
 import dev.anhcraft.oreprocessor.api.upgrade.UpgradeLevel;
-import org.bukkit.Material;
+import dev.anhcraft.oreprocessor.api.util.UItemStack;
+import dev.anhcraft.oreprocessor.api.util.UMaterial;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,7 +47,7 @@ public interface OreProcessorApi {
      * @return The ore
      */
     @Nullable
-    Ore getBlockOre(Material block);
+    Ore getBlockOre(UMaterial block);
 
     /**
      * Gets all ores that accept the given feedstock.
@@ -53,7 +55,7 @@ public interface OreProcessorApi {
      * @return Found ores
      */
     @NotNull
-    Collection<Ore> getOresAllowFeedstock(Material feedstock);
+    Collection<Ore> getOresAllowFeedstock(UMaterial feedstock);
 
     /**
      * Gets the processing interval.
@@ -138,4 +140,41 @@ public interface OreProcessorApi {
      * @return The shop provider
      */
     ShopProviderType getShopProvider();
+
+    /**
+     * Gets the material of the given item stack.
+     * @param itemStack The item stack
+     * @return The material
+     */
+    @Nullable
+    UMaterial identifyMaterial(@Nullable ItemStack itemStack);
+
+    /**
+     * Gets the {@link UItemStack} of the given item stack.
+     * @param itemStack The item stack
+     * @return The item
+     */
+    @Nullable
+    UItemStack identifyItem(@Nullable ItemStack itemStack);
+
+    /**
+     * Builds an {@link ItemStack} from the given {@link UMaterial}<br>
+     * For vanilla materials, this guarantees that the item returned is not-null. Otherwise, the result may be
+     * null due to several reasons such as the associated 3rd plugin is unavailable, the given material is not
+     * registered, or whatever caused it failed to create the item.<br>
+     * Calling this method is the same as calling to {@link #buildItem(UItemStack)} with an amount of 1.
+     * @param material The material
+     * @return The item
+     */
+    @Nullable
+    ItemStack buildItem(@NotNull UMaterial material);
+
+    /**
+     * Builds an {@link ItemStack} from the given {@link UItemStack}
+     * @param itemStack The item stack
+     * @return The item
+     * @see #buildItem(UMaterial)
+     */
+    @Nullable
+    ItemStack buildItem(@Nullable UItemStack itemStack);
 }

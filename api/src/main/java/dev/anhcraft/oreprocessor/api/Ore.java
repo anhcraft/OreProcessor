@@ -1,7 +1,7 @@
 package dev.anhcraft.oreprocessor.api;
 
+import dev.anhcraft.oreprocessor.api.util.UMaterial;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -15,13 +15,13 @@ import java.util.*;
 public class Ore {
     private final String id;
     private final String name;
-    private final Material icon;
-    private final Set<Material> blocks;
-    private final Set<Material> allowedProducts;
+    private final UMaterial icon;
+    private final Set<UMaterial> blocks;
+    private final Set<UMaterial> allowedProducts;
     private final Map<String, OreTransform> transform;
-    private final Set<Material> acceptableFeedstock;
+    private final Set<UMaterial> acceptableFeedstock;
 
-    public Ore(String id, String name, Material icon, Set<Material> blocks, Set<Material> allowedProducts, Map<String, OreTransform> transform, Set<Material> acceptableFeedstock) {
+    public Ore(String id, String name, UMaterial icon, Set<UMaterial> blocks, Set<UMaterial> allowedProducts, Map<String, OreTransform> transform, Set<UMaterial> acceptableFeedstock) {
         this.id = id;
         this.name = name;
         this.icon = icon;
@@ -42,17 +42,17 @@ public class Ore {
     }
 
     @NotNull
-    public Material getIcon() {
+    public UMaterial getIcon() {
         return icon;
     }
 
     @NotNull
-    public Set<Material> getBlocks() {
+    public Set<UMaterial> getBlocks() {
         return blocks; // unmodifiable
     }
 
     @NotNull
-    public Set<Material> getAllowedProducts() {
+    public Set<UMaterial> getAllowedProducts() {
         return allowedProducts; // unmodifiable
     }
 
@@ -104,11 +104,11 @@ public class Ore {
     }
 
     @NotNull
-    public Set<Material> getAcceptableFeedstock() {
+    public Set<UMaterial> getAcceptableFeedstock() {
         return acceptableFeedstock; // unmodifiable
     }
 
-    public boolean isAcceptableFeedstock(Material material) {
+    public boolean isAcceptableFeedstock(UMaterial material) {
         return acceptableFeedstock.contains(material);
     }
 }

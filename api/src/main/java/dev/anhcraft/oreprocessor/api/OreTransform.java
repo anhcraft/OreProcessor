@@ -1,8 +1,8 @@
 package dev.anhcraft.oreprocessor.api;
 
+import dev.anhcraft.oreprocessor.api.util.UItemStack;
+import dev.anhcraft.oreprocessor.api.util.UMaterial;
 import dev.anhcraft.oreprocessor.api.util.WheelSelection;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -14,9 +14,9 @@ import java.util.Set;
  */
 public class OreTransform {
     private final String id;
-    private final Map<Material, WheelSelection<ItemStack>> transformMap;
+    private final Map<UMaterial, WheelSelection<UItemStack>> transformMap;
 
-    public OreTransform(String id, Map<Material, WheelSelection<ItemStack>> transformMap) {
+    public OreTransform(String id, Map<UMaterial, WheelSelection<UItemStack>> transformMap) {
         this.id = id;
         this.transformMap = transformMap; // unmodifiable
     }
@@ -27,23 +27,23 @@ public class OreTransform {
     }
 
     @NotNull
-    public Set<Material> getFeedstock() {
+    public Set<UMaterial> getFeedstock() {
         return transformMap.keySet(); // unmodifiable
     }
 
-    public boolean hasFeedstock(Material material) {
+    public boolean hasFeedstock(UMaterial material) {
         return transformMap.containsKey(material);
     }
 
     @Nullable
-    public WheelSelection<ItemStack> getProduct(Material material) {
+    public WheelSelection<UItemStack> getProduct(UMaterial material) {
         return transformMap.get(material);
     }
 
-    public boolean hasProduct(Material material) {
+    public boolean hasProduct(UMaterial material) {
         return transformMap.values().stream()
                 .flatMap(wheelSelection -> wheelSelection.getKeys().stream())
-                .anyMatch(itemStack -> itemStack.getType() == material);
+                .anyMatch(itemStack -> itemStack.getMaterial().equals(material));
     }
 
     /**
@@ -52,8 +52,8 @@ public class OreTransform {
      * @return the corresponding product or {@code null} if not exists
      */
     @Nullable
-    public ItemStack convert(Material feedstock) {
-        WheelSelection<ItemStack> w = transformMap.get(feedstock);
+    public UItemStack convert(UMaterial feedstock) {
+        WheelSelection<UItemStack> w = transformMap.get(feedstock);
         return w != null ? w.roll() : null;
     }
 }
