@@ -1,18 +1,19 @@
 package dev.anhcraft.oreprocessor.storage.player;
 
+import dev.anhcraft.oreprocessor.api.data.PlayerData;
 import org.jetbrains.annotations.NotNull;
 
 public class TrackedPlayerData {
-    private final PlayerDataImpl playerData;
+    private final PlayerData playerData;
     private long loadTime;
 
-    public TrackedPlayerData(@NotNull PlayerDataImpl playerData, long loadTime) {
+    public TrackedPlayerData(@NotNull PlayerData playerData, long loadTime) {
         this.playerData = playerData;
         this.loadTime = loadTime;
     }
 
     @NotNull
-    public PlayerDataImpl getPlayerData() {
+    public PlayerData getPlayerData() {
         return playerData;
     }
 

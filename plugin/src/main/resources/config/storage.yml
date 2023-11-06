@@ -1,0 +1,23 @@
+type: flatfile # flatfile or database
+
+player-data-table: "ore_players"
+server-data-table: "ore_server"
+
+# For database, configure Hikari connection pool here
+hikari-properties: |
+  dataSourceClassName=org.postgresql.ds.PGSimpleDataSource
+  dataSource.serverName=localhost
+  dataSource.portNumber=5432
+  dataSource.databaseName=mydb
+  dataSource.user=root
+  dataSource.password=123
+  dataSource.cachePrepStmts=true
+  dataSource.prepStmtCacheSize=250
+  dataSource.prepStmtCacheSqlLimit=2048
+  dataSource.useServerPrepStmts=true
+  dataSource.useLocalSessionState=true
+  dataSource.rewriteBatchedStatements=true
+  dataSource.cacheResultSetMetadata=true
+  dataSource.cacheServerConfiguration=true
+  dataSource.elideSetAutoCommits=true
+  dataSource.maintainTimeStats=false

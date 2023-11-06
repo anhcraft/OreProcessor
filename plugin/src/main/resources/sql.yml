@@ -1,0 +1,10 @@
+create-player-table: |
+  create table if not exists %s (
+    uuid varchar(36),
+    hideTutorial boolean,
+    hibernationStart bigint,
+    dataVersion tinyint,
+    lastUpdated bigint
+  )
+get-player-dataVersion: select dataVersion from %s where uuid = ?
+set-player-dataVersion: update %s set dataVersion = ? where uuid = ?

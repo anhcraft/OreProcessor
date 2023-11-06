@@ -1,7 +1,8 @@
-package dev.anhcraft.oreprocessor.storage.player;
+package dev.anhcraft.oreprocessor.storage.player.flatfile;
 
 import dev.anhcraft.oreprocessor.OreProcessor;
 import dev.anhcraft.oreprocessor.api.data.OreData;
+import dev.anhcraft.oreprocessor.storage.player.flatfile.model.OreDataConfig;
 import dev.anhcraft.palette.util.ItemUtil;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -11,11 +12,11 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
-public class OreDataImpl implements OreData {
+public class FlatOreData implements OreData {
     private final OreDataConfig config;
     private final AtomicBoolean dirty;
 
-    public OreDataImpl(@NotNull OreDataConfig config, @NotNull AtomicBoolean dirty) {
+    public FlatOreData(@NotNull OreDataConfig config, @NotNull AtomicBoolean dirty) {
         this.config = config;
         this.dirty = dirty;
     }

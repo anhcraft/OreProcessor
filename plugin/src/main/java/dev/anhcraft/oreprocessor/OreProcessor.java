@@ -13,11 +13,13 @@ import dev.anhcraft.oreprocessor.api.OreProcessorApi;
 import dev.anhcraft.oreprocessor.cmd.*;
 import dev.anhcraft.oreprocessor.config.MainConfig;
 import dev.anhcraft.oreprocessor.config.MessageConfig;
+import dev.anhcraft.oreprocessor.config.StorageConfig;
 import dev.anhcraft.oreprocessor.config.UpgradeConfig;
 import dev.anhcraft.oreprocessor.gui.*;
 import dev.anhcraft.oreprocessor.handler.PickupTracker;
 import dev.anhcraft.oreprocessor.handler.ProcessingPlant;
 import dev.anhcraft.oreprocessor.integration.IntegrationManager;
+import dev.anhcraft.oreprocessor.storage.SQLCommand;
 import dev.anhcraft.oreprocessor.storage.player.PlayerDataManager;
 import dev.anhcraft.oreprocessor.storage.server.ServerDataManager;
 import dev.anhcraft.oreprocessor.util.ConfigHelper;
@@ -34,6 +36,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -51,7 +55,9 @@ public final class OreProcessor extends JavaPlugin {
     public Economy economy;
     public MessageConfig messageConfig;
     public MainConfig mainConfig;
+    public StorageConfig storageConfig;
     UpgradeConfig upgradeConfig;
+    public SQLCommand sqlCommand;
 
     @NotNull
     public static OreProcessor getInstance() {
@@ -86,6 +92,16 @@ public final class OreProcessor extends JavaPlugin {
             return;
         }
         sender.sendMessage(ColorUtil.colorize(str));
+    }
+
+    @Override
+    public void onLoad() {
+        try {
+            String str = new String(IOUtil.readResource(OreProcessor.class, "/sql.yml"));
+            sqlCommand = ConfigHelper.load(SQLCommand.class, YamlConfiguration.loadConfiguration(new StringReader(str)));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -152,6 +168,7 @@ public final class OreProcessor extends JavaPlugin {
         mainConfig = ConfigHelper.load(MainConfig.class, requestConfig("config.yml"));
         messageConfig = ConfigHelper.load(MessageConfig.class, requestConfig("messages.yml"));
         upgradeConfig = ConfigHelper.load(UpgradeConfig.class, requestConfig("upgrades.yml"));
+        storageConfig = ConfigHelper.load(StorageConfig.class, requestConfig("storage.yml"));
 
         new File(getDataFolder(), "gui").mkdir();
         GuiRegistry.MENU = ConfigHelper.load(MenuGui.class, requestConfig("gui/menu.yml"));

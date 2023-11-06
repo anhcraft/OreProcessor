@@ -1,9 +1,11 @@
-package dev.anhcraft.oreprocessor.storage.player;
+package dev.anhcraft.oreprocessor.storage.player.flatfile;
 
 import dev.anhcraft.oreprocessor.OreProcessor;
 import dev.anhcraft.oreprocessor.api.data.OreData;
 import dev.anhcraft.oreprocessor.api.data.PlayerData;
 import dev.anhcraft.oreprocessor.api.data.stats.Statistics;
+import dev.anhcraft.oreprocessor.storage.player.flatfile.model.OreDataConfig;
+import dev.anhcraft.oreprocessor.storage.player.flatfile.model.PlayerDataConfigV1;
 import dev.anhcraft.oreprocessor.storage.stats.StatisticConfig;
 import dev.anhcraft.oreprocessor.storage.stats.StatisticsImpl;
 import org.jetbrains.annotations.ApiStatus;
@@ -15,10 +17,10 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class PlayerDataImpl implements PlayerData {
+public class FlatPlayerData implements PlayerData {
     private final PlayerDataConfigV1 config;
 
-    public PlayerDataImpl(@NotNull PlayerDataConfigV1 config) {
+    public FlatPlayerData(@NotNull PlayerDataConfigV1 config) {
         this.config = config;
     }
 
@@ -46,7 +48,7 @@ public class PlayerDataImpl implements PlayerData {
     @Override
     public @Nullable OreData getOreData(@NotNull String ore) {
         if (config.ores == null) return null;
-        return config.ores.containsKey(ore) ? new OreDataImpl(config.ores.get(ore), config.dirty) : null;
+        return config.ores.containsKey(ore) ? new FlatOreData(config.ores.get(ore), config.dirty) : null;
     }
 
     @Override
@@ -57,11 +59,11 @@ public class PlayerDataImpl implements PlayerData {
         if (config.ores == null)
             config.ores = new LinkedHashMap<>(); // marking dirty is redundant
         else if (config.ores.containsKey(ore))
-            return new OreDataImpl(config.ores.get(ore), config.dirty);
+            return new FlatOreData(config.ores.get(ore), config.dirty);
 
         OreDataConfig oreDataConfig = new OreDataConfig();
         config.ores.put(ore, oreDataConfig); // marking dirty is redundant
-        return new OreDataImpl(oreDataConfig, config.dirty);
+        return new FlatOreData(oreDataConfig, config.dirty);
     }
 
     @Override

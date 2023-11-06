@@ -1,4 +1,4 @@
-package dev.anhcraft.oreprocessor.storage.player.compat;
+package dev.anhcraft.oreprocessor.storage.player.flatfile.model;
 
 import dev.anhcraft.config.annotations.Configurable;
 import dev.anhcraft.config.annotations.Exclude;

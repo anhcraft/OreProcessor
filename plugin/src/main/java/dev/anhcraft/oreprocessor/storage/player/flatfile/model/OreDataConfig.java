@@ -1,4 +1,4 @@
-package dev.anhcraft.oreprocessor.storage.player;
+package dev.anhcraft.oreprocessor.storage.player.flatfile.model;
 
 import dev.anhcraft.config.annotations.Configurable;
 import dev.anhcraft.config.annotations.PostHandler;
@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.LinkedHashMap;
 
 @Configurable
-class OreDataConfig {
+public class OreDataConfig {
 
     public int throughput;
 
