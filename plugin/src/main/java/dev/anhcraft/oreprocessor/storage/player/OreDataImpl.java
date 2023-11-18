@@ -156,6 +156,22 @@ public class OreDataImpl implements OreData {
     }
 
     @Override
+    public int setProduct(@NotNull Material material, int expectedAmount, boolean force) {
+        synchronized (config) {
+            int toStore = force ? expectedAmount : Math.min(Math.max(expectedAmount, 0), getCapacity() - countAllProducts() + countProduct(material));
+
+            if (config.products == null)
+                config.products = new LinkedHashMap<>();
+
+            if (!Objects.equals(config.products.put(material, toStore), toStore)) {
+                markDirty();
+            }
+
+            return toStore;
+        }
+    }
+
+    @Override
     public boolean testAndTakeProduct(@NotNull Material material, int expectedAmount, @NotNull Function<Integer, Boolean> function) {
         synchronized (config) {
             int stored = countProduct(material);
