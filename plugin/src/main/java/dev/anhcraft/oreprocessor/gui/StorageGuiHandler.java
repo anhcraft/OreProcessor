@@ -97,13 +97,22 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
             ));
         }
 
+        // allowed products include the filter + existing items
+        Set<Material> allowedProducts = new HashSet<>(products);
+        {
+            Set<Material> filter = OreProcessor.getApi().getStorageFilter(oreId);
+            if (filter != null) {
+                allowedProducts.addAll(filter);
+            }
+        }
+
         for (int i = 0; i < productSlots.size(); i++) {
             int slot = productSlots.get(i);
 
             if (i >= products.size()) {
                 resetItem(slot);
 
-                getSlot(slot).setEvents((ClickEvent) (e, p, i1) -> handleAddProduct(p, p.getItemOnCursor(), products));
+                getSlot(slot).setEvents((ClickEvent) (e, p, i1) -> handleAddProduct(p, p.getItemOnCursor(), allowedProducts));
                 continue;
             }
 
@@ -145,7 +154,7 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
                     }
 
                     // ADD
-                    handleAddProduct(player, cursor, products);
+                    handleAddProduct(player, cursor, allowedProducts);
                 }
             });
         }
@@ -224,16 +233,14 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
         }
     }
 
-    private void handleAddProduct(Player player, ItemStack cursor, Collection<Material> products) {
+    private void handleAddProduct(Player player, ItemStack cursor, Set<Material> products) {
         if (ItemUtil.isEmpty(cursor)) return;
         Material material = cursor.getType();
 
         if (oreData.isFull()) {
             plugin.msg(player, plugin.messageConfig.storageFull);
             player.playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1f, 1f);
-        } else if (!cursor.hasItemMeta() && (products.contains(material) ||
-                ore.getAllowedProducts().contains(material) ||
-                ore.getBestTransform(player).hasProduct(material))) {
+        } else if (!cursor.hasItemMeta() && products.contains(material)) {
             int oldTotalAmount = oreData.countProduct(material);
             int stored = oreData.addProduct(material, cursor.getAmount(), false);
             int remain = cursor.getAmount() - stored;

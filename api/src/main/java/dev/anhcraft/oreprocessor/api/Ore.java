@@ -17,16 +17,14 @@ public class Ore {
     private final String name;
     private final Material icon;
     private final Set<Material> blocks;
-    private final Set<Material> allowedProducts;
     private final Map<String, OreTransform> transform;
     private final Set<Material> acceptableFeedstock;
 
-    public Ore(String id, String name, Material icon, Set<Material> blocks, Set<Material> allowedProducts, Map<String, OreTransform> transform, Set<Material> acceptableFeedstock) {
+    public Ore(String id, String name, Material icon, Set<Material> blocks, Map<String, OreTransform> transform, Set<Material> acceptableFeedstock) {
         this.id = id;
         this.name = name;
         this.icon = icon;
         this.blocks = blocks; // unmodifiable
-        this.allowedProducts = allowedProducts; // unmodifiable
         this.transform = transform; // unmodifiable
         this.acceptableFeedstock = acceptableFeedstock; // unmodifiable
     }
@@ -49,11 +47,6 @@ public class Ore {
     @NotNull
     public Set<Material> getBlocks() {
         return blocks; // unmodifiable
-    }
-
-    @NotNull
-    public Set<Material> getAllowedProducts() {
-        return allowedProducts; // unmodifiable
     }
 
     @NotNull

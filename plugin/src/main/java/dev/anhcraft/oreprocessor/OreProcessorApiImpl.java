@@ -27,6 +27,7 @@ public final class OreProcessorApiImpl implements OreProcessorApi {
     private Map<String, Ore> ores;
     private Map<Material, Ore> block2ores;
     private Multimap<Material, Ore> feedstock2ores;
+    private Multimap<Material, Ore> itemStorage2ores;
     private TreeMap<Integer, UpgradeLevel> throughputUpgrades;
     private TreeMap<Integer, UpgradeLevel> capacityUpgrade;
 
@@ -75,7 +76,6 @@ public final class OreProcessorApiImpl implements OreProcessorApi {
                     oreConfig.name,
                     oreConfig.icon,
                     Collections.unmodifiableSet(oreConfig.blocks),
-                    Collections.unmodifiableSet(oreConfig.allowedProducts),
                     Collections.unmodifiableMap(transformMap),
                     Collections.unmodifiableSet(referenceFeedstock)
             );
@@ -127,6 +127,14 @@ public final class OreProcessorApiImpl implements OreProcessorApi {
                 }
             }
         }
+
+        itemStorage2ores = HashMultimap.create();
+        for (Map.Entry<String, List<Material>> entry : plugin.filterConfig.storage.entrySet()) {
+            for (Material material : entry.getValue()) {
+                if (oreMap.containsKey(entry.getKey()))
+                    itemStorage2ores.put(material, oreMap.get(entry.getKey()));
+            }
+        }
     }
 
     @Override
@@ -151,6 +159,18 @@ public final class OreProcessorApiImpl implements OreProcessorApi {
     @Override
     public @NotNull Collection<Ore> getOresAllowFeedstock(Material feedstock) {
         return feedstock2ores.get(feedstock);
+    }
+
+    @Override
+    public @Nullable Set<Material> getStorageFilter(String id) {
+        List<Material> v = plugin.filterConfig.storage.get(id);
+        return v == null ? null : EnumSet.copyOf(v);
+    }
+
+    @Override
+    public @Nullable List<Ore> getStorageAllowItem(Material item) {
+        Collection<Ore> v = itemStorage2ores.get(item);
+        return v == null ? null : new ArrayList<>(v);
     }
 
     @Override

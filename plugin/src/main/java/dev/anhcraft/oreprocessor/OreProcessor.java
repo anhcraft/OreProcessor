@@ -11,6 +11,7 @@ import dev.anhcraft.jvmkit.utils.ReflectionUtil;
 import dev.anhcraft.oreprocessor.api.ApiProvider;
 import dev.anhcraft.oreprocessor.api.OreProcessorApi;
 import dev.anhcraft.oreprocessor.cmd.*;
+import dev.anhcraft.oreprocessor.config.FilterConfig;
 import dev.anhcraft.oreprocessor.config.MainConfig;
 import dev.anhcraft.oreprocessor.config.MessageConfig;
 import dev.anhcraft.oreprocessor.config.UpgradeConfig;
@@ -51,7 +52,8 @@ public final class OreProcessor extends JavaPlugin {
     public Economy economy;
     public MessageConfig messageConfig;
     public MainConfig mainConfig;
-    UpgradeConfig upgradeConfig;
+    public UpgradeConfig upgradeConfig;
+    public FilterConfig filterConfig;
 
     @NotNull
     public static OreProcessor getInstance() {
@@ -152,6 +154,7 @@ public final class OreProcessor extends JavaPlugin {
         mainConfig = ConfigHelper.load(MainConfig.class, requestConfig("config.yml"));
         messageConfig = ConfigHelper.load(MessageConfig.class, requestConfig("messages.yml"));
         upgradeConfig = ConfigHelper.load(UpgradeConfig.class, requestConfig("upgrades.yml"));
+        filterConfig = ConfigHelper.load(FilterConfig.class, requestConfig("filter.yml"));
 
         new File(getDataFolder(), "gui").mkdir();
         GuiRegistry.MENU = ConfigHelper.load(MenuGui.class, requestConfig("gui/menu.yml"));

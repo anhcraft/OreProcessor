@@ -103,10 +103,6 @@ ores:
     icon: netherite_ingot
     blocks:
       - ancient_debris
-    # You can define allowed products to be added in the storage
-    # By default, only ones defined in the transform circuit are allowed
-    allowed-products:
-      - netherite_block
     transform:
       default: # Fallback/Default
         - ancient_debris > netherite_scrap

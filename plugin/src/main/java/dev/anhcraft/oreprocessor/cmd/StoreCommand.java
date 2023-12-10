@@ -14,10 +14,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.StringJoiner;
 
 @CommandAlias("ore|oreprocessor")
 public class StoreCommand extends BaseCommand {
@@ -43,27 +43,26 @@ public class StoreCommand extends BaseCommand {
             return;
         }
 
-        PlayerData playerData = OreProcessor.getApi().getPlayerData(player);
-        List<String> dirtyOres = new ArrayList<>(1);
+        List<Ore> ores = OreProcessor.getApi().getStorageAllowItem(item.getType());
 
+        if (ores == null || ores.isEmpty()) {
+            plugin.msg(player, plugin.messageConfig.cannotStoreItem);
+            return;
+        }
+
+        PlayerData playerData = OreProcessor.getApi().getPlayerData(player);
+        StringJoiner oreList = new StringJoiner(",");
         int remain = item.getAmount();
 
-        for (String oreId : OreProcessor.getApi().getOres()) {
-            Ore ore = OreProcessor.getApi().getOre(oreId);
-            if (ore == null) continue;
-
-            OreData oreData = playerData.requireOreData(oreId);
-            if (!ore.getAllowedProducts().contains(item.getType()) &&
-                    !oreData.getProducts().contains(item.getType()) &&
-                    !ore.getBestTransform(player).hasProduct(item.getType()))
-                continue;
+        for (Ore ore : ores) {
+            OreData oreData = playerData.requireOreData(ore.getId());
 
             int added = oreData.addProduct(item.getType(), remain, false);
             if (added == 0)
                 continue;
 
             remain -= added;
-            dirtyOres.add(ore.getName());
+            oreList.add(ore.getName());
             plugin.pluginLogger.scope("cmd/store/hand")
                     .add("player", player)
                     .add("item", item.getType())
@@ -77,14 +76,9 @@ public class StoreCommand extends BaseCommand {
                 break;
         }
 
-        if (dirtyOres.isEmpty()) {
-            plugin.msg(player, plugin.messageConfig.cannotStoreItem);
-            return;
-        }
-
         plugin.msg(player, plugin.messageConfig.storedItems
                 .replace("{amount}", Integer.toString(item.getAmount() - remain))
-                .replace("{ores}", String.join(", ", dirtyOres)));
+                .replace("{ores}", oreList.toString()));
 
         item.setAmount(remain);
         player.getInventory().setItemInMainHand(item);
@@ -104,17 +98,13 @@ public class StoreCommand extends BaseCommand {
             if (ItemUtil.isEmpty(item) || item.hasItemMeta())
                 continue;
 
+            List<Ore> ores = OreProcessor.getApi().getStorageAllowItem(item.getType());
+            if (ores == null || ores.isEmpty())
+                continue;
             int remain = item.getAmount();
 
-            for (String oreId : OreProcessor.getApi().getOres()) {
-                Ore ore = OreProcessor.getApi().getOre(oreId);
-                if (ore == null) continue;
-                OreData oreData = playerData.requireOreData(oreId);
-
-                if (!ore.getAllowedProducts().contains(item.getType()) &&
-                        !oreData.getProducts().contains(item.getType()) &&
-                        !ore.getBestTransform(player).hasProduct(item.getType()))
-                    continue;
+            for (Ore ore : ores) {
+                OreData oreData = playerData.requireOreData(ore.getId());
 
                 int added = oreData.addProduct(item.getType(), remain, false);
                 if (added == 0)
