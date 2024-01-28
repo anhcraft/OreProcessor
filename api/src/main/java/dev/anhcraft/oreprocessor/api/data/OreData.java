@@ -52,6 +52,15 @@ public interface OreData extends Modifiable {
     int takeProduct(@NotNull UMaterial material, int expectedAmount);
 
     /**
+     * Set an amount of products.
+     * @param material the product material
+     * @param expectedAmount the expected amount
+     * @param force whether to force the addition
+     * @return the actual amount
+     */
+    int setProduct(@NotNull UMaterial material, int expectedAmount, boolean force);
+
+    /**
      * Tests and takes products if success.
      * @param material the product material
      * @param expectedAmount the expected amount to be taken

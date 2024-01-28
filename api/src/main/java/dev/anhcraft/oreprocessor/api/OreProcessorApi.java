@@ -58,6 +58,26 @@ public interface OreProcessorApi {
     Collection<Ore> getOresAllowFeedstock(UMaterial feedstock);
 
     /**
+     * Gets all materials allowed in the given storage.<br>
+     * If not specified, {@code null} is returned.<br>
+     * The return list can be empty.
+     * @param id storage ID
+     * @return allowed materials
+     */
+    @Nullable
+    Set<UMaterial> getStorageFilter(String id);
+
+    /**
+     * Gets all suitable locations to store the given item.<br>
+     * This guarantees at least one location.<br>
+     * If not specified, {@code null} is returned.<br>
+     * @param item The item
+     * @return The suitable storages
+     */
+    @Nullable
+    List<Ore> getStorageAllowItem(UMaterial item);
+
+    /**
      * Gets the processing interval.
      * @return The processing interval
      */

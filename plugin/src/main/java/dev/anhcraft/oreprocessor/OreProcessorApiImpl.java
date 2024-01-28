@@ -29,6 +29,7 @@ public final class OreProcessorApiImpl implements OreProcessorApi {
     private Map<String, Ore> ores;
     private Map<UMaterial, Ore> block2ores;
     private Multimap<UMaterial, Ore> feedstock2ores;
+    private Multimap<UMaterial, Ore> itemStorage2ores;
     private TreeMap<Integer, UpgradeLevel> throughputUpgrades;
     private TreeMap<Integer, UpgradeLevel> capacityUpgrade;
 
@@ -77,7 +78,6 @@ public final class OreProcessorApiImpl implements OreProcessorApi {
                     oreConfig.name,
                     oreConfig.icon,
                     Collections.unmodifiableSet(oreConfig.blocks),
-                    Collections.unmodifiableSet(oreConfig.allowedProducts),
                     Collections.unmodifiableMap(transformMap),
                     Collections.unmodifiableSet(referenceFeedstock)
             );
@@ -129,6 +129,14 @@ public final class OreProcessorApiImpl implements OreProcessorApi {
                 }
             }
         }
+
+        itemStorage2ores = HashMultimap.create();
+        for (Map.Entry<String, List<UMaterial>> entry : plugin.filterConfig.storage.entrySet()) {
+            for (UMaterial material : entry.getValue()) {
+                if (oreMap.containsKey(entry.getKey()))
+                    itemStorage2ores.put(material, oreMap.get(entry.getKey()));
+            }
+        }
     }
 
     @Override
@@ -153,6 +161,18 @@ public final class OreProcessorApiImpl implements OreProcessorApi {
     @Override
     public @NotNull Collection<Ore> getOresAllowFeedstock(UMaterial feedstock) {
         return feedstock2ores.get(feedstock);
+    }
+
+    @Override
+    public @Nullable Set<UMaterial> getStorageFilter(String id) {
+        List<UMaterial> v = plugin.filterConfig.storage.get(id);
+        return v == null ? null : new HashSet<>(v);
+    }
+
+    @Override
+    public @Nullable List<Ore> getStorageAllowItem(UMaterial item) {
+        Collection<Ore> v = itemStorage2ores.get(item);
+        return v == null ? null : new ArrayList<>(v);
     }
 
     @Override
@@ -251,6 +271,6 @@ public final class OreProcessorApiImpl implements OreProcessorApi {
 
     @Override
     public @Nullable ItemStack buildItem(@Nullable UItemStack itemStack) {
-        return plugin.integrationManager.getItemCustomizer(itemStack.getMaterial().getClassifier()).buildItem(itemStack);
+        return plugin.integrationManager.getItemCustomizer(itemStack.getMaterial().getClassifier()).buildItem(itemStack.getMaterial());
     }
 }

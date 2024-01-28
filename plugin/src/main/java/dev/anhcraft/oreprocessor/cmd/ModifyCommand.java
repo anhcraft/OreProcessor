@@ -19,6 +19,54 @@ public class ModifyCommand extends BaseCommand {
         this.plugin = plugin;
     }
 
+    @Subcommand("set")
+    @CommandPermission("oreprocessor.set")
+    @Description("Put item into an ore storage")
+    @CommandCompletion("@players @ores @materials")
+    public void setOre(CommandSender sender, OfflinePlayer player, String ore, Material material, int amount, @Default("false") boolean force) {
+        if (!player.hasPlayedBefore()) {
+            sender.sendMessage(ChatColor.RED + "This player has not played before!");
+            return;
+        }
+        if (!Objects.equals(ore, "*") && OreProcessor.getApi().getOre(ore) == null) {
+            sender.sendMessage(ChatColor.RED + "This ore does not exist!");
+            return;
+        }
+        if (!player.isOnline())
+            sender.sendMessage(ChatColor.YELLOW + "Fetching player data as he is currently offline...");
+
+        OreProcessor.getApi().requirePlayerData(player.getUniqueId()).whenComplete((playerData, throwable) -> {
+            if (throwable != null) {
+                sender.sendMessage(ChatColor.RED + throwable.getMessage());
+                return;
+            }
+            OreData oreData = playerData.requireOreData(ore);
+            int oldTotalAmount = oreData.countProduct(material);
+            int actualNewAmount = oreData.setProduct(material, amount, force);
+            plugin.pluginLogger.scope("cmd/add")
+                    .add("sender", sender)
+                    .add("target", player)
+                    .add("ore", ore)
+                    .add("material", material)
+                    .add("force", force)
+                    .add("oldTotalAmount", oldTotalAmount)
+                    .add("expectedNewAmount", amount)
+                    .add("actualNewAmount", actualNewAmount)
+                    .flush();
+            if (force) {
+                sender.sendMessage(ChatColor.GREEN + String.format(
+                        "Forced putting %d %s into %s's %s storage",
+                        amount, material, player.getName(), ore
+                ));
+            } else {
+                sender.sendMessage(ChatColor.GREEN + String.format(
+                        "Put %d %s into %s's %s storage (actual: %d)",
+                        amount, material, player.getName(), ore, actualNewAmount
+                ));
+            }
+        });
+    }
+
     @Subcommand("add")
     @CommandPermission("oreprocessor.add")
     @Description("Add item to an ore storage")

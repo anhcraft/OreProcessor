@@ -1,0 +1,12 @@
+# Check out the wiki for further information
+storage:
+  coal: [coal, coal_ore, deepslate_coal_ore, coal_block]
+  iron: [iron_ingot, iron_ore, deepslate_iron_ore, iron_block]
+  gold: [gold_ingot, gold_ore, deepslate_gold_ore, gold_block]
+  copper: [copper_ingot, copper_ore, deepslate_copper_ore, copper_block]
+  lapis_lazuli: [lapis_lazuli, lapis_ore, deepslate_lapis_ore, lapis_block]
+  redstone: [redstone, redstone_ore, deepslate_redstone_ore, redstone_block]
+  diamond: [diamond, diamond_ore, deepslate_diamond_ore, diamond_block]
+  emerald: [emerald, emerald_ore, deepslate_emerald_ore, emerald_block]
+  quartz: [quartz, quartz_block, nether_quartz_ore]
+  netherite: [ancient_debris, netherite_ingot, netherite_block]

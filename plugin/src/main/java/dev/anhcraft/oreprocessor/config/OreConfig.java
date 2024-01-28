@@ -39,13 +39,6 @@ public class OreConfig {
     public Set<UMaterial> blocks = Collections.emptySet();
 
     @Description({
-            "A list of allowed products to be added to the storage",
-            "By default, only ones defined in the transform circuit are allowed"
-    })
-    @Validation(notNull = true, notEmpty = true, silent = true)
-    public Set<UMaterial> allowedProducts = Collections.emptySet();
-
-    @Description({
             "A list of categories of material transformation",
             "The key is used for permission",
             "A <b>default</b> key must always exist and will not require permission"
@@ -59,7 +52,6 @@ public class OreConfig {
     @PostHandler
     private void postProcess() {
         blocks = blocks.stream().filter(Objects::nonNull).collect(Collectors.toSet());
-        allowedProducts = allowedProducts.stream().filter(Objects::nonNull).collect(Collectors.toSet());
 
         for (Map.Entry<String, List<String>> e : rawTransform.entrySet()) {
             Map<UMaterial, WheelSelection<UItemStack>> map = new EnumMap<>(UMaterial.class);
