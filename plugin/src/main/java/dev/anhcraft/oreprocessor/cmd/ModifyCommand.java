@@ -4,8 +4,8 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import dev.anhcraft.oreprocessor.OreProcessor;
 import dev.anhcraft.oreprocessor.api.data.OreData;
+import dev.anhcraft.oreprocessor.api.util.UMaterial;
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 
@@ -23,7 +23,12 @@ public class ModifyCommand extends BaseCommand {
     @CommandPermission("oreprocessor.set")
     @Description("Put item into an ore storage")
     @CommandCompletion("@players @ores @materials")
-    public void setOre(CommandSender sender, OfflinePlayer player, String ore, Material material, int amount, @Default("false") boolean force) {
+    public void setOre(CommandSender sender, OfflinePlayer player, String ore, String material, int amount, @Default("false") boolean force) {
+        UMaterial uMaterial = UMaterial.parse(material);
+        if (uMaterial == null) {
+            sender.sendMessage(ChatColor.RED + "Invalid material!");
+            return;
+        }
         if (!player.hasPlayedBefore()) {
             sender.sendMessage(ChatColor.RED + "This player has not played before!");
             return;
@@ -41,8 +46,8 @@ public class ModifyCommand extends BaseCommand {
                 return;
             }
             OreData oreData = playerData.requireOreData(ore);
-            int oldTotalAmount = oreData.countProduct(material);
-            int actualNewAmount = oreData.setProduct(material, amount, force);
+            int oldTotalAmount = oreData.countProduct(uMaterial);
+            int actualNewAmount = oreData.setProduct(uMaterial, amount, force);
             plugin.pluginLogger.scope("cmd/add")
                     .add("sender", sender)
                     .add("target", player)
@@ -71,7 +76,12 @@ public class ModifyCommand extends BaseCommand {
     @CommandPermission("oreprocessor.add")
     @Description("Add item to an ore storage")
     @CommandCompletion("@players @ores @materials")
-    public void addOre(CommandSender sender, OfflinePlayer player, String ore, Material material, int amount, @Default("false") boolean force) {
+    public void addOre(CommandSender sender, OfflinePlayer player, String ore, String material, int amount, @Default("false") boolean force) {
+        UMaterial uMaterial = UMaterial.parse(material);
+        if (uMaterial == null) {
+            sender.sendMessage(ChatColor.RED + "Invalid material!");
+            return;
+        }
         if (!player.hasPlayedBefore()) {
             sender.sendMessage(ChatColor.RED + "This player has not played before!");
             return;
@@ -89,8 +99,8 @@ public class ModifyCommand extends BaseCommand {
                 return;
             }
             OreData oreData = playerData.requireOreData(ore);
-            int oldTotalAmount = oreData.countProduct(material);
-            int actualDelta = oreData.addProduct(material, amount, force);
+            int oldTotalAmount = oreData.countProduct(uMaterial);
+            int actualDelta = oreData.addProduct(uMaterial, amount, force);
             plugin.pluginLogger.scope("cmd/add")
                     .add("sender", sender)
                     .add("target", player)
@@ -120,7 +130,12 @@ public class ModifyCommand extends BaseCommand {
     @CommandPermission("oreprocessor.subtract")
     @Description("Subtract item from an ore storage")
     @CommandCompletion("@players @ores @materials")
-    public void subtractOre(CommandSender sender, OfflinePlayer player, String ore, Material material, int amount) {
+    public void subtractOre(CommandSender sender, OfflinePlayer player, String ore, String material, int amount) {
+        UMaterial uMaterial = UMaterial.parse(material);
+        if (uMaterial == null) {
+            sender.sendMessage(ChatColor.RED + "Invalid material!");
+            return;
+        }
         if (!player.hasPlayedBefore()) {
             sender.sendMessage(ChatColor.RED + "This player has not played before!");
             return;
@@ -138,8 +153,8 @@ public class ModifyCommand extends BaseCommand {
                 return;
             }
             OreData oreData = playerData.requireOreData(ore);
-            int oldTotalAmount = oreData.countProduct(material);
-            int actual = oreData.takeProduct(material, amount);
+            int oldTotalAmount = oreData.countProduct(uMaterial);
+            int actual = oreData.takeProduct(uMaterial, amount);
             plugin.pluginLogger.scope("cmd/subtract")
                     .add("sender", sender)
                     .add("target", player)

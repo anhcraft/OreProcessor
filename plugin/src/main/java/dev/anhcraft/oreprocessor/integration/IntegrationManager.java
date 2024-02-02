@@ -4,6 +4,7 @@ import dev.anhcraft.config.utils.ObjectUtil;
 import dev.anhcraft.oreprocessor.OreProcessor;
 import dev.anhcraft.oreprocessor.api.integration.ShopProviderType;
 import dev.anhcraft.oreprocessor.api.util.MaterialClass;
+import dev.anhcraft.oreprocessor.api.util.UMaterial;
 import dev.anhcraft.oreprocessor.integration.adder.ItemCustomizer;
 import dev.anhcraft.oreprocessor.integration.adder.OraxenBridge;
 import dev.anhcraft.oreprocessor.integration.shop.EconomyShopGUIBridge;
@@ -15,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class IntegrationManager {
@@ -89,11 +91,8 @@ public class IntegrationManager {
 
     public Set<String> getAllMaterials() {
         Set<String> result = new HashSet<>();
-        for (Material value : Material.values()) {
-            result.add(value.name().toLowerCase());
-        }
         for (ItemCustomizer integration : itemCustomizers.values()) {
-            result.addAll(integration.getCustomMaterials());
+            result.addAll(integration.getCustomMaterials().stream().map(UMaterial::toString).collect(Collectors.toList()));
         }
         return result;
     }

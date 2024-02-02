@@ -4,6 +4,7 @@ import dev.anhcraft.oreprocessor.api.util.MaterialClass;
 import dev.anhcraft.oreprocessor.api.util.UItemStack;
 import dev.anhcraft.oreprocessor.api.util.UMaterial;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
@@ -11,13 +12,14 @@ import java.util.Set;
 public interface ItemCustomizer {
     MaterialClass getMaterialClass();
 
-    Set<String> getCustomMaterials();
-
-    ItemStack buildItem(UMaterial material);
+    Set<UMaterial> getCustomMaterials();
 
     @Nullable
-    UItemStack identifyItem(ItemStack item);
+    ItemStack buildItem(@NotNull UMaterial material);
 
     @Nullable
-    UMaterial identifyMaterial(ItemStack item);
+    UItemStack identifyItem(@NotNull ItemStack item);
+
+    @Nullable
+    UMaterial identifyMaterial(@NotNull ItemStack item);
 }

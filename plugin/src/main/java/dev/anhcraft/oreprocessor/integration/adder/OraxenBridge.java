@@ -7,6 +7,7 @@ import dev.anhcraft.oreprocessor.api.util.UMaterial;
 import dev.anhcraft.oreprocessor.integration.Integration;
 import io.th0rgal.oraxen.api.OraxenItems;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -24,23 +25,23 @@ public class OraxenBridge implements Integration, ItemCustomizer {
     }
 
     @Override
-    public Set<String> getCustomMaterials() {
-        return OraxenItems.nameStream().map(s -> MaterialClass.ORAXEN.getPrefix() + ":" + s).collect(Collectors.toSet());
+    public Set<UMaterial> getCustomMaterials() {
+        return OraxenItems.nameStream().map(UMaterial::fromOraxen).collect(Collectors.toSet());
     }
 
     @Override
-    public ItemStack buildItem(UMaterial material) {
+    public @NotNull ItemStack buildItem(@NotNull UMaterial material) {
         return OraxenItems.getItemById(material.getIdentifier()).build();
     }
 
     @Override
-    public UItemStack identifyItem(ItemStack item) {
+    public UItemStack identifyItem(@NotNull ItemStack item) {
         String id = OraxenItems.getIdByItem(item);
         return id == null ? null : new UItemStack(UMaterial.fromOraxen(id), item.getAmount());
     }
 
     @Override
-    public UMaterial identifyMaterial(ItemStack item) {
+    public UMaterial identifyMaterial(@NotNull ItemStack item) {
         String id = OraxenItems.getIdByItem(item);
         return id == null ? null : UMaterial.fromOraxen(id);
     }

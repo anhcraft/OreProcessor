@@ -5,13 +5,14 @@ import dev.anhcraft.oreprocessor.OreProcessor;
 import dev.anhcraft.oreprocessor.api.Ore;
 import dev.anhcraft.oreprocessor.api.data.OreData;
 import dev.anhcraft.oreprocessor.api.data.PlayerData;
+import dev.anhcraft.oreprocessor.api.util.UMaterial;
 import dev.anhcraft.oreprocessor.util.CraftingRecipe;
+import dev.anhcraft.oreprocessor.util.MaterialUtil;
 import dev.anhcraft.oreprocessor.util.ScopedLog;
 import dev.anhcraft.palette.event.ClickEvent;
 import dev.anhcraft.palette.ui.GuiHandler;
 import dev.anhcraft.palette.util.ItemReplacer;
 import dev.anhcraft.palette.util.ItemUtil;
-import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -65,7 +66,7 @@ public class CraftingGuiHandler extends GuiHandler implements AutoRefresh {
         replaceItem("ore", new ItemReplacer() {
             @Override
             public @NotNull ItemBuilder apply(int slot, @NotNull ItemBuilder itemBuilder) {
-                itemBuilder.material(ore.getIcon());
+                MaterialUtil.apply(itemBuilder, ore.getIcon());
                 itemBuilder.replaceDisplay(s -> s.replace("{ore}", ore.getName())
                         .replace("{processing}", Integer.toString(processing))
                         .replace("{storage-current}", Integer.toString(stored))
@@ -78,7 +79,7 @@ public class CraftingGuiHandler extends GuiHandler implements AutoRefresh {
 
         List<Integer> productSlots = new ArrayList<>(locateComponent("product"));
         Collections.sort(productSlots);
-        List<Material> products = new ArrayList<>(oreData.getProducts());
+        List<UMaterial> products = new ArrayList<>(oreData.getProducts());
         if (products.size() > productSlots.size()) {
             plugin.getLogger().warning(String.format(
                     "%s has %d products while GUI's display capability is %d (ore=%s)",
@@ -95,13 +96,13 @@ public class CraftingGuiHandler extends GuiHandler implements AutoRefresh {
                 continue;
             }
 
-            Material product = products.get(i);
+            UMaterial product = products.get(i);
             CraftingRecipe recipe = GuiRegistry.CRAFTING.getRecipeFor(product);
             int productCount = oreData.countProduct(product);
 
             if (recipe == null || productCount < recipe.getInput().getAmount()) {
                 ItemBuilder itemBuilder = GuiRegistry.CRAFTING.getUncraftableProductIcon();
-                itemBuilder.material(product);
+                MaterialUtil.apply(itemBuilder, product);
                 itemBuilder.replaceDisplay(s -> s.replace("{current}", Integer.toString(productCount)));
                 getInventory().setItem(slot, itemBuilder.build());
                 getSlot(slot).setEvents();
@@ -109,7 +110,7 @@ public class CraftingGuiHandler extends GuiHandler implements AutoRefresh {
             }
 
             ItemBuilder itemBuilder = GuiRegistry.CRAFTING.getCraftableProductIcon();
-            itemBuilder.material(product);
+            MaterialUtil.apply(itemBuilder, product);
             itemBuilder.replaceDisplay(s -> s.replace("{current}", Integer.toString(productCount)));
             getInventory().setItem(slot, itemBuilder.build());
             getSlot(slot).setEvents(new ClickEvent() {
@@ -149,7 +150,7 @@ public class CraftingGuiHandler extends GuiHandler implements AutoRefresh {
                                 return -1;
                             }
                             int actualProduct = craftTimes * recipe.getOutput().getAmount();
-                            oreData.addProduct(recipe.getOutput().getType(), actualProduct, true);
+                            oreData.addProduct(recipe.getOutput().getMaterial(), actualProduct, true);
                             player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
                             int remainingInput = actualInput % recipe.getInput().getAmount();
                             int newAmount = currentAmount - actualInput + remainingInput;

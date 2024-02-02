@@ -44,7 +44,8 @@ public class StoreCommand extends BaseCommand {
             return;
         }
 
-        List<Ore> ores = OreProcessor.getApi().getStorageAllowItem(UMaterial.fromVanilla(item.getType()));
+        UMaterial material = UMaterial.of(item.getType());
+        List<Ore> ores = OreProcessor.getApi().getStorageAllowItem(material);
 
         if (ores == null || ores.isEmpty()) {
             plugin.msg(player, plugin.messageConfig.cannotStoreItem);
@@ -58,7 +59,7 @@ public class StoreCommand extends BaseCommand {
         for (Ore ore : ores) {
             OreData oreData = playerData.requireOreData(ore.getId());
 
-            int added = oreData.addProduct(UMaterial.fromVanilla(item.getType()), remain, false);
+            int added = oreData.addProduct(material, remain, false);
             if (added == 0)
                 continue;
 
@@ -99,7 +100,8 @@ public class StoreCommand extends BaseCommand {
             if (ItemUtil.isEmpty(item) || item.hasItemMeta())
                 continue;
 
-            List<Ore> ores = OreProcessor.getApi().getStorageAllowItem(UMaterial.fromVanilla(item.getType()));
+            UMaterial material = UMaterial.of(item.getType());
+            List<Ore> ores = OreProcessor.getApi().getStorageAllowItem(material);
             if (ores == null || ores.isEmpty())
                 continue;
             int remain = item.getAmount();
@@ -107,7 +109,7 @@ public class StoreCommand extends BaseCommand {
             for (Ore ore : ores) {
                 OreData oreData = playerData.requireOreData(ore.getId());
 
-                int added = oreData.addProduct(UMaterial.fromVanilla(item.getType()), remain, false);
+                int added = oreData.addProduct(material, remain, false);
                 if (added == 0)
                     continue;
 

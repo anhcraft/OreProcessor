@@ -5,7 +5,9 @@ import dev.anhcraft.oreprocessor.OreProcessor;
 import dev.anhcraft.oreprocessor.api.Ore;
 import dev.anhcraft.oreprocessor.api.data.OreData;
 import dev.anhcraft.oreprocessor.api.data.PlayerData;
+import dev.anhcraft.oreprocessor.api.util.UMaterial;
 import dev.anhcraft.oreprocessor.integration.shop.ShopProvider;
+import dev.anhcraft.oreprocessor.util.MaterialUtil;
 import dev.anhcraft.oreprocessor.util.ScopedLog;
 import dev.anhcraft.palette.event.ClickEvent;
 import dev.anhcraft.palette.ui.GuiHandler;
@@ -14,7 +16,6 @@ import dev.anhcraft.palette.util.ItemReplacer;
 import dev.anhcraft.palette.util.ItemUtil;
 import net.milkbowl.vault.economy.EconomyResponse;
 import org.apache.commons.lang.mutable.MutableDouble;
-import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -76,7 +77,7 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
         replaceItem("ore", new ItemReplacer() {
             @Override
             public @NotNull ItemBuilder apply(int slot, @NotNull ItemBuilder itemBuilder) {
-                itemBuilder.material(ore.getIcon());
+                MaterialUtil.apply(itemBuilder, ore.getIcon());
                 itemBuilder.replaceDisplay(s -> s.replace("{ore}", ore.getName())
                         .replace("{processing}", Integer.toString(processing))
                         .replace("{storage-current}", Integer.toString(stored))
@@ -89,7 +90,7 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
 
         List<Integer> productSlots = new ArrayList<>(locateComponent("product"));
         Collections.sort(productSlots);
-        List<Material> products = new ArrayList<>(oreData.getProducts());
+        List<UMaterial> products = new ArrayList<>(oreData.getProducts());
         if (products.size() > productSlots.size()) {
             plugin.getLogger().warning(String.format(
                     "%s has %d products while GUI's display capability is %d (ore=%s)",
@@ -98,9 +99,9 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
         }
 
         // allowed products include the filter + existing items
-        Set<Material> allowedProducts = new HashSet<>(products);
+        Set<UMaterial> allowedProducts = new HashSet<>(products);
         {
-            Set<Material> filter = OreProcessor.getApi().getStorageFilter(oreId);
+            Set<UMaterial> filter = OreProcessor.getApi().getStorageFilter(oreId);
             if (filter != null) {
                 allowedProducts.addAll(filter);
             }
@@ -116,10 +117,9 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
                 continue;
             }
 
-            Material product = products.get(i);
+            UMaterial product = products.get(i);
             ItemBuilder itemBuilder = GuiRegistry.STORAGE.getProductIcon();
-            itemBuilder.material(product);
-
+            MaterialUtil.apply(itemBuilder, product);
             itemBuilder.replaceDisplay(s -> s.replace("{current}", Integer.toString(oreData.countProduct(product))));
 
             getInventory().setItem(slot, itemBuilder.build());
@@ -138,7 +138,11 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
                             player.playSound(player.getLocation(), Sound.ITEM_SHIELD_BLOCK, 1f, 1f);
                             return;
                         }
-                        ItemUtil.addToInventory(player, new ItemStack(product, actual));
+                        ItemStack item = OreProcessor.getApi().buildItem(product, actual);
+                        if (item == null) {
+                            return;
+                        }
+                        ItemUtil.addToInventory(player, item);
                         player.playSound(player.getLocation(), Sound.ENTITY_ITEM_FRAME_REMOVE_ITEM, 1f, 1f);
                         plugin.pluginLogger.scope("storage")
                                 .add("player", player)
@@ -184,7 +188,7 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
 
                             MutableDouble profits = new MutableDouble(0);
                             MutableDouble count = new MutableDouble(0);
-                            for (Material product : oreData.getProducts()) {
+                            for (UMaterial product : oreData.getProducts()) {
                                 if (!shopProvider.get().canSell(product)) continue;
                                 int amount = (int) (oreData.countProduct(product) * proportion);
                                 if (amount <= 0) continue;
@@ -208,7 +212,7 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
                                     } else {
                                         plugin.getLogger().warning(String.format(
                                                 "Failed to deposit %.3f to %s's account for selling %d %s",
-                                                profit, player.getName(), actual, product.getKey()
+                                                profit, player.getName(), actual, product
                                         ));
                                         log.add("newTotalAmount", currentAmount);
                                     }
@@ -233,9 +237,9 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
         }
     }
 
-    private void handleAddProduct(Player player, ItemStack cursor, Set<Material> products) {
+    private void handleAddProduct(Player player, ItemStack cursor, Set<UMaterial> products) {
         if (ItemUtil.isEmpty(cursor)) return;
-        Material material = cursor.getType();
+        UMaterial material = UMaterial.of(cursor.getType());
 
         if (oreData.isFull()) {
             plugin.msg(player, plugin.messageConfig.storageFull);

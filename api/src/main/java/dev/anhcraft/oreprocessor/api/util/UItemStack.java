@@ -11,7 +11,7 @@ public class UItemStack {
     private final int amount;
 
     public static UItemStack of(@NotNull ItemStack itemStack) {
-        return new UItemStack(UMaterial.fromVanilla(itemStack.getType()), itemStack.getAmount());
+        return new UItemStack(UMaterial.of(itemStack.getType()), itemStack.getAmount());
     }
 
     public UItemStack(@NotNull UMaterial material, int amount) {
@@ -26,6 +26,10 @@ public class UItemStack {
 
     public int getAmount() {
         return amount;
+    }
+
+    public boolean isEmpty() {
+        return amount <= 0 || material.isEmpty();
     }
 
     @Override

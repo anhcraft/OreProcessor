@@ -3,11 +3,11 @@ package dev.anhcraft.oreprocessor.handler;
 import dev.anhcraft.config.bukkit.utils.ColorUtil;
 import dev.anhcraft.oreprocessor.OreProcessor;
 import dev.anhcraft.oreprocessor.api.event.OrePickupEvent;
+import dev.anhcraft.oreprocessor.api.util.UMaterial;
 import dev.anhcraft.oreprocessor.util.LocaleUtils;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -59,9 +59,9 @@ public class PickupTracker implements Listener {
             return queue.poll();
         }
 
-        public void increase(Material material, int amount) {
+        public void increase(UMaterial material, int amount) {
             for (PickupAggregator m : queue) {
-                if (m.getMaterial() == material) {
+                if (m.getMaterial().is(material)) {
                     m.addAmount(amount);
                     return;
                 }
@@ -71,15 +71,15 @@ public class PickupTracker implements Listener {
     }
 
     public static class PickupAggregator implements Comparable<PickupAggregator> {
-        private final Material material;
+        private final UMaterial material;
         private int amount;
 
-        public PickupAggregator(Material material, int amount) {
+        public PickupAggregator(UMaterial material, int amount) {
             this.material = material;
             this.amount = amount;
         }
 
-        public Material getMaterial() {
+        public UMaterial getMaterial() {
             return material;
         }
 

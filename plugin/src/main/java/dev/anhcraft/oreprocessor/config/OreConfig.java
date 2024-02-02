@@ -54,7 +54,7 @@ public class OreConfig {
         blocks = blocks.stream().filter(Objects::nonNull).collect(Collectors.toSet());
 
         for (Map.Entry<String, List<String>> e : rawTransform.entrySet()) {
-            Map<UMaterial, WheelSelection<UItemStack>> map = new EnumMap<>(UMaterial.class);
+            Map<UMaterial, WheelSelection<UItemStack>> map = new HashMap<>();
             for (String str : e.getValue()) {
                 String[] split = str.split("\\s*>\\s*");
                 if (split.length != 2)

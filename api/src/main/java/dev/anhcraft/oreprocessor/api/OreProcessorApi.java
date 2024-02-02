@@ -181,20 +181,35 @@ public interface OreProcessorApi {
      * Builds an {@link ItemStack} from the given {@link UMaterial}<br>
      * For vanilla materials, this guarantees that the item returned is not-null. Otherwise, the result may be
      * null due to several reasons such as the associated 3rd plugin is unavailable, the given material is not
-     * registered, or whatever caused it failed to create the item.<br>
-     * Calling this method is the same as calling to {@link #buildItem(UItemStack)} with an amount of 1.
+     * registered, or whatever caused it failed to create the item.
      * @param material The material
      * @return The item
      */
     @Nullable
-    ItemStack buildItem(@NotNull UMaterial material);
+    ItemStack buildItem(@Nullable UMaterial material, int amount);
+
+    /**
+     * Builds an {@link ItemStack} from the given {@link UMaterial}<br>
+     * Calling this method is the same as calling to {@link #buildItem(UMaterial, int)} with an amount of 1.
+     * @param material The material
+     * @return The item
+     * @see #buildItem(UMaterial, int)
+     */
+    @Nullable
+    default ItemStack buildItem(@Nullable UMaterial material) {
+        return buildItem(material, 1);
+    }
 
     /**
      * Builds an {@link ItemStack} from the given {@link UItemStack}
+     * Calling this method is the same as calling to {@link #buildItem(UMaterial, int)}
      * @param itemStack The item stack
      * @return The item
-     * @see #buildItem(UMaterial)
+     * @see #buildItem(UMaterial, int)
      */
     @Nullable
-    ItemStack buildItem(@Nullable UItemStack itemStack);
+    default ItemStack buildItem(@Nullable UItemStack itemStack) {
+        if (itemStack == null) return null;
+        return buildItem(itemStack.getMaterial(), itemStack.getAmount());
+    }
 }

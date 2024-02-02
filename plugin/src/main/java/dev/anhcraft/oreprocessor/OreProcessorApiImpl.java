@@ -246,6 +246,8 @@ public final class OreProcessorApiImpl implements OreProcessorApi {
 
     @Override
     public @Nullable UMaterial identifyMaterial(@Nullable ItemStack itemStack) {
+        if (itemStack == null)
+            return null;
         for (ItemCustomizer itemCustomizer : plugin.integrationManager.getItemCustomizers()) {
             UMaterial uMaterial = itemCustomizer.identifyMaterial(itemStack);
             if (uMaterial != null)
@@ -256,6 +258,8 @@ public final class OreProcessorApiImpl implements OreProcessorApi {
 
     @Override
     public @Nullable UItemStack identifyItem(@Nullable ItemStack itemStack) {
+        if (itemStack == null)
+            return null;
         for (ItemCustomizer itemCustomizer : plugin.integrationManager.getItemCustomizers()) {
             UItemStack uItemStack = itemCustomizer.identifyItem(itemStack);
             if (uItemStack != null)
@@ -265,12 +269,19 @@ public final class OreProcessorApiImpl implements OreProcessorApi {
     }
 
     @Override
-    public @Nullable ItemStack buildItem(@Nullable UMaterial material) {
-        return plugin.integrationManager.getItemCustomizer(material.getClassifier()).buildItem(material);
+    public @Nullable ItemStack buildItem(@Nullable UMaterial material, int amount) {
+        if (material == null)
+            return null;
+        ItemStack item = plugin.integrationManager.getItemCustomizer(material.getClassifier()).buildItem(material);
+        if (item != null)
+            item.setAmount(amount);
+        return item;
     }
 
     @Override
     public @Nullable ItemStack buildItem(@Nullable UItemStack itemStack) {
+        if (itemStack == null)
+            return null;
         return plugin.integrationManager.getItemCustomizer(itemStack.getMaterial().getClassifier()).buildItem(itemStack.getMaterial());
     }
 }

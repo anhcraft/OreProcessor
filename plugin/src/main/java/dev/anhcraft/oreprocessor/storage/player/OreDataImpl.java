@@ -2,9 +2,8 @@ package dev.anhcraft.oreprocessor.storage.player;
 
 import dev.anhcraft.oreprocessor.OreProcessor;
 import dev.anhcraft.oreprocessor.api.data.OreData;
-import dev.anhcraft.palette.util.ItemUtil;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
+import dev.anhcraft.oreprocessor.api.util.UItemStack;
+import dev.anhcraft.oreprocessor.api.util.UMaterial;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -69,14 +68,14 @@ public class OreDataImpl implements OreData {
     }
 
     @Override
-    public @NotNull Set<Material> getFeedstock() {
+    public @NotNull Set<UMaterial> getFeedstock() {
         synchronized (config) {
             return config.feedstock == null ? Collections.emptySet() : new HashSet<>(config.feedstock.keySet()); // clone to prevent CME
         }
     }
 
     @Override
-    public void addFeedstock(@NotNull Material material, int amount) {
+    public void addFeedstock(@NotNull UMaterial material, int amount) {
         synchronized (config) {
             int newVal = amount;
             if (config.feedstock == null)
@@ -92,7 +91,7 @@ public class OreDataImpl implements OreData {
     }
 
     @Override
-    public int countFeedstock(@NotNull Material material) {
+    public int countFeedstock(@NotNull UMaterial material) {
         synchronized (config) {
             return config.feedstock == null ? 0 : config.feedstock.getOrDefault(material, 0);
         }
@@ -111,14 +110,14 @@ public class OreDataImpl implements OreData {
     }
 
     @Override
-    public @NotNull Set<Material> getProducts() {
+    public @NotNull Set<UMaterial> getProducts() {
         synchronized (config) {
             return config.products == null ? Collections.emptySet() : new HashSet<>(config.products.keySet()); // clone to prevent CME
         }
     }
 
     @Override
-    public int addProduct(@NotNull Material material, int expectedAmount, boolean force) {
+    public int addProduct(@NotNull UMaterial material, int expectedAmount, boolean force) {
         synchronized (config) {
             int toStore = force ? expectedAmount : Math.min(expectedAmount, getCapacity() - countAllProducts());
             int newVal = countProduct(material) + toStore;
@@ -136,7 +135,7 @@ public class OreDataImpl implements OreData {
     }
 
     @Override
-    public int takeProduct(@NotNull Material material, int expectedAmount) {
+    public int takeProduct(@NotNull UMaterial material, int expectedAmount) {
         synchronized (config) {
             int stored = countProduct(material);
             int toTake = Math.min(expectedAmount, stored);
@@ -156,7 +155,7 @@ public class OreDataImpl implements OreData {
     }
 
     @Override
-    public int setProduct(@NotNull Material material, int expectedAmount, boolean force) {
+    public int setProduct(@NotNull UMaterial material, int expectedAmount, boolean force) {
         synchronized (config) {
             int toStore = force ? expectedAmount : Math.min(Math.max(expectedAmount, 0), getCapacity() - countAllProducts() + countProduct(material));
 
@@ -172,7 +171,7 @@ public class OreDataImpl implements OreData {
     }
 
     @Override
-    public boolean testAndTakeProduct(@NotNull Material material, int expectedAmount, @NotNull Function<Integer, Boolean> function) {
+    public boolean testAndTakeProduct(@NotNull UMaterial material, int expectedAmount, @NotNull Function<Integer, Boolean> function) {
         synchronized (config) {
             int stored = countProduct(material);
             int toTake = Math.min(expectedAmount, stored);
@@ -195,7 +194,7 @@ public class OreDataImpl implements OreData {
     }
 
     @Override
-    public boolean testAndSetProduct(@NotNull Material material, @NotNull Function<Integer, Integer> function) {
+    public boolean testAndSetProduct(@NotNull UMaterial material, @NotNull Function<Integer, Integer> function) {
         synchronized (config) {
             int newVal;
 
@@ -216,7 +215,7 @@ public class OreDataImpl implements OreData {
     }
 
     @Override
-    public int countProduct(@NotNull Material material) {
+    public int countProduct(@NotNull UMaterial material) {
         synchronized (config) {
             return config.products == null ? 0 : config.products.getOrDefault(material, 0);
         }
@@ -249,8 +248,8 @@ public class OreDataImpl implements OreData {
     }
 
     @Override
-    public Map<Material, Integer> process(int throughputMultiplier, @NotNull Function<Material, ItemStack> function) {
-        Map<Material, Integer> summary = new HashMap<>();
+    public Map<UMaterial, Integer> process(int throughputMultiplier, @NotNull Function<UMaterial, UItemStack> function) {
+        Map<UMaterial, Integer> summary = new HashMap<>();
 
         synchronized (config) {
             if (config.feedstock == null)
@@ -259,12 +258,12 @@ public class OreDataImpl implements OreData {
             int totalStored = countAllProducts();
             int capacity = getCapacity();
 
-            for (Iterator<Map.Entry<Material, Integer>> it = config.feedstock.entrySet().iterator(); it.hasNext() && totalStored < capacity; ) {
-                Map.Entry<Material, Integer> en = it.next();
-                ItemStack output = function.apply(en.getKey());
-                if (ItemUtil.isEmpty(output) || !output.getType().isItem())
+            for (Iterator<Map.Entry<UMaterial, Integer>> it = config.feedstock.entrySet().iterator(); it.hasNext() && totalStored < capacity; ) {
+                Map.Entry<UMaterial, Integer> en = it.next();
+                UItemStack output = function.apply(en.getKey());
+                if (output.isEmpty() || !output.getMaterial().isItem())
                     continue;
-                Material product = output.getType();
+                UMaterial product = output.getMaterial();
 
                 int availableStorage = capacity - totalStored;
                 int actualQueued = Math.min(en.getValue(), getThroughput() * throughputMultiplier);

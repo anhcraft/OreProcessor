@@ -19,6 +19,7 @@ public class UMaterialAdapter implements TypeAdapter<UMaterial> {
 
     @Override
     public @Nullable UMaterial complexify(@NotNull ConfigDeserializer configDeserializer, @NotNull Type type, @NotNull SimpleForm simpleForm) throws Exception {
+        if (!simpleForm.isString()) return null;
         return UMaterial.parse(Objects.requireNonNull(simpleForm.asString()));
     }
 }

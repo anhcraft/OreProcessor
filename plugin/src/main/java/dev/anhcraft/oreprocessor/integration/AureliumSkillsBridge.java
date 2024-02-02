@@ -5,6 +5,7 @@ import dev.anhcraft.oreprocessor.OreProcessor;
 import dev.anhcraft.oreprocessor.api.Ore;
 import dev.anhcraft.oreprocessor.api.data.OreData;
 import dev.anhcraft.oreprocessor.api.data.PlayerData;
+import dev.anhcraft.oreprocessor.api.util.UMaterial;
 import dev.anhcraft.oreprocessor.storage.stats.StatisticHelper;
 import dev.anhcraft.palette.util.ItemUtil;
 import org.bukkit.Material;
@@ -31,7 +32,7 @@ public class AureliumSkillsBridge implements Integration, Listener, EventDebugge
         Player player = event.getPlayer();
         ItemStack item = event.getItemStack();
         if (ItemUtil.isEmpty(item) || item.hasItemMeta()) return;
-        Material feedstock = item.getType();
+        UMaterial feedstock = UMaterial.of(item.getType());
         int amount = item.getAmount();
         Collection<Ore> ores = OreProcessor.getApi().getOresAllowFeedstock(feedstock);
         if (ores.isEmpty()) return;
