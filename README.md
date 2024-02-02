@@ -25,7 +25,7 @@ Join my support server: https://discord.gg/HRAEKapRwx
 
 ## Terms of services
 
-Ore Processor is a semi-premium plugin with open source and paid support.
+Ore Processor is a freemium plugin with open source and paid support.
 
 > - Purchases are final
 > - Support is only provided for customers
