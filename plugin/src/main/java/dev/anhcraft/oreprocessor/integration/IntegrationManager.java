@@ -2,21 +2,26 @@ package dev.anhcraft.oreprocessor.integration;
 
 import dev.anhcraft.config.utils.ObjectUtil;
 import dev.anhcraft.oreprocessor.OreProcessor;
+import dev.anhcraft.oreprocessor.api.integration.ShopProviderType;
+import dev.anhcraft.oreprocessor.api.util.MaterialClass;
+import dev.anhcraft.oreprocessor.api.util.UMaterial;
+import dev.anhcraft.oreprocessor.integration.adder.ItemCustomizer;
+import dev.anhcraft.oreprocessor.integration.adder.OraxenBridge;
 import dev.anhcraft.oreprocessor.integration.shop.EconomyShopGUIBridge;
 import dev.anhcraft.oreprocessor.integration.shop.ShopGuiPlusBridge;
 import dev.anhcraft.oreprocessor.integration.shop.ShopProvider;
-import dev.anhcraft.oreprocessor.api.integration.ShopProviderType;
+import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class IntegrationManager {
     private final Map<String, Integration> integrationMap = new HashMap<>();
+    private final Map<MaterialClass, ItemCustomizer> itemCustomizers = new EnumMap<>(MaterialClass.class);
     private final OreProcessor mainPlugin;
 
     public IntegrationManager(OreProcessor mainPlugin) {
@@ -29,6 +34,7 @@ public class IntegrationManager {
         tryHook("PlaceholderAPI", PlaceholderApiBridge.class);
         tryHook("eco", EcoBridge.class);
         tryHook("AdvancedEnchantments", AdvancedEnchantmentBridge.class);
+        tryHook("OraxenBridge", OraxenBridge.class);
     }
 
     private void tryHook(String plugin, Class<? extends Integration> clazz) {
@@ -53,6 +59,9 @@ public class IntegrationManager {
                 }
             }
             integrationMap.put(plugin, (Integration) instance);
+            if (instance instanceof ItemCustomizer) {
+                itemCustomizers.put(((ItemCustomizer) instance).getMaterialClass(), (ItemCustomizer) instance);
+            }
             this.mainPlugin.getLogger().info("[Integration] Hooked to " + plugin);
         }
     }
@@ -65,10 +74,26 @@ public class IntegrationManager {
         return integrationMap.values().stream();
     }
 
+    public Collection<ItemCustomizer> getItemCustomizers() {
+        return itemCustomizers.values();
+    }
+
     public Optional<ShopProvider> getShopProvider(@Nullable ShopProviderType shopProviderType) {
         if (shopProviderType == null) return Optional.empty();
         return Optional.ofNullable(integrationMap.get(shopProviderType.getPlugin()))
                 .filter(i -> i instanceof ShopProvider)
                 .map(i -> (ShopProvider) i);
+    }
+
+    public ItemCustomizer getItemCustomizer(MaterialClass materialClass) {
+        return itemCustomizers.get(materialClass);
+    }
+
+    public Set<String> getAllMaterials() {
+        Set<String> result = new HashSet<>();
+        for (ItemCustomizer integration : itemCustomizers.values()) {
+            result.addAll(integration.getCustomMaterials().stream().map(UMaterial::toString).collect(Collectors.toList()));
+        }
+        return result;
     }
 }

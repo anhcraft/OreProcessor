@@ -4,11 +4,11 @@ import dev.anhcraft.oreprocessor.OreProcessor;
 import dev.anhcraft.oreprocessor.api.Ore;
 import dev.anhcraft.oreprocessor.api.data.OreData;
 import dev.anhcraft.oreprocessor.api.data.PlayerData;
+import dev.anhcraft.oreprocessor.api.util.UMaterial;
 import dev.anhcraft.oreprocessor.storage.stats.StatisticHelper;
 import net.advancedplugins.ae.impl.effects.api.FakeAdvancedBlockBreakEvent;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
@@ -51,7 +51,7 @@ public class AdvancedEnchantmentBridge implements Integration, Listener, EventDe
         //        player.getInventory().getItemInMainHand().containsEnchantment(Enchantment.SILK_TOUCH)) return;
 
         Block block = event.getBlock();
-        Ore ore = OreProcessor.getApi().getBlockOre(block.getType());
+        Ore ore = OreProcessor.getApi().getBlockOre(UMaterial.of(block.getType()));
         if (ore == null) return;
 
         PlayerData playerData = OreProcessor.getApi().getPlayerData(player);
@@ -68,7 +68,7 @@ public class AdvancedEnchantmentBridge implements Integration, Listener, EventDe
                 if (!(entity instanceof Item) || entity.isDead()) continue;
                 ItemStack itemStack = ((Item) entity).getItemStack();
                 if (itemStack.hasItemMeta()) continue;
-                Material feedstock = itemStack.getType();
+                UMaterial feedstock = UMaterial.of(itemStack.getType());
                 int amount = itemStack.getAmount();
 
                 if (ore.isAcceptableFeedstock(feedstock)) {

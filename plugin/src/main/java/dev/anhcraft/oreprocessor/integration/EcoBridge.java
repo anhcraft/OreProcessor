@@ -5,8 +5,8 @@ import dev.anhcraft.oreprocessor.OreProcessor;
 import dev.anhcraft.oreprocessor.api.Ore;
 import dev.anhcraft.oreprocessor.api.data.OreData;
 import dev.anhcraft.oreprocessor.api.data.PlayerData;
+import dev.anhcraft.oreprocessor.api.util.UMaterial;
 import dev.anhcraft.oreprocessor.storage.stats.StatisticHelper;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -34,7 +34,7 @@ public class EcoBridge implements Integration, Listener, EventDebugger {
         for (Iterator<? extends ItemStack> it = event.getItems().iterator(); it.hasNext(); ) {
             ItemStack item = it.next();
             if (item.hasItemMeta()) continue;
-            Material feedstock = item.getType();
+            UMaterial feedstock = UMaterial.of(item.getType());
             int amount = item.getAmount();
             Collection<Ore> ores = OreProcessor.getApi().getOresAllowFeedstock(feedstock);
             if (ores.isEmpty()) continue;

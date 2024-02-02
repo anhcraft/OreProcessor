@@ -7,6 +7,8 @@ import dev.anhcraft.config.bukkit.BukkitConfigProvider;
 import dev.anhcraft.config.bukkit.BukkitConfigSerializer;
 import dev.anhcraft.config.bukkit.struct.YamlConfigSection;
 import dev.anhcraft.config.schema.SchemaScanner;
+import dev.anhcraft.oreprocessor.api.util.UMaterial;
+import dev.anhcraft.oreprocessor.config.adapter.UMaterialAdapter;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,7 +20,9 @@ public class ConfigHelper {
 
     static {
         SERIALIZER = new BukkitConfigSerializer(BukkitConfigProvider.YAML);
+        SERIALIZER.registerTypeAdapter(UMaterial.class, new UMaterialAdapter());
         DESERIALIZER = new BukkitConfigDeserializer(BukkitConfigProvider.YAML);
+        DESERIALIZER.registerTypeAdapter(UMaterial.class, new UMaterialAdapter());
     }
 
     @NotNull

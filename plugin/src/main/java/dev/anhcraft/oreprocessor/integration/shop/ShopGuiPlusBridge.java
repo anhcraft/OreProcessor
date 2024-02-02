@@ -1,18 +1,21 @@
 package dev.anhcraft.oreprocessor.integration.shop;
 
+import dev.anhcraft.oreprocessor.api.ApiProvider;
+import dev.anhcraft.oreprocessor.api.util.UMaterial;
 import net.brcdev.shopgui.ShopGuiPlusApi;
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 public class ShopGuiPlusBridge implements ShopProvider {
 
     @Override
-    public boolean canSell(Material material) {
-        return ShopGuiPlusApi.getItemStackShopItem(new ItemStack(material, 1)) != null;
+    public boolean canSell(UMaterial material) {
+        ItemStack i = ApiProvider.getApi().buildItem(material);
+        if (i == null) return false;
+        return ShopGuiPlusApi.getItemStackShopItem(i) != null;
     }
 
     @Override
-    public double getSellPrice(Material material, int amount) {
-        return ShopGuiPlusApi.getItemStackShopItem(new ItemStack(material, 1)).getSellPriceForAmount(amount);
+    public double getSellPrice(UMaterial material, int amount) {
+        return ShopGuiPlusApi.getItemStackShopItem(ApiProvider.getApi().buildItem(material)).getSellPriceForAmount(amount);
     }
 }

@@ -8,10 +8,10 @@ import dev.anhcraft.oreprocessor.api.data.PlayerData;
 import dev.anhcraft.oreprocessor.api.event.AsyncPlayerDataLoadEvent;
 import dev.anhcraft.oreprocessor.api.event.OreMineEvent;
 import dev.anhcraft.oreprocessor.api.event.OrePickupEvent;
+import dev.anhcraft.oreprocessor.api.util.UMaterial;
 import dev.anhcraft.oreprocessor.storage.stats.StatisticHelper;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.Material;
 import org.bukkit.block.BlockState;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Item;
@@ -65,7 +65,7 @@ public class ProcessingPlant implements Listener {
                 if (!plugin.mainConfig.behaviourSettings.disableOfflineProcessing) {
                     for (String oreId : event.getData().listOreIds()) {
                         OreTransform oreTransform = OreProcessor.getApi().requireOre(oreId).getBestTransform(event.getPlayerId());
-                        Map<Material, Integer> summary = event.getData().requireOreData(oreId).process(mul, oreTransform::convert);
+                        Map<UMaterial, Integer> summary = event.getData().requireOreData(oreId).process(mul, oreTransform::convert);
                         if (summary.isEmpty()) continue;
                         int processed = summary.values().stream().reduce(0, Integer::sum);
 
@@ -75,7 +75,7 @@ public class ProcessingPlant implements Listener {
                                 "Processed x%d %s for %s using transform #%s",
                                 processed, oreId, event.getPlayerId(), oreTransform.getId()
                         ));
-                        for (Map.Entry<Material, Integer> e : summary.entrySet()) {
+                        for (Map.Entry<UMaterial, Integer> e : summary.entrySet()) {
                             plugin.pluginLogger.scope("offline-processing")
                                     .add("player", event.getPlayerId())
                                     .add("hibernation", hibernationTime)
@@ -120,7 +120,7 @@ public class ProcessingPlant implements Listener {
         if (!plugin.mainConfig.behaviourSettings.processSilkTouchItems &&
                 player.getInventory().getItemInMainHand().containsEnchantment(Enchantment.SILK_TOUCH)) return;
 
-        Ore ore = OreProcessor.getApi().getBlockOre(event.getBlock().getType());
+        Ore ore = OreProcessor.getApi().getBlockOre(UMaterial.of(event.getBlock().getType()));
         if (ore == null) return;
 
         PlayerData playerData = OreProcessor.getApi().getPlayerData(player);
@@ -157,7 +157,7 @@ public class ProcessingPlant implements Listener {
                 player.getInventory().getItemInMainHand().containsEnchantment(Enchantment.SILK_TOUCH)) return;
 
         BlockState brokenBlock = event.getBlockState();
-        Ore ore = OreProcessor.getApi().getBlockOre(brokenBlock.getType());
+        Ore ore = OreProcessor.getApi().getBlockOre(UMaterial.of(brokenBlock.getType()));
         if (ore == null) return;
 
         PlayerData playerData = OreProcessor.getApi().getPlayerData(player);
@@ -170,7 +170,7 @@ public class ProcessingPlant implements Listener {
         for (Iterator<Item> iterator = event.getItems().iterator(); iterator.hasNext(); ) {
             ItemStack eventItem = iterator.next().getItemStack();
             if (eventItem.hasItemMeta()) continue;
-            Material feedstock = eventItem.getType();
+            UMaterial feedstock = UMaterial.of(eventItem.getType());
             int amount = eventItem.getAmount();
 
             OrePickupEvent pickupEvent = new OrePickupEvent(player, event.getBlock(), brokenBlock, ore, feedstock, amount);

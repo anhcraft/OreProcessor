@@ -9,6 +9,7 @@ import dev.anhcraft.oreprocessor.OreProcessor;
 import dev.anhcraft.oreprocessor.api.Ore;
 import dev.anhcraft.oreprocessor.api.data.OreData;
 import dev.anhcraft.oreprocessor.api.data.PlayerData;
+import dev.anhcraft.oreprocessor.api.util.UMaterial;
 import dev.anhcraft.palette.util.ItemUtil;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -43,7 +44,8 @@ public class StoreCommand extends BaseCommand {
             return;
         }
 
-        List<Ore> ores = OreProcessor.getApi().getStorageAllowItem(item.getType());
+        UMaterial material = UMaterial.of(item.getType());
+        List<Ore> ores = OreProcessor.getApi().getStorageAllowItem(material);
 
         if (ores == null || ores.isEmpty()) {
             plugin.msg(player, plugin.messageConfig.cannotStoreItem);
@@ -57,7 +59,7 @@ public class StoreCommand extends BaseCommand {
         for (Ore ore : ores) {
             OreData oreData = playerData.requireOreData(ore.getId());
 
-            int added = oreData.addProduct(item.getType(), remain, false);
+            int added = oreData.addProduct(material, remain, false);
             if (added == 0)
                 continue;
 
@@ -98,7 +100,8 @@ public class StoreCommand extends BaseCommand {
             if (ItemUtil.isEmpty(item) || item.hasItemMeta())
                 continue;
 
-            List<Ore> ores = OreProcessor.getApi().getStorageAllowItem(item.getType());
+            UMaterial material = UMaterial.of(item.getType());
+            List<Ore> ores = OreProcessor.getApi().getStorageAllowItem(material);
             if (ores == null || ores.isEmpty())
                 continue;
             int remain = item.getAmount();
@@ -106,7 +109,7 @@ public class StoreCommand extends BaseCommand {
             for (Ore ore : ores) {
                 OreData oreData = playerData.requireOreData(ore.getId());
 
-                int added = oreData.addProduct(item.getType(), remain, false);
+                int added = oreData.addProduct(material, remain, false);
                 if (added == 0)
                     continue;
 

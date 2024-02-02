@@ -10,10 +10,12 @@ import dev.anhcraft.oreprocessor.api.data.PlayerData;
 import dev.anhcraft.oreprocessor.api.data.ServerData;
 import dev.anhcraft.oreprocessor.api.integration.ShopProviderType;
 import dev.anhcraft.oreprocessor.api.upgrade.UpgradeLevel;
+import dev.anhcraft.oreprocessor.api.util.UItemStack;
+import dev.anhcraft.oreprocessor.api.util.UMaterial;
 import dev.anhcraft.oreprocessor.api.util.WheelSelection;
 import dev.anhcraft.oreprocessor.config.OreConfig;
 import dev.anhcraft.oreprocessor.config.UpgradeLevelConfig;
-import org.bukkit.Material;
+import dev.anhcraft.oreprocessor.integration.adder.ItemCustomizer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -25,9 +27,9 @@ import java.util.concurrent.CompletableFuture;
 public final class OreProcessorApiImpl implements OreProcessorApi {
     private final OreProcessor plugin;
     private Map<String, Ore> ores;
-    private Map<Material, Ore> block2ores;
-    private Multimap<Material, Ore> feedstock2ores;
-    private Multimap<Material, Ore> itemStorage2ores;
+    private Map<UMaterial, Ore> block2ores;
+    private Multimap<UMaterial, Ore> feedstock2ores;
+    private Multimap<UMaterial, Ore> itemStorage2ores;
     private TreeMap<Integer, UpgradeLevel> throughputUpgrades;
     private TreeMap<Integer, UpgradeLevel> capacityUpgrade;
 
@@ -44,11 +46,11 @@ public final class OreProcessorApiImpl implements OreProcessorApi {
 
             LinkedHashMap<String, OreTransform> transformMap = new LinkedHashMap<>();
 
-            for (Map.Entry<String, Map<Material, WheelSelection<ItemStack>>> e : oreConfig.transform.entrySet()) {
+            for (Map.Entry<String, Map<UMaterial, WheelSelection<UItemStack>>> e : oreConfig.transform.entrySet()) {
                 transformMap.put(e.getKey(), new OreTransform(e.getKey(), Collections.unmodifiableMap(e.getValue())));
             }
 
-            Set<Material> referenceFeedstock = null;
+            Set<UMaterial> referenceFeedstock = null;
 
             for (Iterator<OreTransform> it = transformMap.values().iterator(); it.hasNext(); ) {
                 OreTransform value = it.next();
@@ -81,7 +83,7 @@ public final class OreProcessorApiImpl implements OreProcessorApi {
             );
             oreMap.put(entry.getKey(), ore);
 
-            for (Material material : referenceFeedstock) {
+            for (UMaterial material : referenceFeedstock) {
                 feedstock2ores.put(material, ore);
             }
         }
@@ -121,7 +123,7 @@ public final class OreProcessorApiImpl implements OreProcessorApi {
 
         block2ores = new HashMap<>();
         for (Ore ore : oreMap.values()) {
-            for (Material block : ore.getBlocks()) {
+            for (UMaterial block : ore.getBlocks()) {
                 if (block2ores.put(block, ore) != null) {
                     plugin.getLogger().warning("Duplication detected: Ore '"+ore.getName()+"' exists in multiple blocks!");
                 }
@@ -129,8 +131,8 @@ public final class OreProcessorApiImpl implements OreProcessorApi {
         }
 
         itemStorage2ores = HashMultimap.create();
-        for (Map.Entry<String, List<Material>> entry : plugin.filterConfig.storage.entrySet()) {
-            for (Material material : entry.getValue()) {
+        for (Map.Entry<String, List<UMaterial>> entry : plugin.filterConfig.storage.entrySet()) {
+            for (UMaterial material : entry.getValue()) {
                 if (oreMap.containsKey(entry.getKey()))
                     itemStorage2ores.put(material, oreMap.get(entry.getKey()));
             }
@@ -152,23 +154,23 @@ public final class OreProcessorApiImpl implements OreProcessorApi {
     }
 
     @Override
-    public @Nullable Ore getBlockOre(Material block) {
+    public @Nullable Ore getBlockOre(UMaterial block) {
         return block2ores.get(block);
     }
 
     @Override
-    public @NotNull Collection<Ore> getOresAllowFeedstock(Material feedstock) {
+    public @NotNull Collection<Ore> getOresAllowFeedstock(UMaterial feedstock) {
         return feedstock2ores.get(feedstock);
     }
 
     @Override
-    public @Nullable Set<Material> getStorageFilter(String id) {
-        List<Material> v = plugin.filterConfig.storage.get(id);
-        return v == null ? null : EnumSet.copyOf(v);
+    public @Nullable Set<UMaterial> getStorageFilter(String id) {
+        List<UMaterial> v = plugin.filterConfig.storage.get(id);
+        return v == null ? null : new HashSet<>(v);
     }
 
     @Override
-    public @Nullable List<Ore> getStorageAllowItem(Material item) {
+    public @Nullable List<Ore> getStorageAllowItem(UMaterial item) {
         Collection<Ore> v = itemStorage2ores.get(item);
         return v == null ? null : new ArrayList<>(v);
     }
@@ -240,5 +242,46 @@ public final class OreProcessorApiImpl implements OreProcessorApi {
     @Override
     public ShopProviderType getShopProvider() {
         return plugin.mainConfig.shopProvider;
+    }
+
+    @Override
+    public @Nullable UMaterial identifyMaterial(@Nullable ItemStack itemStack) {
+        if (itemStack == null)
+            return null;
+        for (ItemCustomizer itemCustomizer : plugin.integrationManager.getItemCustomizers()) {
+            UMaterial uMaterial = itemCustomizer.identifyMaterial(itemStack);
+            if (uMaterial != null)
+                return uMaterial;
+        }
+        return null;
+    }
+
+    @Override
+    public @Nullable UItemStack identifyItem(@Nullable ItemStack itemStack) {
+        if (itemStack == null)
+            return null;
+        for (ItemCustomizer itemCustomizer : plugin.integrationManager.getItemCustomizers()) {
+            UItemStack uItemStack = itemCustomizer.identifyItem(itemStack);
+            if (uItemStack != null)
+                return uItemStack;
+        }
+        return null;
+    }
+
+    @Override
+    public @Nullable ItemStack buildItem(@Nullable UMaterial material, int amount) {
+        if (material == null)
+            return null;
+        ItemStack item = plugin.integrationManager.getItemCustomizer(material.getClassifier()).buildItem(material);
+        if (item != null)
+            item.setAmount(amount);
+        return item;
+    }
+
+    @Override
+    public @Nullable ItemStack buildItem(@Nullable UItemStack itemStack) {
+        if (itemStack == null)
+            return null;
+        return plugin.integrationManager.getItemCustomizer(itemStack.getMaterial().getClassifier()).buildItem(itemStack.getMaterial());
     }
 }

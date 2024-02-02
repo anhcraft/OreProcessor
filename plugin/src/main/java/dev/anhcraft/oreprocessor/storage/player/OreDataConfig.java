@@ -2,7 +2,7 @@ package dev.anhcraft.oreprocessor.storage.player;
 
 import dev.anhcraft.config.annotations.Configurable;
 import dev.anhcraft.config.annotations.PostHandler;
-import org.bukkit.Material;
+import dev.anhcraft.oreprocessor.api.util.UMaterial;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashMap;
@@ -15,10 +15,10 @@ class OreDataConfig {
     public int capacity;
 
     @Nullable
-    public LinkedHashMap<Material, Integer> feedstock;
+    public LinkedHashMap<UMaterial, Integer> feedstock;
 
     @Nullable
-    public LinkedHashMap<Material, Integer> products;
+    public LinkedHashMap<UMaterial, Integer> products;
 
     @PostHandler
     private void handle() {

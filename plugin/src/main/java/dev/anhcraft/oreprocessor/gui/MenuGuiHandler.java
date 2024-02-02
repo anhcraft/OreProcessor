@@ -5,6 +5,7 @@ import dev.anhcraft.oreprocessor.OreProcessor;
 import dev.anhcraft.oreprocessor.api.Ore;
 import dev.anhcraft.oreprocessor.api.data.OreData;
 import dev.anhcraft.oreprocessor.api.data.PlayerData;
+import dev.anhcraft.oreprocessor.util.MaterialUtil;
 import dev.anhcraft.palette.event.ClickEvent;
 import dev.anhcraft.palette.ui.GuiHandler;
 import dev.anhcraft.palette.util.ItemReplacer;
@@ -49,7 +50,7 @@ public class MenuGuiHandler extends GuiHandler implements AutoRefresh {
             replaceItem(slot, new ItemReplacer() {
                 @Override
                 public @NotNull ItemBuilder apply(int i, @NotNull ItemBuilder itemBuilder) {
-                    itemBuilder.material(ore.getIcon());
+                    MaterialUtil.apply(itemBuilder, ore.getIcon());
                     itemBuilder.name(GuiRegistry.MENU.oreName);
                     itemBuilder.lore(GuiRegistry.MENU.oreLore);
                     int processing = oreData.countAllFeedstock();

@@ -1,7 +1,7 @@
 package dev.anhcraft.oreprocessor.api.event;
 
 import dev.anhcraft.oreprocessor.api.Ore;
-import org.bukkit.Material;
+import dev.anhcraft.oreprocessor.api.util.UMaterial;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
@@ -21,11 +21,11 @@ public class OrePickupEvent extends PlayerEvent implements Cancellable {
     private final Block block;
     private final BlockState brokenState;
     private final Ore ore;
-    private Material feedstock;
+    private UMaterial feedstock;
     private int amount;
     private boolean cancelled;
 
-    public OrePickupEvent(Player player, Block block, BlockState brokenState, Ore ore, Material feedstock, int amount) {
+    public OrePickupEvent(Player player, Block block, BlockState brokenState, Ore ore, UMaterial feedstock, int amount) {
         super(player);
         this.block = block;
         this.brokenState = brokenState;
@@ -50,11 +50,11 @@ public class OrePickupEvent extends PlayerEvent implements Cancellable {
     }
 
     @NotNull
-    public Material getFeedstock() {
+    public UMaterial getFeedstock() {
         return feedstock;
     }
 
-    public void setFeedstock(@NotNull Material feedstock) {
+    public void setFeedstock(@NotNull UMaterial feedstock) {
         this.feedstock = feedstock;
     }
 

@@ -1,25 +1,29 @@
 package dev.anhcraft.oreprocessor.util;
 
-import org.bukkit.Material;
+import dev.anhcraft.oreprocessor.api.ApiProvider;
+import dev.anhcraft.oreprocessor.api.util.UMaterial;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
 
 public class LocaleUtils {
-    private static final EnumMap<Material, String> CACHE = new EnumMap<>(Material.class);
+    private static final Map<UMaterial, String> CACHE = new HashMap<>();
 
-    public static String getLocalizedName(Material material) {
+    public static String getLocalizedName(UMaterial material) {
         if (CACHE.containsKey(material))
             return CACHE.get(material);
-        String name = snakeCaseToTitleCase(material.name());
-        ItemStack itemStack = new ItemStack(material);
-        ItemMeta meta = itemStack.getItemMeta();
-        if (meta != null) {
-            if (meta.hasDisplayName())
-                name = meta.getDisplayName();
-            else if (meta.hasLocalizedName())
-                name = meta.getLocalizedName();
+        String name = snakeCaseToTitleCase(material.getIdentifier());
+        ItemStack itemStack = ApiProvider.getApi().buildItem(material);
+        if (itemStack != null) {
+            ItemMeta meta = itemStack.getItemMeta();
+            if (meta != null) {
+                if (meta.hasDisplayName())
+                    name = meta.getDisplayName();
+                else if (meta.hasLocalizedName())
+                    name = meta.getLocalizedName();
+            }
         }
         CACHE.put(material, name);
         return name;
