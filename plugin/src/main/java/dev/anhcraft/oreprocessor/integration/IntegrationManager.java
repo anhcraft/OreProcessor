@@ -10,7 +10,6 @@ import dev.anhcraft.oreprocessor.integration.adder.OraxenBridge;
 import dev.anhcraft.oreprocessor.integration.shop.EconomyShopGUIBridge;
 import dev.anhcraft.oreprocessor.integration.shop.ShopGuiPlusBridge;
 import dev.anhcraft.oreprocessor.integration.shop.ShopProvider;
-import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
@@ -34,7 +33,7 @@ public class IntegrationManager {
         tryHook("PlaceholderAPI", PlaceholderApiBridge.class);
         tryHook("eco", EcoBridge.class);
         tryHook("AdvancedEnchantments", AdvancedEnchantmentBridge.class);
-        tryHook("OraxenBridge", OraxenBridge.class);
+        tryHook("Oraxen", OraxenBridge.class);
     }
 
     private void tryHook(String plugin, Class<? extends Integration> clazz) {
