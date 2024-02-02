@@ -28,7 +28,7 @@ Join my support server: https://discord.gg/HRAEKapRwx
 Ore Processor is a semi-premium plugin with open source and paid support.
 
 > - Purchases are final
-> - Support is only provided for customers and plugin contributors only
+> - Support is only provided for customers
 
 ## License
 
