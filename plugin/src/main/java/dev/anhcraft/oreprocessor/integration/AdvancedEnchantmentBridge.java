@@ -5,7 +5,7 @@ import dev.anhcraft.oreprocessor.api.Ore;
 import dev.anhcraft.oreprocessor.api.data.OreData;
 import dev.anhcraft.oreprocessor.api.data.PlayerData;
 import dev.anhcraft.oreprocessor.storage.stats.StatisticHelper;
-import net.advancedplugins.ae.impl.effects.api.FakeAdvancedBlockBreakEvent;
+import net.advancedplugins.ae.impl.utils.protection.events.FakeAdvancedBlockBreakEvent;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
