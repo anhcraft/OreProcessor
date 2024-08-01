@@ -1,4 +1,5 @@
 # Ore Processor
+[![](https://jitpack.io/v/anhcraft/OreProcessor.svg)](https://jitpack.io/#anhcraft/OreProcessor)
 
 Ore Processor is a plugin to customize mining experience.
 
