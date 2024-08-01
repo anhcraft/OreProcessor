@@ -26,6 +26,7 @@ public class IntegrationManager {
     public IntegrationManager(OreProcessor mainPlugin) {
         this.mainPlugin = mainPlugin;
 
+        tryHook("AuraSkills", AuraSkillsBridge.class);
         tryHook("AureliumSkills", AureliumSkillsBridge.class);
         tryHook("ShopGUIPlus", ShopGuiPlusBridge.class);
         tryHook("EconomyShopGUI", EconomyShopGUIBridge.class);
