@@ -37,9 +37,8 @@ public class ScopedLog {
             return value;
         } else if (value instanceof OfflinePlayer) {
             return ((OfflinePlayer) value).getUniqueId().toString();
-        } else if (value instanceof EconomyResponse) {
-            EconomyResponse er = (EconomyResponse) value;
-            String err = er.errorMessage == null ? "" : er.errorMessage;
+        } else if (value instanceof EconomyResponse er) {
+          String err = er.errorMessage == null ? "" : er.errorMessage;
             return String.format("a=%.03f|b=%.05f|e=%s", er.amount, er.balance, err);
         } else if (value instanceof Ore) {
             return ((Ore) value).getId();

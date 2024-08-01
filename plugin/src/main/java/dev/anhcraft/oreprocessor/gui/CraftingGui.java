@@ -62,7 +62,7 @@ public class CraftingGui extends Gui {
                 OreProcessor.getInstance().getLogger().warning(String.format("Invalid crafting output in phase '%s'", recipe));
                 continue;
             }
-            craftingRecipeMap.put(in.getMaterial(), new CraftingRecipe(in, out));
+            craftingRecipeMap.put(in.material(), new CraftingRecipe(in, out));
         }
     }
 

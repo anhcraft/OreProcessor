@@ -35,16 +35,17 @@ public class MainConfig {
             "The key specifies the id",
             "The value is the ore configuration section"
     })
-    @Example("ores:\n" +
-            "  coal:\n" +
-            "    name: \"Coal\"\n" +
-            "    icon: coal\n" +
-            "    blocks:\n" +
-            "      - coal_ore\n" +
-            "      - deepslate_coal_ore\n" +
-            "    transform:\n" +
-            "      default:\n" +
-            "        - coal > coal"
+    @Example("""
+      ores:
+        coal:
+          name: "Coal"
+          icon: coal
+          blocks:
+            - coal_ore
+            - deepslate_coal_ore
+          transform:
+            default:
+              - coal > coal"""
     )
     @Validation(notNull = true, notEmpty = true)
     public LinkedHashMap<String, OreConfig> ores;

@@ -8,36 +8,38 @@ import java.util.LinkedHashMap;
 public class UpgradeConfig {
     @Description("Throughput upgrade configuration")
     @Example(
-            "throughput-upgrade:\n" +
-            "  default: # The default upgrade, must always exist\n" +
-            "    amount: 1\n" +
-            "  level-1: # Whatever name\n" +
-            "    amount: 2\n" +
-            "    cost: 50000\n" +
-            "  level-3:\n" +
-            "    amount: 3\n" +
-            "    cost: 100000\n" +
-            "  level-4:\n" +
-            "    amount: 4\n" +
-            "    cost: 300000"
+      """
+        throughput-upgrade:
+          default: # The default upgrade, must always exist
+            amount: 1
+          level-1: # Whatever name
+            amount: 2
+            cost: 50000
+          level-3:
+            amount: 3
+            cost: 100000
+          level-4:
+            amount: 4
+            cost: 300000"""
     )
     @Validation(notNull = true, notEmpty = true)
     public LinkedHashMap<String, UpgradeLevelConfig> throughputUpgrade;
 
     @Description("Capacity upgrade configuration")
     @Example(
-            "capacity-upgrade:\n" +
-            "  default:\n" +
-            "    amount: 128\n" +
-            "  level-1:\n" +
-            "    amount: 192\n" +
-            "    cost: 30000\n" +
-            "  level-3:\n" +
-            "    amount: 256\n" +
-            "    cost: 50000\n" +
-            "  level-4:\n" +
-            "    amount: 320\n" +
-            "    cost: 100000"
+      """
+        capacity-upgrade:
+          default:
+            amount: 128
+          level-1:
+            amount: 192
+            cost: 30000
+          level-3:
+            amount: 256
+            cost: 50000
+          level-4:
+            amount: 320
+            cost: 100000"""
     )
     @Validation(notNull = true, notEmpty = true)
     public LinkedHashMap<String, UpgradeLevelConfig> capacityUpgrade;

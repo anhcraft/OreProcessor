@@ -6,10 +6,7 @@ import org.jetbrains.annotations.NotNull;
 /**
  * An abstract wrapper for {@link ItemStack} to work with different materials from vanilla and custom item plugins.
  */
-public class UItemStack {
-    private final UMaterial material;
-    private final int amount;
-
+public record UItemStack(@NotNull UMaterial material, int amount) {
     public static UItemStack of(@NotNull ItemStack itemStack) {
         return new UItemStack(UMaterial.of(itemStack.getType()), itemStack.getAmount());
     }
@@ -17,15 +14,6 @@ public class UItemStack {
     public UItemStack(@NotNull UMaterial material, int amount) {
         this.material = material;
         this.amount = amount;
-    }
-
-    @NotNull
-    public UMaterial getMaterial() {
-        return material;
-    }
-
-    public int getAmount() {
-        return amount;
     }
 
     public boolean isEmpty() {
@@ -39,13 +27,6 @@ public class UItemStack {
         UItemStack that = (UItemStack) o;
         if (amount != that.amount) return false;
         return material.equals(that.material);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = material.hashCode();
-        result = 31 * result + amount;
-        return result;
     }
 
     @Override

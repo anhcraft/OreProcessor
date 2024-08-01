@@ -210,6 +210,6 @@ public interface OreProcessorApi {
     @Nullable
     default ItemStack buildItem(@Nullable UItemStack itemStack) {
         if (itemStack == null) return null;
-        return buildItem(itemStack.getMaterial(), itemStack.getAmount());
+        return buildItem(itemStack.material(), itemStack.amount());
     }
 }

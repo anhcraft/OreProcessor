@@ -89,7 +89,7 @@ public class PlaceholderApiBridge implements Integration {
 
             else if (player != null) {
                 Optional<PlayerData> pd = OreProcessor.getApi().getPlayerData(player.getUniqueId());
-                if (!pd.isPresent()) return null;
+                if (pd.isEmpty()) return null;
 
                 // ore_capacity_<ore>
                 if (params.startsWith(CAPACITY)) {

@@ -24,6 +24,6 @@ public class CraftingRecipe {
 
     @Override
     public String toString() {
-        return String.format("%d %s > %d %s", input.getAmount(), input.getMaterial(), output.getAmount(), output.getMaterial());
+        return String.format("%d %s > %d %s", input.amount(), input.material(), output.amount(), output.material());
     }
 }

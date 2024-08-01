@@ -246,7 +246,7 @@ public final class OreProcessorApiImpl implements OreProcessorApi {
 
     @Override
     public @Nullable UMaterial identifyMaterial(@Nullable ItemStack itemStack) {
-        if (itemStack == null)
+        if (itemStack == null || itemStack.getType().isAir())
             return null;
         for (ItemCustomizer itemCustomizer : plugin.integrationManager.getItemCustomizers()) {
             UMaterial uMaterial = itemCustomizer.identifyMaterial(itemStack);
@@ -258,7 +258,7 @@ public final class OreProcessorApiImpl implements OreProcessorApi {
 
     @Override
     public @Nullable UItemStack identifyItem(@Nullable ItemStack itemStack) {
-        if (itemStack == null)
+        if (itemStack == null || itemStack.getType().isAir())
             return null;
         for (ItemCustomizer itemCustomizer : plugin.integrationManager.getItemCustomizers()) {
             UItemStack uItemStack = itemCustomizer.identifyItem(itemStack);
@@ -282,6 +282,6 @@ public final class OreProcessorApiImpl implements OreProcessorApi {
     public @Nullable ItemStack buildItem(@Nullable UItemStack itemStack) {
         if (itemStack == null)
             return null;
-        return plugin.integrationManager.getItemCustomizer(itemStack.getMaterial().getClassifier()).buildItem(itemStack.getMaterial());
+        return plugin.integrationManager.getItemCustomizer(itemStack.material().getClassifier()).buildItem(itemStack.material());
     }
 }

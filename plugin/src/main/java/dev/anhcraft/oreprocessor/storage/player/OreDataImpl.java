@@ -261,19 +261,19 @@ public class OreDataImpl implements OreData {
             for (Iterator<Map.Entry<UMaterial, Integer>> it = config.feedstock.entrySet().iterator(); it.hasNext() && totalStored < capacity; ) {
                 Map.Entry<UMaterial, Integer> en = it.next();
                 UItemStack output = function.apply(en.getKey());
-                if (output.isEmpty() || !output.getMaterial().isItem())
+                if (output.isEmpty() || !output.material().isItem())
                     continue;
-                UMaterial product = output.getMaterial();
+                UMaterial product = output.material();
 
                 int availableStorage = capacity - totalStored;
                 int actualQueued = Math.min(en.getValue(), getThroughput() * throughputMultiplier);
                 // ensure that the output multiplication will not make storage overfull
-                actualQueued = Math.min(actualQueued * output.getAmount(), availableStorage) / output.getAmount();
+                actualQueued = Math.min(actualQueued * output.amount(), availableStorage) / output.amount();
 
                 if (actualQueued == 0)
                     continue;
 
-                int createdProduct = actualQueued * output.getAmount();
+                int createdProduct = actualQueued * output.amount();
 
                 if (config.products == null)
                     config.products = new LinkedHashMap<>();

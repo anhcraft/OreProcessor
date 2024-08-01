@@ -169,8 +169,8 @@ public class ProcessingPlant implements Listener {
 
         for (Iterator<Item> iterator = event.getItems().iterator(); iterator.hasNext(); ) {
             ItemStack eventItem = iterator.next().getItemStack();
-            if (eventItem.hasItemMeta()) continue;
-            UMaterial feedstock = UMaterial.of(eventItem.getType());
+            UMaterial feedstock = OreProcessor.getApi().identifyMaterial(eventItem);
+            if (feedstock == null) continue;
             int amount = eventItem.getAmount();
 
             OrePickupEvent pickupEvent = new OrePickupEvent(player, event.getBlock(), brokenBlock, ore, feedstock, amount);

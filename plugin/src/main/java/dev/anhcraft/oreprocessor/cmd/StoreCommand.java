@@ -39,12 +39,11 @@ public class StoreCommand extends BaseCommand {
             return;
         }
 
-        if (item.hasItemMeta()) { // prevent non-vanilla items
+        UMaterial material = OreProcessor.getApi().identifyMaterial(item);
+        if (material == null) {
             plugin.msg(player, plugin.messageConfig.storeInvalidItem);
             return;
         }
-
-        UMaterial material = UMaterial.of(item.getType());
         List<Ore> ores = OreProcessor.getApi().getStorageAllowItem(material);
 
         if (ores == null || ores.isEmpty()) {
@@ -97,10 +96,11 @@ public class StoreCommand extends BaseCommand {
 
         for (int i = 0; i < 36; i++) {
             ItemStack item = inv.getItem(i);
-            if (ItemUtil.isEmpty(item) || item.hasItemMeta())
+            if (ItemUtil.isEmpty(item))
                 continue;
-
-            UMaterial material = UMaterial.of(item.getType());
+            UMaterial material = OreProcessor.getApi().identifyMaterial(item);
+            if (material == null)
+                continue;
             List<Ore> ores = OreProcessor.getApi().getStorageAllowItem(material);
             if (ores == null || ores.isEmpty())
                 continue;

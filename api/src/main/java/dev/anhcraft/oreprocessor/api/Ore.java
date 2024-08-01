@@ -80,12 +80,10 @@ public class Ore {
      */
     @NotNull
     public OreTransform getBestTransform(@NotNull OfflinePlayer player) {
-        if (!(player instanceof Player))
+        if (!(player instanceof Player p))
             return getDefaultTransform();
 
-        Player p = (Player) player;
-
-        List<String> reversedKeys = new ArrayList<>(transform.keySet());
+      List<String> reversedKeys = new ArrayList<>(transform.keySet());
         Collections.reverse(reversedKeys);
         for (String key : reversedKeys) {
             if (p.hasPermission("oreprocessor.transform." + getId() + "." + key)) {

@@ -43,7 +43,7 @@ public class OreTransform {
     public boolean hasProduct(UMaterial material) {
         return transformMap.values().stream()
                 .flatMap(wheelSelection -> wheelSelection.getKeys().stream())
-                .anyMatch(itemStack -> itemStack.getMaterial().equals(material));
+                .anyMatch(itemStack -> itemStack.material().equals(material));
     }
 
     /**

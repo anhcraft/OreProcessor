@@ -67,8 +67,8 @@ public class AdvancedEnchantmentBridge implements Integration, Listener, EventDe
             for (Entity entity : entities) {
                 if (!(entity instanceof Item) || entity.isDead()) continue;
                 ItemStack itemStack = ((Item) entity).getItemStack();
-                if (itemStack.hasItemMeta()) continue;
-                UMaterial feedstock = UMaterial.of(itemStack.getType());
+                UMaterial feedstock = OreProcessor.getApi().identifyMaterial(itemStack);
+                if (feedstock == null) continue;
                 int amount = itemStack.getAmount();
 
                 if (ore.isAcceptableFeedstock(feedstock)) {
