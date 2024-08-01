@@ -77,14 +77,13 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
         replaceItem("ore", new ItemReplacer() {
             @Override
             public @NotNull ItemBuilder apply(int slot, @NotNull ItemBuilder itemBuilder) {
-                MaterialUtil.apply(itemBuilder, ore.getIcon());
                 itemBuilder.replaceDisplay(s -> s.replace("{ore}", ore.getName())
                         .replace("{processing}", Integer.toString(processing))
                         .replace("{storage-current}", Integer.toString(stored))
                         .replace("{storage-capacity}", Integer.toString(cap))
                         .replace("{storage-ratio}", Integer.toString((int) (((double) stored) / cap * 100d)))
                         .replace("{throughput}", Integer.toString(throughputM)));
-                return itemBuilder;
+                return MaterialUtil.mergeToBuilder(itemBuilder, ore.getIcon());
             }
         });
 
@@ -119,10 +118,9 @@ public class StorageGuiHandler extends GuiHandler implements AutoRefresh {
 
             UMaterial product = products.get(i);
             ItemBuilder itemBuilder = GuiRegistry.STORAGE.getProductIcon();
-            MaterialUtil.apply(itemBuilder, product);
             itemBuilder.replaceDisplay(s -> s.replace("{current}", Integer.toString(oreData.countProduct(product))));
+            getInventory().setItem(slot, MaterialUtil.mergeToItem(itemBuilder, product));
 
-            getInventory().setItem(slot, itemBuilder.build());
             getSlot(slot).setEvents(new ClickEvent() {
                 @Override
                 public void onClick(@NotNull InventoryClickEvent clickEvent, @NotNull Player player, int i) {

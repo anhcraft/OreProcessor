@@ -48,7 +48,6 @@ public class InspectGuiHandler extends GuiHandler implements AutoRefresh {
             replaceItem(slot, new ItemReplacer() {
                 @Override
                 public @NotNull ItemBuilder apply(int i, @NotNull ItemBuilder itemBuilder) {
-                    MaterialUtil.apply(itemBuilder, ore.getIcon());
                     itemBuilder.name(GuiRegistry.INSPECT.oreName);
                     itemBuilder.lore(GuiRegistry.INSPECT.oreLore);
                     int processing = oreData.countAllFeedstock();
@@ -61,7 +60,7 @@ public class InspectGuiHandler extends GuiHandler implements AutoRefresh {
                             .replace("{storage-capacity}", Integer.toString(cap))
                             .replace("{storage-ratio}", Integer.toString((int) (((double) stored) / cap * 100d)))
                             .replace("{throughput}", Integer.toString(throughputM)));
-                    return itemBuilder;
+                    return MaterialUtil.mergeToBuilder(itemBuilder, ore.getIcon());
                 }
             });
         }

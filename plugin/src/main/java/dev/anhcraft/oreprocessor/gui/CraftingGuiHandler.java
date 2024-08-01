@@ -65,15 +65,14 @@ public class CraftingGuiHandler extends GuiHandler implements AutoRefresh {
 
         replaceItem("ore", new ItemReplacer() {
             @Override
-            public @NotNull ItemBuilder apply(int slot, @NotNull ItemBuilder itemBuilder) {
-                MaterialUtil.apply(itemBuilder, ore.getIcon());
+            public @NotNull ItemBuilder apply(int slot, @NotNull ItemBuilder itemBuilder) {;
                 itemBuilder.replaceDisplay(s -> s.replace("{ore}", ore.getName())
                         .replace("{processing}", Integer.toString(processing))
                         .replace("{storage-current}", Integer.toString(stored))
                         .replace("{storage-capacity}", Integer.toString(cap))
                         .replace("{storage-ratio}", Integer.toString((int) (((double) stored) / cap * 100d)))
                         .replace("{throughput}", Integer.toString(throughputM)));
-                return itemBuilder;
+                return MaterialUtil.mergeToBuilder(itemBuilder, ore.getIcon());
             }
         });
 
@@ -102,17 +101,15 @@ public class CraftingGuiHandler extends GuiHandler implements AutoRefresh {
 
             if (recipe == null || productCount < recipe.getInput().amount()) {
                 ItemBuilder itemBuilder = GuiRegistry.CRAFTING.getUncraftableProductIcon();
-                MaterialUtil.apply(itemBuilder, product);
                 itemBuilder.replaceDisplay(s -> s.replace("{current}", Integer.toString(productCount)));
-                getInventory().setItem(slot, itemBuilder.build());
+                getInventory().setItem(slot, MaterialUtil.mergeToItem(itemBuilder, product));
                 getSlot(slot).setEvents();
                 continue;
             }
 
             ItemBuilder itemBuilder = GuiRegistry.CRAFTING.getCraftableProductIcon();
-            MaterialUtil.apply(itemBuilder, product);
             itemBuilder.replaceDisplay(s -> s.replace("{current}", Integer.toString(productCount)));
-            getInventory().setItem(slot, itemBuilder.build());
+            getInventory().setItem(slot, MaterialUtil.mergeToItem(itemBuilder, product));
             getSlot(slot).setEvents(new ClickEvent() {
                 @Override
                 public void onClick(@NotNull InventoryClickEvent clickEvent, @NotNull Player player, int i) {
