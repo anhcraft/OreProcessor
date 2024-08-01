@@ -19,16 +19,18 @@ public class UMaterial {
     @Nullable
     public static UMaterial parse(@NotNull String str) {
         String[] args = str.split(":");
-        if (args.length > 2)
-            return null;
-        if (args.length == 2) {
+        if (args.length == 1) {
+            Material material = Material.getMaterial(str.toUpperCase());
+            return material == null ? null : of(material);
+        }
+        if (args.length >= 2) {
             MaterialClass materialClass = MaterialClass.getClassByPrefix(args[0]);
             if (materialClass == null)
                 return null;
-            return new UMaterial(materialClass, args[1]);
+            String[] idParams = Arrays.copyOfRange(args, 1, args.length);
+            return new UMaterial(materialClass, String.join(":", idParams));
         }
-        Material material = Material.getMaterial(str.toUpperCase());
-        return material == null ? null : of(material);
+        return null;
     }
 
     public static UMaterial of(@NotNull Material material) {

@@ -194,5 +194,12 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/oraxen.jar</systemPath>
         </dependency>
+        <dependency>
+            <groupId>dev.lone</groupId>
+            <artifactId>itemsadder</artifactId>
+            <version>3.6.4-release-3</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/ItemsAdder_3.6.4-release-3.jar</systemPath>
+        </dependency>
     </dependencies>
 </project>

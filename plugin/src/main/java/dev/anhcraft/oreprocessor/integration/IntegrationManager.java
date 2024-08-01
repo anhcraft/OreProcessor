@@ -6,6 +6,7 @@ import dev.anhcraft.oreprocessor.api.integration.ShopProviderType;
 import dev.anhcraft.oreprocessor.api.util.MaterialClass;
 import dev.anhcraft.oreprocessor.api.util.UMaterial;
 import dev.anhcraft.oreprocessor.integration.adder.ItemCustomizer;
+import dev.anhcraft.oreprocessor.integration.adder.ItemsAdderBridge;
 import dev.anhcraft.oreprocessor.integration.adder.OraxenBridge;
 import dev.anhcraft.oreprocessor.integration.adder.VanillaBridge;
 import dev.anhcraft.oreprocessor.integration.shop.EconomyShopGUIBridge;
@@ -37,6 +38,7 @@ public class IntegrationManager {
         tryHook("eco", EcoBridge.class);
         tryHook("AdvancedEnchantments", AdvancedEnchantmentBridge.class);
         tryHook("Oraxen", OraxenBridge.class);
+        tryHook("ItemsAdder", ItemsAdderBridge.class);
     }
 
     private void tryHook(String plugin, Class<? extends Integration> clazz) {
