@@ -1,5 +1,6 @@
 package dev.anhcraft.oreprocessor.api.util;
 
+import com.google.common.base.Preconditions;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -99,6 +100,11 @@ public class UMaterial {
 
     public boolean isItem() {
         return item;
+    }
+
+    public Material asBukkit() {
+        Preconditions.checkArgument(classifier == MaterialClass.VANILLA, "Not vanilla item");
+        return Material.getMaterial(identifier);
     }
 
     @Override
