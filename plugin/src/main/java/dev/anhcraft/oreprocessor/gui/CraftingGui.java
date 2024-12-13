@@ -48,17 +48,17 @@ public class CraftingGui extends Gui {
         for (String recipe : recipes) {
             String[] args = recipe.split(">");
             if (args.length != 2) {
-                OreProcessor.getInstance().getLogger().warning(String.format("Invalid crafting recipe phase '%s'", recipe));
+                OreProcessor.getInstance().getLogger().warning(String.format("Invalid crafting recipe phrase '%s'", recipe));
                 continue;
             }
             ItemStack in = parseItem(args[0].trim());
             if (in == null) {
-                OreProcessor.getInstance().getLogger().warning(String.format("Invalid crafting input in phase '%s'", recipe));
+                OreProcessor.getInstance().getLogger().warning(String.format("Invalid crafting input in phrase '%s'", recipe));
                 continue;
             }
             ItemStack out = parseItem(args[1].trim());
             if (out == null) {
-                OreProcessor.getInstance().getLogger().warning(String.format("Invalid crafting output in phase '%s'", recipe));
+                OreProcessor.getInstance().getLogger().warning(String.format("Invalid crafting output in phrase '%s'", recipe));
                 continue;
             }
             craftingRecipeMap.put(in.getType(), new CraftingRecipe(in, out));
@@ -68,16 +68,16 @@ public class CraftingGui extends Gui {
     private ItemStack parseItem(String str) {
         String[] args = str.split("\\s+");
         if (args.length != 2) {
-            OreProcessor.getInstance().getLogger().warning(String.format("Invalid crafting recipe phase '%s'", str));
+            OreProcessor.getInstance().getLogger().warning(String.format("Invalid crafting recipe phrase '%s'", str));
             return null;
         }
         if (!args[0].matches("^\\d+$")) {
-            OreProcessor.getInstance().getLogger().warning(String.format("Invalid number '%s' in phase '%s'", args[0], str));
+            OreProcessor.getInstance().getLogger().warning(String.format("Invalid number '%s' in phrase '%s'", args[0], str));
             return null;
         }
         Material material = Material.getMaterial(args[1].toUpperCase());
         if (isEmpty(material)) {
-            OreProcessor.getInstance().getLogger().warning(String.format("Invalid material '%s' in phase '%s'", args[1], str));
+            OreProcessor.getInstance().getLogger().warning(String.format("Invalid material '%s' in phrase '%s'", args[1], str));
             return null;
         }
         return new ItemStack(material, Integer.parseInt(args[0]));

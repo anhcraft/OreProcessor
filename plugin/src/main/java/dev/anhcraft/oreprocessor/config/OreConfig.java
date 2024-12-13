@@ -63,13 +63,13 @@ public class OreConfig {
 
                 Material from = (Material) EnumUtil.findEnum(Material.class, split[0].trim().toUpperCase());
                 if (from == null) {
-                    OreProcessor.getInstance().getLogger().warning(String.format("Unknown material '%s' in phase '%s'", split[0], str));
+                    OreProcessor.getInstance().getLogger().warning(String.format("Unknown material '%s' in phrase '%s'", split[0], str));
                     continue;
                 }
 
                 WheelSelection<ItemStack> to = parseSelectionSet(split[1]);
                 if (to.isEmpty()) {
-                    OreProcessor.getInstance().getLogger().warning(String.format("No products available in phase '%s'", str));
+                    OreProcessor.getInstance().getLogger().warning(String.format("No products available in phrase '%s'", str));
                     continue;
                 }
 
@@ -98,17 +98,17 @@ public class OreConfig {
             if (args.length == 1) {
                 ItemStack is = parseItemstack(args[0]);
                 if (is != null) map.add(is, 100d);
-                else OreProcessor.getInstance().getLogger().warning(String.format("Invalid item format '%s' in phase '%s'", args[0], str));
+                else OreProcessor.getInstance().getLogger().warning(String.format("Invalid item format '%s' in phrase '%s'", args[0], str));
             }
 
             else if (args.length == 2) {
                 ItemStack is = parseItemstack(args[1]);
                 if (is != null) map.add(is, Double.parseDouble(args[0].replace("%", "")));
-                else OreProcessor.getInstance().getLogger().warning(String.format("Invalid item format '%s' in phase '%s'", args[1], str));
+                else OreProcessor.getInstance().getLogger().warning(String.format("Invalid item format '%s' in phrase '%s'", args[1], str));
             }
 
             else {
-                OreProcessor.getInstance().getLogger().warning(String.format("Invalid format '%s' in phase '%s'", choice, str));
+                OreProcessor.getInstance().getLogger().warning(String.format("Invalid format '%s' in phrase '%s'", choice, str));
             }
         }
 
@@ -125,7 +125,7 @@ public class OreConfig {
             Material material = (Material) EnumUtil.findEnum(Material.class, args[0].toUpperCase());
             String num = args[1];
             if (!num.matches("\\d+")) {
-                OreProcessor.getInstance().getLogger().warning(String.format("Invalid number '%s' in phase '%s'", num, str));
+                OreProcessor.getInstance().getLogger().warning(String.format("Invalid number '%s' in phrase '%s'", num, str));
                 return null;
             }
             return material == null ? null : new ItemStack(material, Integer.parseInt(num));
