@@ -165,7 +165,7 @@
         <dependency>
             <groupId>com.github.Gypopo</groupId>
             <artifactId>EconomyShopGUI-API</artifactId>
-            <version>1.7.1</version>
+            <version>1.7.2</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -177,15 +177,15 @@
         <dependency>
             <groupId>com.willfp</groupId>
             <artifactId>eco</artifactId>
-            <version>6.73.3</version>
+            <version>6.74.4</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>ae</groupId>
             <artifactId>ae</artifactId>
-            <version>9.8.1</version>
+            <version>9.14.2</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/AdvancedEnchantments-9.9.19.jar</systemPath>
+            <systemPath>${project.basedir}/lib/AdvancedEnchantments-9.14.2.jar</systemPath>
         </dependency>
     </dependencies>
 </project>
